@@ -5,6 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "prisma-migrate-dev": "dotenv -e .env.development npx prisma migrate dev",
+    "prisma-seed-dev": "dotenv -e .env.development ts-node prisma/seed.ts",
+    "prisma-re-seed": "dotenv -e .env.development npx prisma migrate reset && dotenv -e .env.development ts-node prisma/seed.ts",
     "dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
     "serve": "cross-env NODE_ENV=production node dist/index.js",

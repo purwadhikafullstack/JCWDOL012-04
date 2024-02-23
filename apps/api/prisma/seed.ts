@@ -1,5 +1,5 @@
 // prisma/seed.ts
-import { PrismaClient } from '@prisma/client';
+import { Prisma, Transactions, PrismaClient, Mutations } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -7,68 +7,317 @@ async function main() {
   // Seed data here
 
 
+  //5 regions
+  for (let i = 1; i <= 5; i++) {
+    await prisma.regions.create({
+      data: {
+        name: 'region' + i,
+      }
+    });
+    console.log(`Created region${i}`);
+  }
 
-//   id                         Int         @id @default(autoincrement())
-//   firstName                  String
-//   lastName                   String
-//   email                      String      @unique
-//   password                   String?
-//   gender                     String
-//   phoneNumber                String
-//   isVerified                 Boolean     @default(false)
-//   role                       Role        @default(CUSTOMER)
-//   primaryAddressId           Int?
-//   wareHouseAdmin_warehouseId Int?
-//   wareHouseAdmin             Warehouses? @relation(fields: [wareHouseAdmin_warehouseId], references: [id])
-//   profilePicture             String?
-//   createdAt                  DateTime    @default(now())
-//   updatedAt                  DateTime    @updatedAt
-//   archived                   Boolean     @default(false)
+  //5 provinces
+  for (let i = 1; i <= 5; i++) {
+    await prisma.provinces.create({
+      data: {
+        name: 'province' + i,
+        regionId: i
+      }
+    });
+    console.log(`Created province${i}`);
+  }
 
-for(let i = 1; i <= 20; i++){
+  //5 cities
+  for (let i = 1; i <= 5; i++) {
+    await prisma.cities.create({
+      data: {
+        name: 'city' + i,
+        provinceId: i
+      }
+    });
+    console.log(`Created city${i}`);
+  }
+
+  //20 customer
+  for (let i = 1; i <= 20; i++) {
     await prisma.users.create({
       data: {
-        firstName: 'customer'+i,
-        lastName: 'lastName'+i,
-        email: 'email'+i+'@bata.com',
-        password: 'password'+i,
-        gender: 'gender'+i,
-        phoneNumber: 'phoneNumber'+i,
+        firstName: 'customer' + i,
+        lastName: 'lastName' + i,
+        email: 'email' + i + '@bata.com',
+        password: 'password' + i,
+        gender: 'gender' + i,
+        phoneNumber: 'phoneNumber' + i,
         isVerified: true,
         role: 'CUSTOMER',
         profilePicture: '/images/profilePict1.jpeg'
       },
     });
-}
+    console.log(`Created customer ${i}`);
+  }
 
-await prisma.users.create({
+  //1 superadmin
+  await prisma.users.create({
     data: {
-        firstName: 'admin',
-        lastName: 'admin',
-        email: 'admin@admin.com',
-        password: 'admin',
+      firstName: 'admin',
+      lastName: 'admin',
+      email: 'admin@admin.com',
+      password: 'admin',
+      gender: 'male',
+      phoneNumber: '123456789',
+      isVerified: true,
+      role: 'SUPER_ADMIN',
+      profilePicture: '/images/profilePict1.jpeg'
+    }
+  });
+  console.log(`Created superadmin`);
+
+  //5 warehouse
+  for (let i = 1; i <= 5; i++) {
+    await prisma.warehouses.create({
+      data: {
+        name: 'warehouse' + i,
+        address: 'address' + i,
+        cityId: i,
+        latitude: 'latitude' + i,
+        longitude: 'longitude' + i
+      }
+    });
+  }
+  console.log(`Created warehouse`);
+
+  //5 warehouse admin
+  for (let i = 1; i <= 5; i++) {
+    await prisma.users.create({
+      data: {
+        firstName: 'warehouse_admin' + i,
+        lastName: 'warehouse_admin' + i,
+        email: 'warehouse_admin' + i + '@admin.com',
+        password: 'warehouse_admin' + i,
         gender: 'male',
         phoneNumber: '123456789',
         isVerified: true,
-        role: 'SUPER_ADMIN',
+        role: 'WAREHOUSE_ADMIN',
         profilePicture: '/images/profilePict1.jpeg'
-}});
+      }
+    });
+    console.log(`Created warehouse admin ${i}`);
+  }
 
-for(let i = 1; i <= 5; i++){
-    await prisma.users.create({
+  //address
+  for (let i = 1; i <= 20; i++) {
+    let randAddressCount = Math.floor(Math.random() * 5) + 1;
+    for (let j = 1; j <= randAddressCount; j++) {
+      let randCityId = Math.floor(Math.random() * 5) + 1;
+      let isPrimaryAddressTemp = j === 1;
+      await prisma.userCities.create({
         data: {
-            firstName: 'warehouse_admin'+i,
-            lastName: 'warehouse_admin'+i,
-            email: 'warehouse_admin'+i+'@admin.com',
-            password: 'warehouse_admin'+i,
-            gender: 'male',
-            phoneNumber: '123456789',
-            isVerified: true,
-            role: 'WAREHOUSE_ADMIN',
-            profilePicture: '/images/profilePict1.jpeg'
-    }});
-}
+          userId: i,
+          cityId: randCityId,
+          address: 'address' + j,
+          latitude: 'latitude' + j,
+          longitude: 'longitude' + j,
+          isPrimaryAddress: isPrimaryAddressTemp
+        }
+      });
+      console.log(`Created address${j} for customer${i}`);
+    }
+  }
 
+  //5 product categories
+  for (let i = 1; i <= 5; i++) {
+    await prisma.productCategories.create({
+      data: {
+        name: 'productCategory' + i,
+        description: 'description' + i
+      }
+    });
+    console.log(`Created product category${i}`);
+  }
+
+  //30 products
+  for (let i = 1; i <= 30; i++) {
+    let categoryTemp = Math.floor(Math.random() * 5) + 1;
+    let priceTemp = Math.floor(Math.random() * 20000000) + 1000;
+    await prisma.products.create({
+      data: {
+        name: 'product' + i,
+        description: 'description' + i,
+        price: priceTemp,
+        productCategoryId: categoryTemp,
+      }
+    });
+    console.log(`Created product${i}`);
+  }
+
+  //product images
+  for (let i = 1; i <= 30; i++) {
+    let randImageCount = Math.floor(Math.random() * 7) + 2;
+    for (let j = 1; j <= randImageCount; j++) {
+      await prisma.productImages.create({
+        data: {
+          productId: i,
+          path: '/images/products/product' + i + 'image' + j + '.jpeg'
+        }
+      });
+      console.log(`Created product${i} image${j}`);
+    }
+  }
+
+  //5 warehouses products
+  for (let i = 1; i <= 5; i++) {
+    for (let j = 1; j <= 30; j++) {
+      let stockTemp = Math.random() > 0.3 ? Math.floor(Math.random() * 100) + 1 : 0;
+      await prisma.productsWarehouses.create({
+        data: {
+          warehouseId: i,
+          productId: j,
+          stock: stockTemp
+        }
+      });
+      console.log(`Created product${j} to warehouse${i} with stock ${stockTemp}`);
+    }
+  }
+
+  // shopping cart
+  for (let i = 1; i <= 20; i++) {
+    let randProductCount = Math.floor(Math.random() * 5) + 1;
+    for (let j = 1; j <= randProductCount; j++) {
+      let productTemp = Math.floor(Math.random() * 30) + 1;
+      let quantityTemp = Math.floor(Math.random() * 5) + 1;
+      await prisma.shoppingCart.create({
+        data: {
+          userId: i,
+          productId: productTemp,
+          quantity: quantityTemp
+        }
+      });
+      console.log(`Created product${productTemp} to shopping cart of customer${i} with quantity ${quantityTemp}`);
+    }
+  }
+
+  let orderStatusEnum = [
+    'PENDING_PROOF',
+    'PENDING_VERIFICATION',
+    'VERIFIED',
+    'FAILED_PAYMENT',
+    'CANCELLED',
+    'PROCESSING',
+    'SHIPPING',
+    'SENT',
+    'CONFIRMED',
+  ]
+
+  // userId            Int
+  // user              Users                  @relation(fields: [userId], references: [id])
+  // paymentType       paymentType
+  // paymentProof      String?
+  // orderStatus       orderStatus            @default(PENDING_PROOF)
+  // warehouseId       Int
+  // warehouse         Warehouses             @relation(fields: [warehouseId], references: [id])
+  // paymentProofDate  DateTime?
+  // verifiedDate      DateTime?
+  // shippingDate      DateTime?
+  // sentDate          DateTime?
+  // processDate       DateTime?
+  // confirmationDate  DateTime?
+  // cancelledDate     DateTime?
+  // failedPaymentDate DateTime?
+  // shippingCost      Float
+  // total             Float
+
+  //6 kasus transaction
+  //tipe1-paymentGateway, processing,shiping,sent,confirmed
+  //tipe2-transfer,paymentProof ,verified,processing,shipping,sent,confirmed
+  //tipe3-transfer,failedPayment
+  //tipe4-transfer,cancelled
+  //tipe5-paymentGateway,processing,cancelled
+  //tipe6-transfer,paymentProof,verified,processing,cancelled
+
+  // 100 transaction
+  for (let i = 1; i <= 100; i++) {
+    let userIdTemp = Math.floor(Math.random() * 20) + 1;
+    let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[Math.floor(Math.random() * 9)] as Transactions['orderStatus'];
+    let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
+    let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
+    let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
+    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENT_GATEWAY' : 'TRANSFER';
+    await prisma.transactions.create({
+      data: {
+        userId: userIdTemp,
+        paymentType: paymentTypeTemp as Transactions['paymentType'],
+        orderStatus: orderStatusTemp,
+        warehouseId: warehouseIdTemp,
+        shippingCost: shippingCostTemp,
+        total: totalTemp
+      }
+    });
+    console.log(`Created transaction ${i}`);
+  }
+
+  // transactionId Int
+  // transaction   Transactions @relation(fields: [transactionId], references: [id])
+  // productId     Int
+  // product       Products     @relation(fields: [productId], references: [id])
+  // quantity      Int
+  // price         Float
+  //transaction products
+  for (let i = 1; i <= 100; i++) {
+    let transactionIdTemp = i;
+    let productCountTemp = Math.floor(Math.random() * 5) + 1;
+    for (let j = 1; j <= productCountTemp; j++) {
+      let productIdTemp = Math.floor(Math.random() * 30) + 1;
+      let quantityTemp = Math.floor(Math.random() * 5) + 1;
+      let priceTemp = Math.floor(Math.random() * 100000) + 1000;
+      await prisma.transactionsProducts.create({
+        data: {
+          transactionId: transactionIdTemp,
+          productId: productIdTemp,
+          quantity: quantityTemp,
+          price: priceTemp
+        }
+      });
+      console.log(`Created transaction${i} product${j}`);
+    }
+  }
+
+
+  let mutationType = [
+    'TRANSACTION',
+    'MANUAL_ADMIN',
+    'AUTOMATED'
+  ]
+  // productId     Int
+  // product       Products?     @relation(fields: [productId], references: [id])
+  // warehouseId   Int
+  // warehouse     Warehouses?   @relation(fields: [warehouseId], references: [id])
+  // transactionId Int?
+  // transaction   Transactions? @relation(fields: [transactionId], references: [id])
+  // isAdd         Boolean       @default(true)
+  // quantity      Int
+  // mutationType  mutationType
+  //mutations
+  for (let i = 1; i <= 100; i++) {
+    let productIdTemp = Math.floor(Math.random() * 30) + 1;
+    let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
+    let transactionIdTemp = Math.random() > 0.7 ? i : null;
+    let isAddTemp = Math.random() > 0.5;
+    let quantityTemp = Math.floor(Math.random() * 5) + 1;
+    let mutationTypeTemp = mutationType[Math.floor(Math.random() * 3)];
+    await prisma.mutations.create({
+      data: {
+        productId: productIdTemp,
+        warehouseId: warehouseIdTemp,
+        transactionId: transactionIdTemp,
+        isAdd: isAddTemp,
+        quantity: quantityTemp,
+        mutationType: mutationTypeTemp as Mutations['mutationType']
+      }
+    });
+    console.log(`Created mutation ${i}`);
+  }
+}
 
 
 main()
