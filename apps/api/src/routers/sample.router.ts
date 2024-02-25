@@ -14,7 +14,7 @@ export class SampleRouter {
   private initializeRoutes(): void {
     this.router.get('/', this.sampleController.getSampleData);
     this.router.get('/:id', this.sampleController.getSampleDataById);
-    this.router.post('/', this.sampleController.createSampleData);
+    // this.router.post('/', this.sampleController.createSampleData);
   }
 
   getRouter(): Router {
