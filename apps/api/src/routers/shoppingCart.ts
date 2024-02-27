@@ -87,7 +87,6 @@ cartRouter.post('/cart', async (req:Request, res: Response): Promise<void> => {
             id: productId
         }
     });
-
     if (!product) {
         res.status(404).json({ message: 'Product not found' });
         return;
