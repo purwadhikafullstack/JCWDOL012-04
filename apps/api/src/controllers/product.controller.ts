@@ -42,8 +42,35 @@ export class ProductController {
         where: {
           id: id,
         },
+        include: {
+          productImages: true,
+          productsWarehouses: {
+            select: {
+              stock: true,
+              warehouse: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          productCategory: true,
+        },
       });
-      return res.status(200).json(product);
+      const singleProduct = product;
+
+      // Calculate total stock for the single product
+      const totalStock = singleProduct?.productsWarehouses.reduce(
+        (total, warehouse) => total + warehouse.stock,
+        0,
+      );
+
+      // Include the totalStock in the product object
+      const productWithTotalStock = {
+        ...singleProduct,
+        totalStock,
+      };
+      return res.status(200).json(productWithTotalStock);
     } catch (error) {
       console.log(error);
     }

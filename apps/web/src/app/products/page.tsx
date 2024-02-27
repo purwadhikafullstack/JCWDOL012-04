@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 interface Product {
-  id: number; // Adjust the type according to your actual API response
+  id: number;
   name: string;
   price: number;
   totalStock: number;
@@ -53,7 +53,7 @@ export default function Products() {
           <Link key={index} href={`/products/${product.id}`}>
             <div
               id="product"
-              className="flex flex-col w-[150px] lg:w-[180px] h-[215px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px]"
+              className="flex flex-col w-[150px] xl:w-[180px] h-[215px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px]"
             >
               <div id="product-image" className="relative w-full h-[120px]">
                 {/* <Image
