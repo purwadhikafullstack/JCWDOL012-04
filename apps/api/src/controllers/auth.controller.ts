@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { compare } from 'bcrypt'
-import { Secret, sign } from 'jsonwebtoken'
+import { Secret, sign, verify } from 'jsonwebtoken'
 import { resBadRequest, resCreated, resInternalServerError, resSuccess, resUnauthorized } from "@/services/responses";
 import { createNewUser } from "@/services/auth";
 
@@ -32,8 +32,8 @@ export async function loginWithEmail(req: Request, res: Response) {
     if (!req.body.email || !req.body.password) return resBadRequest(res, 'Email and password are required', null)
 
     try {
-        const { email, password } = req.body
-        const user = await prisma.users.findUnique({ where: { email } })
+        const { password } = req.body
+        const user = await prisma.users.findUnique({ where: { email: req.body.email } })
         if (!user) return resBadRequest(res, 'Invalid email or password', null)
         if (!user.password) return resUnauthorized(res, 'User ', null, 0) //Tambah provider (Google) -> !user.provider
 
@@ -41,12 +41,27 @@ export async function loginWithEmail(req: Request, res: Response) {
         if (!passwordMatch) return resBadRequest(res, 'Invalid email or password', null)
 
         const secret = process.env.JWT_SECRET as Secret
-        const token = sign({ id: user.id }, secret, { expiresIn: '1d' })
+        const { id, firstName, lastName, email, role } = user
+        const token = sign({ id, firstName, lastName, email, role }, secret, { expiresIn: '1d' })
 
         return resSuccess(res, 'Login successful', { user, token })
 
     } catch (error) {
         console.log(error)
         return resInternalServerError(res, 'Login failed', null)
+    }
+}
+
+export async function verifyToken(req: Request, res: Response, next: NextFunction) {
+    try {
+        const token = req.headers.authorization?.replace('Bearer ', '')
+        if (!token) return resUnauthorized(res, 'Unauthorized', null)
+        const verified = verify(token, process.env.JWT_SECRET as Secret)
+        if (!verified) return resUnauthorized(res, 'Unauthorized', null)
+        req.user = verified as DecryptedUserToken
+        next()
+    } catch (error) {
+        console.log(error)
+        resInternalServerError(res, 'Token verification failed', null)
     }
 }
