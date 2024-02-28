@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { compare } from 'bcrypt'
 import { Secret, sign, verify } from 'jsonwebtoken'
-import { resBadRequest, resCreated, resInternalServerError, resSuccess, resUnauthorized } from "@/services/responses";
+import { resBadRequest, resCreated, resForbidden, resInternalServerError, resSuccess, resUnauthorized } from "@/services/responses";
 import { createNewUser } from "@/services/auth";
 
 const prisma = new PrismaClient();
@@ -12,6 +12,7 @@ export async function registerWithEmail(req: Request, res: Response) {
     if (!req.body.firstName || !req.body.lastName) return resBadRequest(res, 'First name and last name are required', null)
     if (!req.body.gender) return resBadRequest(res, "Gender is required", null)
     if (!req.body.phoneNumber) return resBadRequest(res, "Phone number is required", null)
+    if (req.user) return resForbidden(res, 'User already logged in', null, 1)
 
     try {
         const { email } = req.body
@@ -29,6 +30,7 @@ export async function registerWithEmail(req: Request, res: Response) {
 }
 
 export async function loginWithEmail(req: Request, res: Response) {
+    if (req.user) return resSuccess(res, 'User already logged in', null, 1)
     if (!req.body.email || !req.body.password) return resBadRequest(res, 'Email and password are required', null)
 
     try {

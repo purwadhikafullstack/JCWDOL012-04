@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { loginWithEmail, registerWithEmail } from "@/controllers/auth.controller";
+import { loginWithEmail, registerWithEmail, verifyToken } from "@/controllers/auth.controller";
 
 const authRouter = Router();
 
-authRouter.post('/register', registerWithEmail);
-authRouter.post('/login', loginWithEmail);
+authRouter.post('/register', verifyToken, registerWithEmail);
+authRouter.post('/login', verifyToken, loginWithEmail);
 
 export { authRouter };

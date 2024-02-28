@@ -31,8 +31,9 @@ export function resUnauthorized(res: Response, message: string, data: null | obj
     });
 }
 
-export function resForbidden(res: Response, message: string, data: null | object | any[]) {
+export function resForbidden(res: Response, message: string, data: null | object | any[], code?: number) {
     return res.status(403).send({
+        code,
         msg: message,
         data: data
     });
