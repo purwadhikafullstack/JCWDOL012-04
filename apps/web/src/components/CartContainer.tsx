@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { formatToRupiah } from '@/utils/helper';
 
 interface CartContainerProps {
   data: {
@@ -18,7 +19,8 @@ interface CartContainerProps {
 }
 
 export const CartContainer: React.FC<CartContainerProps> = (props) => {
-  const [cartQty, setCartQty] = useState<any>(1);
+  const [cartQty, setCartQty] = useState<number>(1);
+  const maxItem = Math.floor((props.totalStock * 30) / 100);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -29,7 +31,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
 
   const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = Number(e.target.value);
-    if (inputValue < 1 || (props.data && inputValue > props?.totalStock)) {
+    if (inputValue < 1 || (props.data && inputValue > maxItem)) {
       setCartQty(1);
     }
   };
@@ -37,16 +39,6 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
   let subtotal;
   if (props?.price !== undefined) {
     subtotal = props?.price * cartQty;
-  }
-
-  function formatToRupiah(number: number) {
-    const formatter = new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    });
-
-    return formatter.format(number);
   }
 
   return (
@@ -57,13 +49,13 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
       <div className="hidden lg:flex my-[10px] font-semibold">Cart</div>
       <div
         id="cart-qty"
-        className="flex items-center w-full md:w-[240px] space-x-3"
+        className="flex items-center w-full md:w-[240px] space-x-3 lg:space-x-2"
       >
         <button
           onClick={() => {
             setCartQty(cartQty - 1);
           }}
-          className={`text-white bg-[#8207c5] px-[15px] py-[6px] rounded-full text-xl ${
+          className={`text-white hover:scale-110 duration-200 bg-[#8207c5] px-[15px] py-[6px] rounded-full text-xl ${
             cartQty < 2 ? 'pointer-events-none opacity-70' : ''
           }`}
         >
@@ -74,7 +66,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           accept="num"
-          className="flex-1 w-0 max-w-[400px] rounded-full h-[40px] text-center border border-[#8207c5]"
+          className="flex-1 w-[40px] max-w-[520px] lg:flex-none rounded-full h-[40px] text-center border border-[#8207c5]"
           value={cartQty}
           onChange={handleInputChange}
           onBlur={handleOnBlur}
@@ -83,8 +75,8 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
           onClick={() => {
             setCartQty(Number(cartQty) + 1);
           }}
-          className={`text-white bg-[#8207c5] px-[13px] py-[5px] rounded-full text-xl ${
-            cartQty >= props.totalStock ? 'pointer-events-none opacity-70' : ''
+          className={`text-white hover:scale-110 duration-200 bg-[#8207c5] px-[13px] py-[5px] rounded-full text-xl ${
+            cartQty >= maxItem ? 'pointer-events-none opacity-70' : ''
           }`}
         >
           +
@@ -94,9 +86,9 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
         </div>
       </div>
       <div className="hidden mt-[10px] mb-[5px] lg:flex justify-between">
-        <div>Subtotal</div>
+        <div>Subtotal :</div>
         <div className="font-semibold">
-          {cartQty <= props.totalStock ? (
+          {cartQty <= maxItem ? (
             formatToRupiah(subtotal as number)
           ) : (
             <span className="text-red-600">Quantity overload</span>
@@ -104,8 +96,8 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
         </div>
       </div>
       <button
-        className={`bg-[#8207c5] mt-[10px] text-white py-[5px] rounded-full ${
-          cartQty < 1 || cartQty > props.totalStock || props.totalStock == 0
+        className={`bg-[#8207c5] hover:bg-white hover:text-[#8207c5] border hover:border-[#8207c5] duration-200 mt-[10px] text-white py-[5px] rounded-full ${
+          cartQty < 1 || cartQty > maxItem || props.totalStock == 0
             ? 'pointer-events-none opacity-70'
             : ''
         }`}

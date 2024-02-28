@@ -1,26 +1,14 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
+import { ProductService } from '@/services/product.service';
+
+const productService = new ProductService();
 
 export class ProductController {
   //products
   async getProducts(req: Request, res: Response) {
     try {
-      const products = await prisma.products.findMany({
-        include: {
-          productImages: true,
-          productsWarehouses: {
-            select: {
-              stock: true,
-              warehouse: {
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-          productCategory: true,
-        },
-      });
+      const products = await productService.getAllProducts();
       const productsWithTotalStock = products.map((product) => {
         const totalStock = product.productsWarehouses.reduce(
           (total, warehouse) => total + warehouse.stock,
@@ -38,25 +26,7 @@ export class ProductController {
   async getProduct(req: Request, res: Response) {
     try {
       const id = parseInt(req.params.id);
-      const product = await prisma.products.findUnique({
-        where: {
-          id: id,
-        },
-        include: {
-          productImages: true,
-          productsWarehouses: {
-            select: {
-              stock: true,
-              warehouse: {
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-          productCategory: true,
-        },
-      });
+      const product = await productService.getProduct(id);
       const singleProduct = product;
 
       // Calculate total stock for the single product
@@ -80,13 +50,7 @@ export class ProductController {
   async searchProducts(req: Request, res: Response) {
     try {
       const search = req.params.search;
-      const products = await prisma.products.findMany({
-        where: {
-          name: {
-            contains: search,
-          },
-        },
-      });
+      const products = await productService.searchProducts(search);
       return res.status(200).json(products);
     } catch (error) {
       console.log(error);
