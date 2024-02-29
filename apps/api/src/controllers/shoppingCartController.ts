@@ -19,6 +19,14 @@ export default class ShoppingCartController {
             role: 'CUSTOMER',
             isVerified: true
         };
+        // this.user = {
+        //     id:1,
+        //     firstName: 'customer1',
+        //     lastName: 'lastName1',
+        //     email: 'email1@bata.com',
+        //     role: 'CUSTOMER',
+        //     isVerified: true
+        // };
     }
 
     accCheck(user:any, res:Response): boolean{
