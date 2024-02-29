@@ -6,13 +6,26 @@ import { resBadRequest, resCreated, resForbidden, resInternalServerError, resSuc
 import { createNewUser } from "@/services/auth";
 
 const prisma = new PrismaClient();
+type DecryptedUserToken = {
+    id: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    role: string
+};
+
+declare module 'express' {
+    export interface Request {
+        user?: DecryptedUserToken | null
+    }
+}
 
 export async function registerWithEmail(req: Request, res: Response) {
     if (!req.body.email || !req.body.password) return resBadRequest(res, 'Email and password are required', null)
     if (!req.body.firstName || !req.body.lastName) return resBadRequest(res, 'First name and last name are required', null)
     if (!req.body.gender) return resBadRequest(res, "Gender is required", null)
     if (!req.body.phoneNumber) return resBadRequest(res, "Phone number is required", null)
-    if (req.user) return resForbidden(res, 'User already logged in', null, 1)
+    if (req.user!) return resForbidden(res, 'User already logged in', null, 1)
 
     try {
         const { email } = req.body
@@ -57,13 +70,16 @@ export async function loginWithEmail(req: Request, res: Response) {
 export async function verifyToken(req: Request, res: Response, next: NextFunction) {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '')
-        if (!token) return resUnauthorized(res, 'Unauthorized', null)
+        if (!token) {
+            req.user = null
+            return next()
+        }
         const verified = verify(token, process.env.JWT_SECRET as Secret)
-        if (!verified) return resUnauthorized(res, 'Unauthorized', null)
+        if (!verified) return resUnauthorized(res, 'Invalid or expired token', null)
         req.user = verified as DecryptedUserToken
         next()
     } catch (error) {
         console.log(error)
-        resInternalServerError(res, 'Token verification failed', null)
+        return resInternalServerError(res, 'Token verification failed', null)
     }
 }

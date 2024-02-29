@@ -3,7 +3,7 @@
     "target": "ES2015",
     "module": "commonjs",
     "typeRoots": [
-      ".src/types"
+      "./src/types"
     ],
     "strict": true,
     "esModuleInterop": true,
@@ -19,7 +19,7 @@
   },
   // "include": ["src/**/*"],
   "include": [
-    "**/*.ts"
+    "**/*.ts",
   ],
   "exclude": [
     "node_modules"
