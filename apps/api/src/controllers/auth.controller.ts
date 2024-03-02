@@ -13,7 +13,6 @@ type DecryptedUserToken = {
     lastName: string,
     role: string
 };
-
 declare module 'express' {
     export interface Request {
         user?: DecryptedUserToken | null

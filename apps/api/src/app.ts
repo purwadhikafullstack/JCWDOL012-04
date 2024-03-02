@@ -11,6 +11,8 @@ import cors from 'cors';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
 import { authRouter } from './routers/auth.router';
+const passport = require('passport');
+const session = require('express-session')
 
 export default class App {
   private app: Express;
@@ -54,12 +56,26 @@ export default class App {
   private routes(): void {
     const sampleRouter = new SampleRouter();
 
+    require('./config/passport');
+
+    this.app.use(
+      session({
+        secret: 'mysecret',
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false },
+        name: 'palugadastore.sid'
+      })
+    );
+
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
+
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
     this.app.use('/samples', sampleRouter.getRouter());
-
     this.app.use('/auth', authRouter)
   }
 

@@ -8,6 +8,6 @@ type DecryptedUserToken = {
 
 declare namespace Express {
     export interface Request {
-        user?: DecryptedUserToken
+        user?: DecryptedUserToken | null
     }
 }
