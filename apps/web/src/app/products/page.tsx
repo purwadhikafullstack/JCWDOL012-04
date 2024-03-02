@@ -2,112 +2,179 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+
 import { useEffect, useState } from 'react';
 import { formatToRupiah } from '@/utils/helper';
 import { fetchData } from '@/utils/api';
-import Loading from '@/components/Loading';
+import { Loading } from '@/components/Loading';
+import { SearchBar } from '@/components/SearchBar';
+import { NotFound } from '@/components/NotFound';
 
 interface Product {
   id: number;
   name: string;
   price: number;
   totalStock: number;
+  productImages: {
+    path: string;
+  }[];
   productCategory: {
     name: string;
   };
 }
 
-export default function Products() {
+export default function Products({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const [data, setData] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [totalProducts, setTotalProducts] = useState(0);
 
-  async function fetchProducts() {
-    try {
-      const response = await fetchData('products');
-      setData(response);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const page = (searchParams.page || '1') as string;
+  const pageSize = (searchParams.pageSize || '15') as string;
+  const search = (searchParams.search || '') as string;
+  const category = (searchParams.category || '') as string;
+  const sort = (searchParams.sort || '') as string;
+  const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
 
   useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetchData(
+          `products?page=${page}&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`,
+        );
+        setData(response.products);
+        setTotalProducts(response.totalProducts);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
     fetchProducts();
-  }, []);
+  }, [page, pageSize, search, category, sort]);
+
+  if (isLoading) {
+    return (
+      <>
+        <SearchBar category={category} sort={sort} />
+        <Loading />;
+      </>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <>
+        <SearchBar category={category} sort={sort} />
+        <NotFound />
+      </>
+    );
+  }
 
   return (
     <>
-      {data ? (
-        <div
-          id="products-container"
-          className="flex flex-wrap justify-center mx-auto px-[10px] lg:px-[30px] xl:px-[50px] max-w-[1440px]"
-        >
-          {data.map((product, index) => {
-            return (
-              <Link key={index} href={`/products/${product.id}`}>
+      <SearchBar category={category} sort={sort} />
+      <div
+        id="products-container"
+        className="flex flex-wrap justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[50px] max-w-[1440px]"
+      >
+        {data.map((product, index) => {
+          return (
+            <Link key={index} href={`/products/${product.id}`}>
+              <div
+                id="product"
+                className="flex flex-col w-[150px] xl:w-[180px] h-[205px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] hover:bg-slate-200 duration-200"
+              >
+                <div id="product-image" className="relative w-full h-[120px]">
+                  {/* <Image
+                    className="object-cover object-center"
+                    src={`${product.productImages[0].path}`}
+                    fill
+                    alt="productimage"
+                  /> */}
+                  <Image
+                    className="object-cover object-center"
+                    src={`/images/products/product1image1.jpeg`}
+                    fill
+                    alt="productimage"
+                  />
+                </div>
                 <div
-                  id="product"
-                  className="flex flex-col w-[150px] xl:w-[180px] h-[215px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px]"
+                  id="product-desc"
+                  className="flex flex-col px-[10px] pt-[5px] text-[14px] border-t"
                 >
-                  <div id="product-image" className="relative w-full h-[120px]">
-                    {/* <Image
-                className="object-cover object-center"
-                src={`${product.productImages[0].path}`}
-                fill
-                alt="a"
-              /> */}
-                    <Image
-                      className="object-cover object-center"
-                      src={`/images/products/product1image1.jpeg`}
-                      fill
-                      alt="a"
-                    />
+                  <div id="product-name" className="font-semibold truncate">
+                    {product.name}
                   </div>
-                  <div
-                    id="product-desc"
-                    className="flex flex-col px-[10px] pt-[5px] text-[14px]"
-                  >
+                  <div className="text-green-600 text-[13px] font-semibold truncate">
+                    {formatToRupiah(product.price)}
+                  </div>
+                  <div className="flex mt-[8px] text-[13px] items-center space-x-1">
+                    <div className="relative w-[18px] h-[18px]">
+                      <Image
+                        src={
+                          product.totalStock > 0
+                            ? '/images/icons/box.png'
+                            : '/images/icons/warning.png'
+                        }
+                        fill
+                        alt="box"
+                      />
+                    </div>
                     <div
-                      id="product-name"
-                      className="font-semibold truncate mt-[10px]"
+                      className={`truncate ${
+                        product.totalStock > 0 ? 'text-black' : 'text-red-600'
+                      }`}
                     >
-                      {product.name}
-                    </div>
-                    <div className="text-green-600 text-[13px] font-semibold truncate">
-                      {formatToRupiah(product.price)}
-                    </div>
-                    <div className="flex mt-[8px] text-[13px] items-center space-x-1">
-                      <div className="relative w-[18px] h-[18px]">
-                        <Image
-                          src={
-                            product.totalStock > 0
-                              ? '/images/icons/box.png'
-                              : '/images/icons/warning.png'
-                          }
-                          fill
-                          alt="box"
-                        />
-                      </div>
-                      <div
-                        className={`truncate ${
-                          product.totalStock > 0 ? 'text-black' : 'text-red-600'
-                        }`}
-                      >
-                        {product.totalStock > 0
-                          ? product.totalStock + ' Items left'
-                          : 'Out of stock'}
-                      </div>
-                    </div>
-                    <div className="absolute  mt-[-16px] ml-[-10px] pl-[10px] pr-[11px] text-xs bg-[#8207c5] text-white p-1 rounded-r-full">
-                      {product.productCategory.name}
+                      {product.totalStock > 0
+                        ? product.totalStock + ' Items left'
+                        : 'Out of stock'}
                     </div>
                   </div>
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+      <div
+        id="pagination"
+        className="mt-[30px] mb-[100px] flex justify-center items-center space-x-3"
+      >
+        <Link
+          href={`?page=${
+            Number(page) - 1
+          }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
+          className={`hover:opacity-80 ${
+            Number(page) > 1 ? '' : 'pointer-events-none opacity-70'
+          }`}
+        >
+          <div className="relative w-[30px] h-[30px] ">
+            <Image src={'/images/icon/left-arrow.svg'} fill alt="prev" />
+          </div>
+        </Link>
+        <div className="text-lg">
+          <span className="mr-[5px]">{page}</span>/
+          <span className="ml-[5px]">
+            {Math.ceil(totalProducts / Number(pageSize))}
+          </span>
         </div>
-      ) : (
-        <Loading />
-      )}
+        <Link
+          href={`?page=${
+            Number(page) + 1
+          }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
+          className={`hover:opacity-80 ${
+            hasNextPage ? '' : 'pointer-events-none opacity-70'
+          }`}
+        >
+          <div className="relative w-[30px] h-[30px]">
+            <Image src={'/images/icon/right-arrow.svg'} fill alt="next" />
+          </div>
+        </Link>
+      </div>
     </>
   );
 }

@@ -1,4 +1,4 @@
-export default function Loading() {
+export const Loading = () => {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center space-y-4">
       <div className="text-xl font-semibold">Retrieving data...</div>
@@ -23,4 +23,4 @@ export default function Loading() {
       </div>
     </div>
   );
-}
+};

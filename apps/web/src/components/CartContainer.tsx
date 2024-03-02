@@ -20,7 +20,6 @@ interface CartContainerProps {
 
 export const CartContainer: React.FC<CartContainerProps> = (props) => {
   const [cartQty, setCartQty] = useState<number>(1);
-  const maxItem = Math.floor((props.totalStock * 30) / 100);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -31,7 +30,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
 
   const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = Number(e.target.value);
-    if (inputValue < 1 || (props.data && inputValue > maxItem)) {
+    if (inputValue < 1 || (props.data && inputValue > props.totalStock)) {
       setCartQty(1);
     }
   };
@@ -76,7 +75,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
             setCartQty(Number(cartQty) + 1);
           }}
           className={`text-white hover:scale-110 duration-200 bg-[#8207c5] px-[13px] py-[5px] rounded-full text-xl ${
-            cartQty >= maxItem ? 'pointer-events-none opacity-70' : ''
+            cartQty >= props.totalStock ? 'pointer-events-none opacity-70' : ''
           }`}
         >
           +
@@ -88,7 +87,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
       <div className="hidden mt-[10px] mb-[5px] lg:flex justify-between">
         <div>Subtotal :</div>
         <div className="font-semibold">
-          {cartQty <= maxItem ? (
+          {cartQty <= props.totalStock ? (
             formatToRupiah(subtotal as number)
           ) : (
             <span className="text-red-600">Quantity overload</span>
@@ -97,7 +96,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
       </div>
       <button
         className={`bg-[#8207c5] hover:bg-white hover:text-[#8207c5] border hover:border-[#8207c5] duration-200 mt-[10px] text-white py-[5px] rounded-full ${
-          cartQty < 1 || cartQty > maxItem || props.totalStock == 0
+          cartQty < 1 || cartQty > props.totalStock || props.totalStock == 0
             ? 'pointer-events-none opacity-70'
             : ''
         }`}

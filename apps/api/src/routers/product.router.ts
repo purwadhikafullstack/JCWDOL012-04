@@ -13,9 +13,13 @@ export class ProductRouter {
 
   private initializeRoutes(): void {
     this.router.get('/products', this.ProductController.getProducts);
+    this.router.get(
+      '/product-categories',
+      this.ProductController.getProductCategories,
+    );
     this.router.get('/product/:id', this.ProductController.getProduct);
     this.router.get(
-      '/products/search=:search',
+      '/products/product-names',
       this.ProductController.searchProducts,
     );
   }

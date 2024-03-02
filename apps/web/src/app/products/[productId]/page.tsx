@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { CartContainer } from '@/components/CartContainer';
-import Loading from '@/components/Loading';
+import { Loading } from '@/components/Loading';
 import { fetchData } from '@/utils/api';
 import { formatToRupiah } from '@/utils/helper';
 
@@ -138,9 +138,7 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
             </div>
             <div className="flex text-sm mt-[5px] mb-[20px]">
               <div className=" w-1/2 text-gray-700">Maximum Purchase</div>
-              <div className=" w-1/2">
-                {Math.floor((data.totalStock * 30) / 100)} Items
-              </div>
+              <div className=" w-1/2">{data.totalStock} Items</div>
             </div>
             <hr />
             <div className="font-semibold mt-[15px]">Product Description</div>
