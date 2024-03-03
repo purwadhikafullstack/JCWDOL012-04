@@ -2,10 +2,10 @@ import { ProductsModel } from './ProductsModel';
 
 export interface ProductImagesModel {
     id: number;
-    name: string;
-    description: string;
+    prductId: number;
+    path: string;
     createdAt: Date;
     updatedAt: Date;
     archived: boolean;
-    products?: ProductsModel[];
+    products?: ProductsModel;
 }

@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import {prisma} from './prisma.service';
 
 
-export default class ShoppingCartService {
-    prisma: PrismaClient;
+export default class CartService {
+    prisma;
     constructor() {
-        this.prisma = new PrismaClient();
+        this.prisma = prisma;
     }
 
     async get(): Promise<any> {
@@ -29,6 +29,18 @@ export default class ShoppingCartService {
             where: {
                 id: id,
                 archived: false
+            }
+        });
+    }
+
+    async preAdd(productId:number): Promise<any> {
+        return await this.prisma.products.findUnique({
+            where: {
+                id: productId,
+                archived: false
+            },
+            include: {
+                productImages: true,
             }
         });
     }
@@ -65,13 +77,26 @@ export default class ShoppingCartService {
             }, 
             include: {
                 product: true
-            }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
         });
     }
 
     async getByProductId(productId: number): Promise<any> {
         return await this.prisma.shoppingCart.findMany({
             where: {
+                productId: productId,
+                archived: false
+            }
+        });
+    }
+
+    async getByUserIdProductIdFirst(userId: number, productId: number): Promise<any> {
+        return await this.prisma.shoppingCart.findFirst({
+            where: {
+                userId: userId,
                 productId: productId,
                 archived: false
             }

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ShoppingCartModel } from "@/model/ShoppingCartModel";
+import { ProductsModel } from "@/model/ProductsModel";
 import { api } from "@/lib/axios.config";
 //implement axios instance -> untuk setting url dkk cukup sekali. *bisa dipisah untuk menjadi 2 setting axios instance
 //api token bisa di setting di axios instance 'axios.config.ts'
@@ -23,7 +24,11 @@ export default class CartApi{
         //         throw error;
         //     });
 
-        return await api.get<ShoppingCartModel[]>('/cart')
+        return await api.get<ShoppingCartModel[]>('/cart', {
+            params: {
+                _: new Date().getTime(),
+            }
+        })
         .then((response) => {
             const status = response.status;
             const data = response.data;
@@ -31,12 +36,29 @@ export default class CartApi{
         })
         .catch((error) => {
             console.log(error);
-            throw error;
+            return error.status;
         });
 
     }
 
-    async addToCart(productId: number, quantity: number = 1) {
+    async preAddToCart(productId: number): Promise<{product:ProductsModel, stock:number, status:number}>{
+        "use server"
+        // const response = await fetch(`${this.baseUrl}/products/${productId}`);
+        // return response.json();
+        console.log(`${this.baseUrl}/cart/preAdd/${productId}`);
+        return await axios.get<{product:ProductsModel, stock:number}>(`${this.baseUrl}/cart/preAdd/${productId}`)
+            .then((response) => {
+                console.log(response.data);
+                return {...response.data, status: response.status};
+            })
+            .catch((error) => {
+                console.log(error);
+                return error.status;
+            });
+    }
+
+
+    async addToCart(productId: number, quantity: number = 1): Promise<{status: number}>{
         "use server"
         // const response = await fetch(`${this.baseUrl}/cart`, {
         //     method: 'POST',
@@ -51,15 +73,16 @@ export default class CartApi{
             quantity: quantity
         })
             .then((response) => {
-                return response.data.json();
+                return {status: response.status};
             })
             .catch((error) => {
                 console.log(error);
+                return error.status;
             });
 
     }
 
-    async updateCartItem(productId: number, quantity: number) {
+    async updateCartItem(productId: number, quantity: number): Promise<{status: number}>{
         "use server"
         // const response = await fetch(`${this.baseUrl}/cart/${productId}`, {
         //     method: 'PUT',
@@ -69,18 +92,19 @@ export default class CartApi{
         //     body: JSON.stringify({ quantity })
         // });
         // return response.json();
-        return await axios.put(`${this.baseUrl}/cart/${productId}`, {
+        return await api.put(`/cart/${productId}`, {
             quantity: quantity
         })
             .then((response) => {
-                return response.data.json();
+                return {status: response.status};
             })
             .catch((error) => {
                 console.log(error);
+                return error.status;
             });
     }
 
-    async deleteCartItem(productId: number) {
+    async deleteCartItem(productId: number): Promise<{status: number}> {
         "use server"
         // const response = await fetch(`${this.baseUrl}/cart/${productId}`, {
         //     method: 'DELETE'
@@ -88,10 +112,11 @@ export default class CartApi{
         // return response.json();
         return await axios.delete(`${this.baseUrl}/cart/${productId}`)
             .then((response) => {
-                return response.data.json();
+                return {status: response.status};
             })
             .catch((error) => {
                 console.log(error);
+                return error.status;
             });
     }
 }
