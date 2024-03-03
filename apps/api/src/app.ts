@@ -9,7 +9,10 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import passport from 'passport';
+import { googleAuthRouter } from './routers/authGoogle.router';
+import { localAuthRouter } from './routers/localAuth.router';
+import { requireJwtAuth } from './middlewares/requireJwtAuth';
 
 export default class App {
   private app: Express;
@@ -25,6 +28,7 @@ export default class App {
     this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    // this.app.use(passport.initialize());
   }
 
   private handleError(): void {
@@ -51,13 +55,18 @@ export default class App {
   }
 
   private routes(): void {
-    const sampleRouter = new SampleRouter();
+    require('./services/googleStrategy')
+    require('./services/localStrategy')
+    require('./services/jwtStrategy')
+    this.app.use(passport.initialize());
 
-    this.app.get('/', (req: Request, res: Response) => {
+    this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
-    this.app.use('/samples', sampleRouter.getRouter());
+    this.app.use('/auth', googleAuthRouter)
+    this.app.use('/auth', localAuthRouter)
+
   }
 
   public start(): void {
