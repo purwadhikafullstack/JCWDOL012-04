@@ -22,18 +22,10 @@ localAuthRouter.get('/logout', (req: Request, res: Response) => {
 })
 
 localAuthRouter.get('/authenticate',
-    // (req: Request, res: Response, next: NextFunction) => {
-    //     console.log(req?.headers?.cookie)
-    //     console.log(req.cookies)
-    //     next()
-    // },
     requireJwtAuth,
     (req: Request, res: Response) => {
         resSuccess(res, 'Authenticated', { user: req.user! }, 1)
     }
 )
-
-const cartRouter = Router()
-
 
 export { localAuthRouter };

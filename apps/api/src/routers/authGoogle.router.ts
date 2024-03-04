@@ -6,6 +6,8 @@ import { Request, Response } from "express";
 import passport from "passport";
 
 const googleAuthRouter = Router();
+const isProduction = process.env.NODE_ENV === 'production';
+const WEB_BASE_URL = isProduction ? process.env.WEB_CLIENT_BASE_URL_PROD : process.env.WEB_CLIENT_BASE_URL_DEV;
 
 googleAuthRouter.get('/', (req: Request, res: Response) => {
     res.send('Auth route')
@@ -31,10 +33,8 @@ googleAuthRouter.get(
 
 googleAuthRouter.get('/google/failed', (req: Request, res: Response) => res.send('Google authentication failed'))
 googleAuthRouter.get('/google/success',
-    requireJwtAuth,
     (req: Request, res: Response) => {
-        console.log(req.headers.cookie)
-        res.send('Google authentication successful')
+        res.redirect(WEB_BASE_URL!)
     })
 
 export { googleAuthRouter };

@@ -25,6 +25,10 @@ export function login(
         })
 }
 
+export function googleLogin() {
+    clientSideRedirect(`${BASE_AUTH_URL}google`)
+}
+
 export function authenticate() {
     auth.get('authenticate')
         .then((response) => response)

@@ -6,7 +6,7 @@ import {
     ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { authenticate, clientSideRedirect, login } from '@/app/lib/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
