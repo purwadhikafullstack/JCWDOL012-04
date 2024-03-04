@@ -10,6 +10,7 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import passport from 'passport';
+import cookieparser from 'cookie-parser';
 import { googleAuthRouter } from './routers/authGoogle.router';
 import { localAuthRouter } from './routers/localAuth.router';
 import { requireJwtAuth } from './middlewares/requireJwtAuth';
@@ -25,9 +26,10 @@ export default class App {
   }
 
   private configure(): void {
-    this.app.use(cors());
+    this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use(cookieparser());
     // this.app.use(passport.initialize());
   }
 

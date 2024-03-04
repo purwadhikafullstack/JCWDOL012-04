@@ -7,7 +7,9 @@ import passport from "passport";
 
 const googleAuthRouter = Router();
 
-googleAuthRouter.get('/', (req: Request, res: Response) => { res.send('Auth route') })
+googleAuthRouter.get('/', (req: Request, res: Response) => {
+    res.send('Auth route')
+})
 googleAuthRouter.get(
     '/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }
@@ -22,7 +24,7 @@ googleAuthRouter.get(
         }),
     function (req: Request, res: Response) {
         const token = generateJWT(req.user as Users);
-        res.cookie('x-auth-token', token)
+        res.cookie('palugada-auth-token', token)
         res.redirect('/auth/google/success')
     },
 )
