@@ -48,6 +48,15 @@ export class ProductService {
     return prisma.products.findMany(query);
   }
 
+  async getTotalStock(id: number) {
+    return prisma.productsWarehouses.aggregate({
+      _sum: {
+        stock: true,
+      },
+      where: {},
+    });
+  }
+
   async getTotalProduct(search: string, category: string) {
     return prisma.products.count({
       where: {

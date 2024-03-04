@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ProductService } from '@/services/product.service';
+import { productsTotalStock } from '@/lib/productsTotalStock';
 
 const productService = new ProductService();
 
@@ -30,7 +31,6 @@ export class ProductController {
       const parsedPage = parseInt(page as string, 10);
       const parsedPageSize = parseInt(pageSize as string, 10);
       const skip = (parsedPage - 1) * parsedPageSize;
-
       const products = (await productService.getAllProducts(
         parsedPageSize,
         skip,
@@ -38,26 +38,15 @@ export class ProductController {
         category as string,
         sort as string,
       )) as Product[];
-
       const totalProducts = await productService.getTotalProduct(
         search as string,
         category as string,
       );
-
-      const productsWithTotalStock = products.map((product) => {
-        const totalStock = product.productsWarehouses.reduce(
-          (total: number, warehouse: productsWarehouse) =>
-            total + warehouse.stock,
-          0,
-        );
-        return { ...product, totalStock };
-      });
-
+      const productsWithTotalStock = productsTotalStock(products);
       const response = {
         products: productsWithTotalStock,
         totalProducts: totalProducts,
       };
-
       return res.status(200).json(response);
     } catch (error) {
       console.log(error);

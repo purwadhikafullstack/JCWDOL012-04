@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { fetchData } from '@/utils/api';
 import { useDebounce } from 'use-debounce';
+import { FilterSort } from './searchBar/FilterSort';
 
 interface ProductCategory {
   id: number;
@@ -135,134 +136,21 @@ export const SearchBar = ({
           })}
         </div>
       </div>
-      <div id="filter-sort" className="flex items-center font-semibold">
-        <div
-          id="filter"
-          className="flex items-center lg:space-x-2 cursor-pointer hover:bg-slate-200 px-[10px] py-[5px] lg:px-[15px] lg:py-[10px] duration-200 rounded-md"
-          onClick={() => {
-            setIsOpenFil(!isOpenFil);
-            setIsOpenSor(false);
-            setIsOpenPri(false);
-            if (isOpenCat) {
-              setIsOpenCat(false);
-              setIsOpenFil(false);
-            }
-          }}
-        >
-          <div className="hidden lg:flex">Filter</div>
-          <div className="relative w-[20px] h-[20px]">
-            <Image
-              src={'/images/icon/filter.png'}
-              fill
-              alt="filter"
-              sizes="20px"
-            />
-          </div>
-        </div>
-        <div
-          id="drop-filter"
-          className={`${
-            isOpenFil ? '' : 'hidden'
-          } absolute flex flex-col font-normal border mt-[90px] right-[105px] px-[20px] py-[10px] bg-[white] shadow-md rounded-md hover:bg-slate-200 cursor-pointer`}
-          onClick={() => {
-            setIsOpenFil(!isOpenFil);
-            setIsOpenCat(!isOpenCat);
-          }}
-        >
-          Category
-        </div>
-        <div
-          id="drop-category"
-          className={`${
-            isOpenCat ? '' : 'hidden'
-          } absolute flex flex-col font-normal border mt-[230px] right-[70px] bg-[white] shadow-md rounded-md`}
-        >
-          {productCategories.map((procat, index) => {
-            return (
-              <Link
-                href={`?page=1&pagesize=15&search=${search}&category=${procat.name}`}
-                key={index}
-                className={`${
-                  procat.name === category
-                    ? 'bg-[#8207C5] hover:bg-[#8207C5] text-white'
-                    : ''
-                } hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]`}
-                onClick={() => {
-                  setIsOpenCat(false);
-                }}
-              >
-                {procat.name}
-              </Link>
-            );
-          })}
-        </div>
-        <div
-          id="sort"
-          className="flex items-center lg:space-x-2 cursor-pointer hover:bg-slate-200 px-[10px] py-[5px] lg:px-[15px] lg:py-[10px] duration-200 rounded-md"
-          onClick={() => {
-            setIsOpenSor(!isOpenSor);
-            setIsOpenFil(false);
-            setIsOpenCat(false);
-            if (isOpenPri) {
-              setIsOpenPri(false);
-              setIsOpenSor(false);
-            }
-          }}
-        >
-          <div className="hidden lg:flex">Sort</div>
-          <div className="relative w-[20px] h-[20px]">
-            <Image src={'/images/icon/sort.png'} fill alt="sort" sizes="20px" />
-          </div>
-        </div>
-        <div
-          id="drop-sort"
-          className={`${
-            isOpenSor ? '' : 'hidden'
-          } absolute flex flex-col font-normal border mt-[90px] right-[18px] px-[28px] py-[10px] bg-[white] shadow-md rounded-md hover:bg-slate-200 cursor-pointer`}
-          onClick={() => {
-            setIsOpenSor(!isOpenSor);
-            setIsOpenPri(!isOpenPri);
-          }}
-        >
-          Price
-        </div>
-        <div
-          id="drop-price"
-          className={`${
-            isOpenPri ? '' : 'hidden'
-          } absolute flex flex-col font-normal border mt-[120px] right-[0px] bg-[white] shadow-md rounded-md`}
-          onClick={() => {
-            setIsOpenPri(false);
-          }}
-        >
-          <Link
-            href={`?page=1&pagesize=15&search=${search}&category=${category}&sort=asc`}
-          >
-            <div
-              className={`${
-                sort === 'asc'
-                  ? 'bg-[#8207C5] hover:bg-[#8207C5] text-white'
-                  : ''
-              } hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]`}
-            >
-              Lowest Price
-            </div>
-          </Link>
-          <Link
-            href={`?page=1&pagesize=15&search=${search}&category=${category}&sort=desc`}
-          >
-            <div
-              className={`${
-                sort === 'desc'
-                  ? 'bg-[#8207C5] hover:bg-[#8207C5] text-white'
-                  : ''
-              } hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]`}
-            >
-              Highest Price
-            </div>
-          </Link>
-        </div>
-      </div>
+      <FilterSort
+        search={search}
+        isOpenFil={isOpenFil}
+        setIsOpenFil={setIsOpenFil}
+        isOpenCat={isOpenCat}
+        setIsOpenCat={setIsOpenCat}
+        isOpenSor={isOpenSor}
+        setIsOpenSor={setIsOpenSor}
+        isOpenPri={isOpenPri}
+        setIsOpenPri={setIsOpenPri}
+        category={category}
+        sort={sort}
+        productCategories={productCategories}
+        setProductCategories={setProductCategories}
+      />
     </nav>
   );
 };
