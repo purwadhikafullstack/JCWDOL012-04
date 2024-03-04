@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
+:root {
   --primaryColor: #8207c5;
+  --lightPurple: #BD4EF9;
 }
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
