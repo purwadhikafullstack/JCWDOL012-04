@@ -17,36 +17,36 @@ enum Role {
 }
 
 model Regions {
-  id        Int         @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  archived  Boolean     @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
 
   Provinces Provinces[]
 }
 
 model Provinces {
-  id       Int      @id @default(autoincrement())
-  name     String
-  region   Regions  @relation(fields: [regionId], references: [id])
-  regionId Int
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  archived  Boolean     @default(false)
+  id        Int      @id @default(autoincrement())
+  name      String
+  region    Regions  @relation(fields: [regionId], references: [id])
+  regionId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
 
-  cities   Cities[]
+  cities Cities[]
 }
 
 model Cities {
-  id         Int          @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
-  province   Provinces    @relation(fields: [provinceId], references: [id])
+  province   Provinces @relation(fields: [provinceId], references: [id])
   provinceId Int
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  archived  Boolean     @default(false)
-  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archived   Boolean   @default(false)
+
   users      UserCities[]
   warehouses Warehouses[]
 }
@@ -67,17 +67,16 @@ model UserCities {
 }
 
 model Warehouses {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   address   String
   cityId    Int
-  city      Cities @relation(fields: [cityId], references: [id])
+  city      Cities   @relation(fields: [cityId], references: [id])
   latitude  String
   longitude String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  archived  Boolean     @default(false)
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
 
   warehouseAdmin     Users[]
   productsWarehouses ProductsWarehouses[]
@@ -91,8 +90,8 @@ model Users {
   lastName                   String
   email                      String      @unique
   password                   String?
-  gender                     String
-  phoneNumber                String
+  gender                     String?
+  phoneNumber                String?
   isVerified                 Boolean     @default(false)
   role                       Role        @default(CUSTOMER)
   wareHouseAdmin_warehouseId Int?
@@ -101,6 +100,7 @@ model Users {
   createdAt                  DateTime    @default(now())
   updatedAt                  DateTime    @updatedAt
   archived                   Boolean     @default(false)
+  googleId                   String?
 
   userCities   UserCities[]
   transactions Transactions[]
@@ -225,7 +225,7 @@ model TransactionsProducts {
 }
 
 enum mutationType {
-  TRANSACTION 
+  TRANSACTION
   MANUAL_ADMIN
   AUTOMATED
 }
@@ -242,7 +242,7 @@ model Mutations {
   quantity      Int
   mutationType  mutationType
 
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  archived      Boolean       @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
 }

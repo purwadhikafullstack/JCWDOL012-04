@@ -89,6 +89,7 @@ async function main() {
 
   //5 warehouse admin
   for (let i = 1; i <= 5; i++) {
+    const warehouseId = i;
     await prisma.users.create({
       data: {
         firstName: 'warehouse_admin' + i,
@@ -98,6 +99,7 @@ async function main() {
         gender: 'male',
         phoneNumber: '123456789',
         isVerified: true,
+        wareHouseAdmin_warehouseId: warehouseId,
         role: 'WAREHOUSE_ADMIN',
         profilePicture: '/images/profilePict1.jpeg'
       }
