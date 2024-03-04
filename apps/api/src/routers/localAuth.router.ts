@@ -11,7 +11,7 @@ localAuthRouter.post('/login', requirelocalAuth, (req: Request, res: Response) =
     const token = generateJWT(req.user as Users);
     const user = req.user
     console.log(token, user)
-    res.cookie('palugada-auth-token', token)
+    res.cookie('palugada-auth-token', token, { maxAge: 1000 * 60 * 60 * 24 })
     resSuccess(res, 'Login successful', { user: user! }, 1)
 })
 
