@@ -5,15 +5,14 @@ import express, {
   Request,
   Response,
   NextFunction,
-  Router,
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
-import { googleAuthRouter } from './routers/authGoogle.router';
-import { localAuthRouter } from './routers/localAuth.router';
-import { requireJwtAuth } from './middlewares/requireJwtAuth';
+import { googleAuthRouter } from './routers/auth/authGoogle.router';
+import { localAuthRouter } from './routers/auth/localAuth.router';
+import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
 
 export default class App {
   private app: Express;
@@ -57,9 +56,9 @@ export default class App {
   }
 
   private routes(): void {
-    require('./services/googleStrategy')
-    require('./services/localStrategy')
-    require('./services/jwtStrategy')
+    require('./services/auth/googleStrategy')
+    require('./services/auth/localStrategy')
+    require('./services/auth/jwtStrategy')
     this.app.use(passport.initialize());
 
     this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {

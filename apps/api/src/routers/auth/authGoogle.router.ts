@@ -1,5 +1,5 @@
-import { requireJwtAuth } from "@/middlewares/requireJwtAuth";
-import { generateJWT } from "@/services/auth";
+import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
+import { generateJWT } from "@/services/auth/auth";
 import { Users } from "@prisma/client";
 import { Router } from "express";
 import { Request, Response } from "express";
