@@ -16,8 +16,8 @@ const localLogin = new LocalStrategy({
         try {
             const user = await prisma.users.findUnique({ where: { email } });
             if (!user) return done(null, false, { message: "Invalid email or password" });
-            if (!user.isVerified) return done(null, false, { message: "Please verify your email" });
-            if (!user.password) return done(null, false, { message: "Credentials are not verified. Check your email and follow the instructions." });
+            if (!user.isVerified) return done(null, false, { message: "You haven't verified you email. Please check you email and follow the instructions from us." });
+            if (!user.password) return done(null, false, { message: "You haven't set up a password. Check your email and follow the instructions." });
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) return done(null, false, { message: "Invalid email or password." });

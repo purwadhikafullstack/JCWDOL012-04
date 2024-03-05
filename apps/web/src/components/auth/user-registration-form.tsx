@@ -5,8 +5,10 @@ import { userRegistrationValidationSchema } from "./validation";
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { registerUserWithEmail } from "@/app/services/auth";
-import { ArrowRightIcon, AtSymbolIcon, ExclamationCircleIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { PiArrowRightBold, PiAt, PiSealWarningLight } from "react-icons/pi";
 import { Button } from "../ui/button";
+import { GoogleLoginButton } from "../ui/button";
+import LineWithText from "../ui/line";
 
 export default function UserRegistrationForm() {
     const [response, setResponse] = useState<null | AxiosResponse | undefined>(null)
@@ -65,7 +67,7 @@ export default function UserRegistrationForm() {
                             </div>
                             {formik.touched.firstName && formik.errors.firstName ? (
                                 <div className="flex items-center mt-2 text-red-500">
-                                    <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                    <PiSealWarningLight className="h-5 w-5 mr-2" />
                                     <span>{formik.errors.firstName}</span>
                                 </div>
                             ) : null}
@@ -91,7 +93,7 @@ export default function UserRegistrationForm() {
                             </div>
                             {formik.touched.lastName && formik.errors.lastName ? (
                                 <div className="flex items-center mt-2 text-red-500">
-                                    <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                    <PiSealWarningLight className="h-5 w-5 mr-2" />
                                     <span>{formik.errors.lastName}</span>
                                 </div>
                             ) : null}
@@ -114,20 +116,23 @@ export default function UserRegistrationForm() {
                                     onBlur={formik.handleBlur}
                                     value={formik.values.email}
                                 />
-                                <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                                <PiAt className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                             </div>
                             {formik.touched.email && formik.errors.email ? (
                                 <div className="flex items-center mt-2 text-red-500">
-                                    <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                    <PiSealWarningLight className="h-5 w-5 mr-2" />
                                     <span>{formik.errors.email}</span>
                                 </div>
                             ) : null}
                         </div>
-                        <div>
-                            <Button className="mt-4 w-full px-3" disabled={formik.isSubmitting} type='submit'>
-                                Sign Me Up <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
-                            </Button>
-                        </div>
+
+                        <Button className="mt-4 w-full px-3" disabled={formik.isSubmitting} type='submit'>
+                            Sign Me Up <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
+                        </Button>
+
+                        <LineWithText text="or" />
+                        <GoogleLoginButton text="Sign Up With Google" />
+
                         <div className="mt-4">
                             Have an account?{' '}
                             <Link className="bold text-purple-800" href="/auth/login">

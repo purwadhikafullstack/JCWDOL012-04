@@ -2,7 +2,7 @@
 
 import { useFormik } from "formik";
 import { setPasswordValidationSchema } from "./validation";
-import { ArrowRightIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { PiArrowRightBold, PiSealWarningLight } from "react-icons/pi";
 import { Button } from "../ui/button";
 import { clientSideRedirect, setPassword } from "@/app/services/auth";
 import { useEffect, useState } from "react";
@@ -68,7 +68,7 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
                                     </div>
                                     {formik.touched.password && formik.errors.password ? (
                                         <div className="flex items-center mt-2 text-red-500">
-                                            <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                            <PiSealWarningLight className="h-5 w-5 mr-2" />
                                             <span>{formik.errors.password}</span>
                                         </div>
                                     ) : null}
@@ -94,14 +94,14 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
                                     </div>
                                     {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
                                         <div className="flex items-center mt-2 text-red-500">
-                                            <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                            <PiSealWarningLight className="h-5 min-w-5 mr-2" />
                                             <span>{formik.errors.confirmPassword}</span>
                                         </div>
                                     ) : null}
                                 </div>
                                 <div>
                                     <Button className="mt-4 w-full px-3" disabled={formik.isSubmitting} type='submit'>
-                                        Complete Registration <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+                                        Complete Registration <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
                                     </Button>
                                 </div>
                             </div>

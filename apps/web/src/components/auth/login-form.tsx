@@ -1,21 +1,16 @@
 'use client'
 
-import { PiArrowRightBold, PiGoogleLogoBold } from "react-icons/pi";
+import { PiArrowRightBold, PiAt, PiKey, PiSealWarningLight } from "react-icons/pi";
 
-import {
-    AtSymbolIcon,
-    KeyIcon,
-    ExclamationCircleIcon,
-} from '@heroicons/react/24/outline';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from '../ui/button';
-import { clientSideRedirect, googleLogin, login } from '@/app/services/auth';
+import { Button, GoogleLoginButton } from '../ui/button';
+import { clientSideRedirect, login } from '@/app/services/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { useSearchParams } from 'next/navigation';
 import Link from "next/link";
+import LineWithText from "../ui/line";
 
 export default function LoginForm() {
     const origin = useSearchParams().get('origin')
@@ -76,11 +71,11 @@ export default function LoginForm() {
                                 onBlur={formik.handleBlur}
                                 value={formik.values.email}
                             />
-                            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                            <PiAt className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                         </div>
                         {formik.touched.email && formik.errors.email ? (
                             <div className="flex items-center mt-2 text-red-500">
-                                <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                <PiSealWarningLight className="h-5 w-5 mr-2" />
                                 <span>{formik.errors.email}</span>
                             </div>
                         ) : null}
@@ -104,11 +99,11 @@ export default function LoginForm() {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
-                            <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                            <PiKey className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
                         </div>
                         {formik.touched.password && formik.errors.password ? (
                             <div className="flex items-center mt-2 text-red-500">
-                                <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                                <PiSealWarningLight className="h-5 w-5 mr-2" />
                                 <span>{formik.errors.password}</span>
                             </div>
                         ) : null}
@@ -118,14 +113,11 @@ export default function LoginForm() {
                 {response?.status === 401 || response?.status === 500 || response?.status === 422
                     ? (
                         <div className="flex items-center mt-2 text-red-500">
-                            <ExclamationCircleIcon className="h-5 w-5 mr-2" />
+                            <PiSealWarningLight className="h-5 w-5 mr-2" />
                             <span>{response.data.message}</span>
                         </div>
                     ) : null}
-                <div className="inline-flex items-center justify-center w-full bg-inherit">
-                    <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-                    <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-inherit left-1/2">or</span>
-                </div>
+                <LineWithText text="or" />
                 <GoogleLoginButton />
                 <div className="mt-4">
                     Don't have an account?{' '}
@@ -144,12 +136,4 @@ function LoginButton({ isSubmitting }: { isSubmitting: boolean }) {
             Log in <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
     );
-}
-
-function GoogleLoginButton() {
-    return (
-        <Button className=" w-full px-3 text-left " onClick={googleLogin}>
-            Login with Google <PiGoogleLogoBold className="ml-auto h-5 w-5 text-gray-50" />
-        </Button>
-    )
 }

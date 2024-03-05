@@ -48,7 +48,6 @@ async function registerUnverifiedUser({ email, firstName, lastName }: Request['b
                 email,
                 firstName,
                 lastName,
-                isVerified: false,
             }
         })
         const token = generateJWT(newUnverifiedUser)

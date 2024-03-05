@@ -16,12 +16,15 @@ export default function Verify({ }) {
     if (!tokenQuery) notFound()
 
     const [tokenStatus, setTokenStatus] = useState<undefined | AxiosResponse>(undefined)
+    let isVerified, password
 
     useEffect(() => {
         axios.get(`${BASE_AUTH_URL}/verify-token?token=${tokenQuery}`)
             .then(res => {
                 setTokenStatus(res)
-                console.log(res)
+                isVerified = res.data.data.user.isVerified
+                password = res.data.data.user.password
+                // console.log(res)
             })
             .catch(err => {
                 console.error(err)
@@ -29,8 +32,9 @@ export default function Verify({ }) {
             })
     }, [])
 
+
     if (!tokenStatus) return <Spinner />
-    if (tokenStatus.status === 200 && tokenStatus.data.data.user.isVerified) return (
+    if (tokenStatus.status === 200 && isVerified && password) return (
         <div className="flex flex-col w-full h-screen items-center justify-center gap-3 p-6">
             <h1 className="text-2xl text-center">Your Account Is Verified</h1>
             <p className="text-center ">Your account has been successfully verified. Please login.</p>
@@ -39,7 +43,7 @@ export default function Verify({ }) {
             </Link>
         </div>
     )
-    if (tokenStatus?.status === 200 && !tokenStatus.data.data.user.isVerified) return <VerifySetPassword userName={tokenStatus.data.data.user.firstName} token={tokenQuery} setToken={setTokenStatus} />
+    if (tokenStatus?.status === 200 && !password) return <VerifySetPassword userName={tokenStatus.data.data.user.firstName} token={tokenQuery} setToken={setTokenStatus} />
     if (tokenStatus.status === 401) return (
         <div className="flex flex-col w-full h-screen items-center justify-center gap-3 p-6">
             <h1 className="text-2xl text-center">Expired or Invalid Verification Link</h1>
