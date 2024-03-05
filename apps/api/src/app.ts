@@ -9,8 +9,10 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
+import cartRouter from './routers/cart.router';
+import {prisma} from './services/prisma.service';
+import { join } from 'path';
 import { ProductRouter } from './routers/product.router';
-// import { SampleRouter } from './routers/sample.router';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
 import { googleAuthRouter } from './routers/authGoogle.router';
@@ -31,8 +33,8 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use('/public', express.static(join(__dirname, './public')));
     this.app.use(cookieparser());
-    // this.app.use(passport.initialize());
   }
 
   private handleError(): void {
@@ -58,6 +60,7 @@ export default class App {
     );
   }
 
+
   private routes(): void {
     const productRouter = new ProductRouter();
     // const sampleRouter = new SampleRouter();
@@ -69,9 +72,10 @@ export default class App {
     this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
+    this.app.use('/api/cart', cartRouter);
+
 
     this.app.use('/api', productRouter.getRouter());
-    // this.app.use('/samples', sampleRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
   }
@@ -79,6 +83,14 @@ export default class App {
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`  ➜  [API] Local:   http://localhost:${PORT}/`);
+    });
+  }
+
+  private setupSignalHandlers() {
+    process.on('SIGINT', async () => {
+      await prisma.$disconnect();
+      console.log('Prisma client disconnected');
+      process.exit();
     });
   }
 }

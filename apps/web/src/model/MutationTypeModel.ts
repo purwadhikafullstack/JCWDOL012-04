@@ -1,0 +1,5 @@
+export enum MutationTypeModel{
+    TRANSACTION = "TRANSACTION",
+    MANUAL_ADMIN = "MANUAL_ADMIN",
+    AUTOMATED = "AUTOMATED"
+}
