@@ -6,6 +6,7 @@ import { CartContainer } from '@/components/products/CartContainer';
 import { Loading } from '@/components/Loading';
 import { fetchData } from '@/utils/api';
 import { formatToRupiah } from '@/utils/helper';
+import CartAdd from '@/components/cart/cart.add';
 
 interface Product {
   id: number;
@@ -146,11 +147,12 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
               {data.description}
             </div>
           </div>
-          <CartContainer
+          {/* <CartContainer
             data={data}
             price={data.price}
             totalStock={data.totalStock}
-          />
+          /> */}
+          <CartAdd productId={data.id} />
         </div>
       ) : (
         <Loading />

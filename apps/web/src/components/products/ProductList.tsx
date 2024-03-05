@@ -47,6 +47,7 @@ export default function ProductList({
         );
         setData(response.products);
         setTotalProducts(response.totalProducts);
+        console.log(response.product);
       } catch (error) {
         console.log(error);
       } finally {
