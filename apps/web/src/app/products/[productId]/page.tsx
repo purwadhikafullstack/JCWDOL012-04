@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { CartContainer } from '@/components/CartContainer';
+import { CartContainer } from '@/components/products/CartContainer';
 import { Loading } from '@/components/Loading';
 import { fetchData } from '@/utils/api';
 import { formatToRupiah } from '@/utils/helper';

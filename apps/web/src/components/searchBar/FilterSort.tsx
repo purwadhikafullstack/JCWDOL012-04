@@ -74,7 +74,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
               key={index}
               className={`${
                 procat.name === props.category
-                  ? 'bg-[#8207C5] hover:bg-[#8207C5] text-white cursor-pointer px-[20px] py-[5px]'
+                  ? 'bg-[var(--primaryColor)] hover:bg-[var(--primaryColor)] text-white cursor-pointer px-[20px] py-[5px]'
                   : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]'
               }`}
               onClick={() => {
@@ -131,7 +131,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
           <div
             className={`${
               props.sort === 'asc'
-                ? 'bg-[#8207C5] hover:bg-[#8207C5] text-white cursor-pointer px-[20px] py-[5px]'
+                ? 'bg-[var(--primaryColor)] hover:bg-[var(--primaryColor)] text-white cursor-pointer px-[20px] py-[5px]'
                 : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]'
             }`}
           >
@@ -144,7 +144,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
           <div
             className={`${
               props.sort === 'desc'
-                ? 'bg-[#8207C5] hover:bg-[#8207C5] text-white cursor-pointer px-[20px] py-[5px]'
+                ? 'bg-[var(--primaryColor)] hover:bg-[var(--primaryColor)] text-white cursor-pointer px-[20px] py-[5px]'
                 : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]'
             }`}
           >

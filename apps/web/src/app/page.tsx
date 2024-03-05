@@ -1,7 +1,13 @@
-export default function Home() {
+import ProductList from '@/components/products/ProductList';
+
+export default function Home({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <>
-      <h1 className="text-4xl font-extrabold">Home Page content goes here</h1>
+      <ProductList searchParams={searchParams} />
     </>
   );
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { fetchData } from '@/utils/api';
 import { useDebounce } from 'use-debounce';
-import { FilterSort } from './searchBar/FilterSort';
+import { FilterSort } from './FilterSort';
 
 interface ProductCategory {
   id: number;
@@ -72,7 +72,7 @@ export const SearchBar = ({
       ></div>
       <div id="search" className="flex flex-1 items-center justify-center">
         <input
-          className="border w-0 flex-1 max-w-[370px] h-[40px] px-[20px] py-[20px] rounded-l-full focus:outline-[#8207C5]"
+          className="border border-slate-300 focus:border-[var(--primaryColor)] w-0 flex-1 max-w-[370px] h-[40px] px-[20px] py-[20px] rounded-l-full"
           type="text"
           placeholder="Search"
           onChange={(e) => {
@@ -101,7 +101,7 @@ export const SearchBar = ({
         >
           <button
             id="search-button"
-            className="border ml-[-1px] px-[12px] pr-[15px] py-[7.5px] rounded-r-full hover:border-[#8207C5] cursor-pointer"
+            className="border border-slate-300 ml-[-1px] px-[12px] pr-[15px] py-[7.5px] rounded-r-full hover:border-[var(--primaryColor)] hover:border-[2px] cursor-pointer"
           >
             <div className="relative w-[25px] h-[25px]">
               <Image

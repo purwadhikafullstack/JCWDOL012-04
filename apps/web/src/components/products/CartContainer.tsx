@@ -54,7 +54,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
           onClick={() => {
             setCartQty(cartQty - 1);
           }}
-          className={`text-white hover:scale-110 duration-200 bg-[#8207c5] px-[15px] py-[6px] rounded-full text-xl ${
+          className={`text-white hover:scale-110 duration-200 bg-[var(--primaryColor)] px-[15px] py-[6px] rounded-full text-xl ${
             cartQty < 2 ? 'pointer-events-none opacity-70' : ''
           }`}
         >
@@ -65,7 +65,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           accept="num"
-          className="flex-1 w-[40px] max-w-[520px] lg:flex-none rounded-full h-[40px] text-center border border-[#8207c5]"
+          className="flex-1 w-[40px] max-w-[520px] lg:flex-none rounded-full h-[40px] text-center border border-[var(--primaryColor)]"
           value={cartQty}
           onChange={handleInputChange}
           onBlur={handleOnBlur}
@@ -74,7 +74,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
           onClick={() => {
             setCartQty(Number(cartQty) + 1);
           }}
-          className={`text-white hover:scale-110 duration-200 bg-[#8207c5] px-[13px] py-[5px] rounded-full text-xl ${
+          className={`text-white hover:scale-110 duration-200 bg-[var(--primaryColor)] px-[13px] py-[5px] rounded-full text-xl ${
             cartQty >= props.totalStock ? 'pointer-events-none opacity-70' : ''
           }`}
         >
@@ -95,7 +95,7 @@ export const CartContainer: React.FC<CartContainerProps> = (props) => {
         </div>
       </div>
       <button
-        className={`bg-[#8207c5] hover:bg-white hover:text-[#8207c5] border hover:border-[#8207c5] duration-200 mt-[10px] text-white py-[5px] rounded-full ${
+        className={`bg-[var(--primaryColor)] hover:bg-white hover:text-[var(--primaryColor)] border hover:border-[var(--primaryColor)] duration-200 mt-[10px] text-white py-[5px] rounded-full ${
           cartQty < 1 || cartQty > props.totalStock || props.totalStock == 0
             ? 'pointer-events-none opacity-70'
             : ''

@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
---primaryColor: #8207c5;
 :root {
   --primaryColor: #8207c5;
   --lightPurple: #bd4ef9;
