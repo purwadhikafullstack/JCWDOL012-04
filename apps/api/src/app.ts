@@ -12,6 +12,7 @@ import { PORT } from './config';
 // import { SampleRouter } from './routers/sample.router';
 import cartRouter from './routers/cart.router';
 import {prisma} from './services/prisma.service';
+import { join } from 'path';
 
 export default class App {
   private app: Express;
@@ -27,6 +28,7 @@ export default class App {
     this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use('/public', express.static(join(__dirname, './public')));
   }
 
   private handleError(): void {

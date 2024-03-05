@@ -28,9 +28,6 @@ export default class CartController {
         };
     }
 
-
-    
-
     async get(req:Request, res:Response): Promise<void>{
         const user = this.user;
         const check = await accCheck(user, res);
