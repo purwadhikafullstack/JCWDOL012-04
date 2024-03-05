@@ -4,12 +4,9 @@
 
 :root {
   --primaryColor: #8207c5;
-<<<<<<< HEAD
   --primaryColor-rgb: 130, 7, 197;
   --primaryColor-dark: #5a0b8c;
-=======
   --lightPurple: #BD4EF9;
->>>>>>> development
 }
 
 * {
