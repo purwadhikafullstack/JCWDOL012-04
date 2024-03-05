@@ -97,6 +97,10 @@ export const SearchBar = ({
           href={`?page=1&pagesize=15&search=${search}`}
           onClick={() => {
             setIsFocus(false);
+            setIsOpenCat(false);
+            setIsOpenFil(false);
+            setIsOpenPri(false);
+            setIsOpenSor(false);
           }}
         >
           <button
