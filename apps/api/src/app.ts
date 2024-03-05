@@ -12,6 +12,7 @@ import { PORT } from './config';
 import cartRouter from './routers/cart.router';
 import {prisma} from './services/prisma.service';
 import { join } from 'path';
+import { ProductRouter } from './routers/product.router';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
 import { googleAuthRouter } from './routers/authGoogle.router';
@@ -61,18 +62,22 @@ export default class App {
 
 
   private routes(): void {
-    require('./services/googleStrategy')
-    require('./services/localStrategy')
-    require('./services/jwtStrategy')
+    const productRouter = new ProductRouter();
+    // const sampleRouter = new SampleRouter();
+    require('./services/googleStrategy');
+    require('./services/localStrategy');
+    require('./services/jwtStrategy');
     this.app.use(passport.initialize());
 
     this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
     this.app.use('/api/cart', cartRouter);
-    this.app.use('/auth', googleAuthRouter)
-    this.app.use('/auth', localAuthRouter)
 
+
+    this.app.use('/api', productRouter.getRouter());
+    this.app.use('/auth', googleAuthRouter);
+    this.app.use('/auth', localAuthRouter);
   }
 
   public start(): void {

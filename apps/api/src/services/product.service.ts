@@ -1,49 +1,114 @@
-import { Products } from "@prisma/client";
-import { prisma } from "./prisma.service";
+import { PrismaClient, Prisma } from '@prisma/client';
 
-export default class ProductService {
-    prisma;
+const prisma = new PrismaClient();
 
-    constructor(){
-        this.prisma = prisma;
-    }
-
-    async get(): Promise<any> {
-        return await this.prisma.products.findMany();
-    }
-
-    async getById(id: number): Promise<any> {
-        return await this.prisma.products.findUnique({
-            where: {
-                id: id
-            }
-        });
-    }
-
-    async add(product: Products): Promise<any> {
-        return await this.prisma.products.create({
-            data: product
-        });
-    }
-
-    async update(id: number, product: Products): Promise<any> {
-        return await this.prisma.products.update({
-            where: {
-                id: id
+export class ProductService {
+  async getAllProducts(
+    parsedPageSize: number,
+    skip: number,
+    search: string,
+    category: string,
+    sort: string | undefined,
+  ) {
+    const query: any = {
+      include: {
+        productImages: true,
+        productsWarehouses: {
+          select: {
+            stock: true,
+            warehouse: {
+              select: {
+                id: true,
+              },
             },
-            data: product
-        });
+          },
+        },
+        productCategory: true,
+      },
+      take: parsedPageSize,
+      skip,
+      where: {
+        name: {
+          contains: search,
+        },
+        productCategory: {
+          name: {
+            contains: category,
+          },
+        },
+      },
+    };
+
+    if (sort) {
+      query.orderBy = {
+        price: sort as Prisma.SortOrder,
+      };
     }
 
-    async remove(id: number): Promise<any> {
-        return await this.prisma.products.update({
-            where: {
-                id: id
+    return prisma.products.findMany(query);
+  }
+
+  async getTotalStock(id: number) {
+    return prisma.productsWarehouses.aggregate({
+      _sum: {
+        stock: true,
+      },
+      where: {},
+    });
+  }
+
+  async getTotalProduct(search: string, category: string) {
+    return prisma.products.count({
+      where: {
+        name: {
+          contains: search,
+        },
+        productCategory: {
+          name: {
+            contains: category,
+          },
+        },
+      },
+    });
+  }
+
+  async getProductCategories() {
+    return prisma.productCategories.findMany();
+  }
+
+  async getProduct(id: number) {
+    return prisma.products.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        productImages: true,
+        productsWarehouses: {
+          select: {
+            stock: true,
+            warehouse: {
+              select: {
+                id: true,
+              },
             },
-            data: {
-                archived: true
-            }
-        })
-    }
-    
+          },
+        },
+        productCategory: true,
+      },
+    });
+  }
+
+  async searchProducts(search: string) {
+    return prisma.products.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        name: {
+          contains: search,
+        },
+      },
+      take: 7,
+    });
+  }
 }
