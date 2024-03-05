@@ -80,14 +80,14 @@ export default function CartAdd({ productId }: { productId: number }) {
     const primaryImagePath = (productImage.length > 0 ? productImage[0]?.path : '/asdf');
     // const primaryImagePath = imageLoadError ? '/images/placeholder.jpg' : (productImage.length > 0 ? productImage[0]?.path : '/asdf');
     return (
-        <div className='m-5 p-5 border-2 border-[var(--primaryColor)] rounded-xl lg:max-w-[350px] lg:min-h-fit bg-gray-100'>
+        <div className='m-5 p-5 border-2 border-[var(--primaryColor)] rounded-xl lg:max-w-[350px] lg:max-h-[250px] lg:min-h-fit'>
             <ToastContainer />
             <div className='ml-5'>
                 <h1 className='text-2xl font-bold mb-5'>Add to Cart</h1>
-                <div className='flex gap-2 items-center my-5'>
+                {/* <div className='flex gap-2 items-center my-5'>
                     <ImagePlaceholder primaryImagePath={primaryImagePath} alt={product?.name ?? ""} />
                     <p className='font-medium'>{product?.name}</p>
-                </div>
+                </div> */}
                 <div className='flex gap-2 items-center mb-5'>
                     <input type='number' min={1} max={stock} defaultValue={quantity} key={quantity} onChange={(e) => { debounceHandleQuantity(e) }} className={`rounded-xl px-2 py-1 lg:max-w-20 border ${inputLimit}`} />
                     <p className='font-medium'>Stock: {stock}</p>
