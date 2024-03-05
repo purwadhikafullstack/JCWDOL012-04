@@ -8,8 +8,7 @@ import { api } from "@/lib/axios.config";
 export default class CartApi{
     baseUrl;
     constructor() {
-        this.baseUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
-        console.log("API URL: ", this.baseUrl);
+        this.baseUrl = process.env.NEXT_PUBLIC_BASE_API_URL_3;
     }
     async getCart(): Promise<{status: number, data:ShoppingCartModel[]}>{
         "use server"

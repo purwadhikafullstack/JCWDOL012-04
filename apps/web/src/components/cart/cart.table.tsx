@@ -161,8 +161,8 @@ export default function CartTable() {
                         </div>
                     )
                 })}
-                <td className="px-6 py-4 text-xl font-bold">Total</td>
-                <td className="px-6 py-4 text-xl font-bold">{idr(total)}</td>
+                <p className="px-6 py-4 text-xl font-bold">Total</p>
+                <p className="px-6 py-4 text-xl font-bold">{idr(total)}</p>
             </div>
         </div>
     )
