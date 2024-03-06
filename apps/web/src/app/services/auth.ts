@@ -6,7 +6,7 @@ const BASE_AUTH_URL = process.env.NEXT_PUBLIC_BASE_AUTH_URL
 
 const auth = axios.create({
     baseURL: BASE_AUTH_URL,
-    withCredentials: true
+    withCredentials: true,
 })
 
 export function login(

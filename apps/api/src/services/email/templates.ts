@@ -8,9 +8,7 @@ export const sendVerificationEmail = async (email: string, token: string) => tra
         from: 'suryaadiwiguna.dev@gmail.com',
         to: 'suryaadiwiguna@gmail.com',
         subject: 'Verify your email',
-        text: `Thanks for signing up! 
-        Please click the link below to verify your email.
-        
+        text: `Thanks for signing up! Please click the link below to verify your email.
         \n\n ${CLIENT_URL}/auth/verify?token=${token}`,
     },
     (err, info) => {
