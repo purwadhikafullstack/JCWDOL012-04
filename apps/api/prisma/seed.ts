@@ -274,7 +274,7 @@ async function main() {
     'MANUAL_ADMIN',
     'AUTOMATED'
   ]
-
+  
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;
