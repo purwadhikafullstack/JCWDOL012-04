@@ -5,36 +5,51 @@ import { genSalt, hash } from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  //5 regions
-  for (let i = 1; i <= 5; i++) {
-    await prisma.regions.create({
-      data: {
-        name: 'region' + i,
-      }
-    });
-    console.log(`Created region${i}`);
-  }
+  const rajaOngkirApiKey = process.env.RAJAONGKIR_API_KEY;
+  const rajaOngkirUrl = process.env.RAJAONGKIR_URL;
 
-  //5 provinces
-  for (let i = 1; i <= 5; i++) {
+  if (!rajaOngkirApiKey || !rajaOngkirUrl) {
+    console.error('RAJAONGKIR_API_KEY or RAJAONGKIR_URL is not defined');
+    process.exit(1);
+  }
+  const headers = new Headers();
+  headers.append('key', rajaOngkirApiKey);
+
+  const citiesRO = await fetch(`${rajaOngkirUrl}/city`, {
+    method: 'GET',
+    headers: headers
+  })
+    .then(response => response.json())
+    .then(data => data.rajaongkir.results)
+    .catch(err => console.error(err));
+
+  const provincesRO = await fetch(`${rajaOngkirUrl}/province`, {
+    method: 'GET',
+    headers: headers
+  })
+    .then(response => response.json())
+    .then(data => data.rajaongkir.results)
+    .catch(err => console.error(err));
+
+  for(const item of provincesRO)  {
     await prisma.provinces.create({
       data: {
-        name: 'province' + i,
-        regionId: i
+        id: parseInt(item.province_id),
+        name: item.province
       }
     });
-    console.log(`Created province${i}`);
+    console.log(`Created province ${item.province}`);
   }
 
-  //5 cities
-  for (let i = 1; i <= 5; i++) {
+  for(const item of citiesRO)  {
     await prisma.cities.create({
       data: {
-        name: 'city' + i,
-        provinceId: i
+        id: parseInt(item.city_id),
+        name: item.city_name,
+        provinceId: parseInt(item.province_id)
       }
     });
-    console.log(`Created city${i}`);
+    console.log(`Created city ${item.city_name}`);
   }
 
   //20 customer
@@ -259,7 +274,7 @@ async function main() {
     'MANUAL_ADMIN',
     'AUTOMATED'
   ]
-  
+
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;

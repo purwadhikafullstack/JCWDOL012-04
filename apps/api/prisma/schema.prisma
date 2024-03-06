@@ -16,21 +16,9 @@ enum Role {
   WAREHOUSE_ADMIN
 }
 
-model Regions {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  archived  Boolean  @default(false)
-
-  Provinces Provinces[]
-}
-
 model Provinces {
   id        Int      @id @default(autoincrement())
   name      String
-  region    Regions  @relation(fields: [regionId], references: [id])
-  regionId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   archived  Boolean  @default(false)
