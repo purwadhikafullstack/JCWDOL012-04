@@ -12,7 +12,9 @@ export class ProductRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.get('/products', this.ProductController.getProducts);
+    this.router.get('/products', this.ProductController.getProductsUser);
+    this.router.get('/admin/products', this.ProductController.getProductsAdmin);
+    this.router.post('/admin/products', this.ProductController.createProduct);
     this.router.get(
       '/product-categories',
       this.ProductController.getProductCategories,

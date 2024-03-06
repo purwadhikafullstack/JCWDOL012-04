@@ -40,6 +40,7 @@ export default function ProductList({
   const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
 
   useEffect(() => {
+    console.log('useEffect executed');
     async function fetchProducts() {
       try {
         const response = await fetchData(
@@ -47,7 +48,6 @@ export default function ProductList({
         );
         setData(response.products);
         setTotalProducts(response.totalProducts);
-        console.log(response.product);
       } catch (error) {
         console.log(error);
       } finally {
@@ -118,8 +118,8 @@ export default function ProductList({
                       <Image
                         src={
                           product.totalStock > 0
-                            ? '/images/icons/box.png'
-                            : '/images/icons/warning.png'
+                            ? '/images/icon/box.png'
+                            : '/images/icon/warning.png'
                         }
                         fill
                         alt="box"

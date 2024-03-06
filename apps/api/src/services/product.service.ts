@@ -1,9 +1,54 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { prisma } from './prisma.service';
 
-const prisma = new PrismaClient();
+interface CreateProductInput {
+  name: string;
+  description: string;
+  price: number;
+  productCategoryId: number;
+  productImages: { path: string }[];
+  productsWarehouses: { warehouseId: number; stock: number }[];
+}
 
 export default class ProductService {
-  async getAllProducts(
+  prisma;
+  constructor() {
+    this.prisma = prisma;
+  }
+  async getAllUserProducts(
+    parsedPageSize: number,
+    skip: number,
+    search: string,
+    category: string,
+    sort: string | undefined,
+  ) {
+    const query: any = {
+      include: {
+        productImages: true,
+        productCategory: true,
+      },
+      take: parsedPageSize,
+      skip,
+      where: {
+        name: {
+          contains: search,
+        },
+        productCategory: {
+          name: {
+            contains: category,
+          },
+        },
+      },
+    };
+    if (sort) {
+      query.orderBy = {
+        price: sort as Prisma.SortOrder,
+      };
+    }
+    return this.prisma.products.findMany(query);
+  }
+
+  async getAllAdminProducts(
     parsedPageSize: number,
     skip: number,
     search: string,
@@ -38,27 +83,26 @@ export default class ProductService {
         },
       },
     };
-
     if (sort) {
       query.orderBy = {
         price: sort as Prisma.SortOrder,
       };
     }
-
-    return prisma.products.findMany(query);
+    return this.prisma.products.findMany(query);
   }
-
   async getTotalStock(id: number) {
-    return prisma.productsWarehouses.aggregate({
+    const totalStock = await this.prisma.productsWarehouses.aggregate({
       _sum: {
         stock: true,
       },
-      where: {},
+      where: {
+        productId: id,
+      },
     });
+    return totalStock._sum.stock || 0;
   }
-
   async getTotalProduct(search: string, category: string) {
-    return prisma.products.count({
+    return this.prisma.products.count({
       where: {
         name: {
           contains: search,
@@ -71,13 +115,11 @@ export default class ProductService {
       },
     });
   }
-
   async getProductCategories() {
-    return prisma.productCategories.findMany();
+    return this.prisma.productCategories.findMany();
   }
-
   async getProduct(id: number) {
-    return prisma.products.findUnique({
+    return this.prisma.products.findUnique({
       where: {
         id: id,
       },
@@ -98,8 +140,38 @@ export default class ProductService {
     });
   }
 
+  static async createProduct(input: CreateProductInput) {
+    const {
+      name,
+      description,
+      price,
+      productCategoryId,
+      productImages,
+      productsWarehouses,
+    } = input;
+    const createdProduct = await prisma.products.create({
+      data: {
+        name,
+        description,
+        price,
+        productCategoryId,
+        productImages: {
+          create: productImages,
+        },
+        productsWarehouses: {
+          create: productsWarehouses,
+        },
+      },
+      include: {
+        productImages: true,
+        productsWarehouses: true,
+      },
+    });
+    return createdProduct;
+  }
+
   async searchProducts(search: string) {
-    return prisma.products.findMany({
+    return this.prisma.products.findMany({
       select: {
         name: true,
       },
