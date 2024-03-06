@@ -80,7 +80,7 @@ export default function ProductList({
       <SearchBar category={category} sort={sort} />
       <div
         id="products-container"
-        className="flex flex-wrap justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[50px] max-w-[1440px]"
+        className="flex flex-wrap justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"
       >
         {data.map((product, index) => {
           return (
