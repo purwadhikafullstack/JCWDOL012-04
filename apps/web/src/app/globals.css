@@ -4,7 +4,9 @@
 
 :root {
   --primaryColor: #8207c5;
-  --lightPurple: #BD4EF9;
+  --primaryColor-rgb: 130, 7, 197;
+  --primaryColor-dark: #5a0b8c;
+  --lightPurple: #bd4ef9;
 }
 
 * {

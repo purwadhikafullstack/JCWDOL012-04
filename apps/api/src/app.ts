@@ -13,6 +13,10 @@ import cookieparser from 'cookie-parser';
 import { googleAuthRouter } from './routers/auth/authGoogle.router';
 import { localAuthRouter } from './routers/auth/localAuth.router';
 import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
+import cartRouter from './routers/cart.router';
+import { prisma } from './services/prisma.service';
+import { join } from 'path';
+import { ProductRouter } from './routers/product.router';
 
 export default class App {
   private app: Express;
@@ -30,6 +34,7 @@ export default class App {
     this.app.use(urlencoded({ extended: true }));
     this.app.use(cookieparser());
     // this.app.use(passport.initialize());
+    this.app.use('/public', express.static(join(__dirname, './public')));
   }
 
   private handleError(): void {
@@ -55,24 +60,37 @@ export default class App {
     );
   }
 
+
   private routes(): void {
-    require('./services/auth/googleStrategy')
-    require('./services/auth/localStrategy')
-    require('./services/auth/jwtStrategy')
+    const productRouter = new ProductRouter();
+    // const sampleRouter = new SampleRouter();
+    require('./services/googleStrategy');
+    require('./services/localStrategy');
+    require('./services/jwtStrategy');
     this.app.use(passport.initialize());
 
     this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
+    this.app.use('/api/cart', cartRouter);
 
-    this.app.use('/auth', googleAuthRouter)
-    this.app.use('/auth', localAuthRouter)
 
+    this.app.use('/api', productRouter.getRouter());
+    this.app.use('/auth', googleAuthRouter);
+    this.app.use('/auth', localAuthRouter);
   }
 
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`  ➜  [API] Local:   http://localhost:${PORT}/`);
+    });
+  }
+
+  private setupSignalHandlers() {
+    process.on('SIGINT', async () => {
+      await prisma.$disconnect();
+      console.log('Prisma client disconnected');
+      process.exit();
     });
   }
 }

@@ -1,12 +1,10 @@
 // prisma/seed.ts
-import { Prisma, Transactions, PrismaClient, Mutations } from '@prisma/client';
+import { Transactions, PrismaClient, Mutations } from '@prisma/client';
+import { genSalt, hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed data here
-
-
   //5 regions
   for (let i = 1; i <= 5; i++) {
     await prisma.regions.create({
@@ -41,12 +39,13 @@ async function main() {
 
   //20 customer
   for (let i = 1; i <= 20; i++) {
+    let passwordUser = await hash(`password${i}`, await genSalt(10));
     await prisma.users.create({
       data: {
         firstName: 'customer' + i,
         lastName: 'lastName' + i,
         email: 'email' + i + '@bata.com',
-        password: 'password' + i,
+        password: passwordUser,
         gender: 'gender' + i,
         phoneNumber: 'phoneNumber' + i,
         isVerified: true,
@@ -57,13 +56,14 @@ async function main() {
     console.log(`Created customer ${i}`);
   }
 
+  let passwordAdmin = await hash(`admin`, await genSalt(10));
   //1 superadmin
   await prisma.users.create({
     data: {
       firstName: 'admin',
       lastName: 'admin',
       email: 'admin@admin.com',
-      password: 'admin',
+      password: passwordAdmin,
       gender: 'male',
       phoneNumber: '123456789',
       isVerified: true,
@@ -90,12 +90,13 @@ async function main() {
   //5 warehouse admin
   for (let i = 1; i <= 5; i++) {
     const warehouseId = i;
+    let passwordWarehouseAdmin = await hash(`warehouse_admin`, await genSalt(10));
     await prisma.users.create({
       data: {
         firstName: 'warehouse_admin' + i,
         lastName: 'warehouse_admin' + i,
         email: 'warehouse_admin' + i + '@admin.com',
-        password: 'warehouse_admin' + i,
+        password: passwordWarehouseAdmin,
         gender: 'male',
         phoneNumber: '123456789',
         isVerified: true,
@@ -211,32 +212,6 @@ async function main() {
     'CONFIRMED',
   ]
 
-  // userId            Int
-  // user              Users                  @relation(fields: [userId], references: [id])
-  // paymentType       paymentType
-  // paymentProof      String?
-  // orderStatus       orderStatus            @default(PENDING_PROOF)
-  // warehouseId       Int
-  // warehouse         Warehouses             @relation(fields: [warehouseId], references: [id])
-  // paymentProofDate  DateTime?
-  // verifiedDate      DateTime?
-  // shippingDate      DateTime?
-  // sentDate          DateTime?
-  // processDate       DateTime?
-  // confirmationDate  DateTime?
-  // cancelledDate     DateTime?
-  // failedPaymentDate DateTime?
-  // shippingCost      Float
-  // total             Float
-
-  //6 kasus transaction
-  //tipe1-paymentGateway, processing,shiping,sent,confirmed
-  //tipe2-transfer,paymentProof ,verified,processing,shipping,sent,confirmed
-  //tipe3-transfer,failedPayment
-  //tipe4-transfer,cancelled
-  //tipe5-paymentGateway,processing,cancelled
-  //tipe6-transfer,paymentProof,verified,processing,cancelled
-
   // 100 transaction
   for (let i = 1; i <= 100; i++) {
     let userIdTemp = Math.floor(Math.random() * 20) + 1;
@@ -258,12 +233,6 @@ async function main() {
     console.log(`Created transaction ${i}`);
   }
 
-  // transactionId Int
-  // transaction   Transactions @relation(fields: [transactionId], references: [id])
-  // productId     Int
-  // product       Products     @relation(fields: [productId], references: [id])
-  // quantity      Int
-  // price         Float
   //transaction products
   for (let i = 1; i <= 100; i++) {
     let transactionIdTemp = i;
@@ -290,15 +259,7 @@ async function main() {
     'MANUAL_ADMIN',
     'AUTOMATED'
   ]
-  // productId     Int
-  // product       Products?     @relation(fields: [productId], references: [id])
-  // warehouseId   Int
-  // warehouse     Warehouses?   @relation(fields: [warehouseId], references: [id])
-  // transactionId Int?
-  // transaction   Transactions? @relation(fields: [transactionId], references: [id])
-  // isAdd         Boolean       @default(true)
-  // quantity      Int
-  // mutationType  mutationType
+  
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;
