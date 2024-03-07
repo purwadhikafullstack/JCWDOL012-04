@@ -16,6 +16,3 @@ export function getCookie(name: string) {
   return "";
 }
 
-export function logOutAction() {
-  document.cookie = "palugada-auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-}

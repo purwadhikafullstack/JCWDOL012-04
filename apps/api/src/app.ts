@@ -64,9 +64,9 @@ export default class App {
   private routes(): void {
     const productRouter = new ProductRouter();
     // const sampleRouter = new SampleRouter();
-    require('./services/googleStrategy');
-    require('./services/localStrategy');
-    require('./services/jwtStrategy');
+    require('./services/auth/googleStrategy');
+    require('./services/auth/localStrategy');
+    require('./services/auth/jwtStrategy');
     this.app.use(passport.initialize());
 
     this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {

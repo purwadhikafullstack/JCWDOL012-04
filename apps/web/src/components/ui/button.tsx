@@ -1,4 +1,4 @@
-import { googleLogin } from '@/app/services/auth';
+import { googleLogin } from '@/lib/store/auth/auth.action';
 import clsx from 'clsx';
 import { PiGoogleLogoBold } from 'react-icons/pi';
 

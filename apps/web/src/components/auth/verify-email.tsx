@@ -4,24 +4,10 @@ import { useFormik } from "formik";
 import { setPasswordValidationSchema } from "./validation";
 import { PiArrowRightBold, PiSealWarningLight } from "react-icons/pi";
 import { Button } from "../ui/button";
-import { clientSideRedirect, setPassword } from "@/app/services/auth";
-import { useEffect, useState } from "react";
-import { AxiosResponse } from "axios";
+import { useAuth } from "@/lib/store/auth/auth.provider";
 
-export default function VerifySetPassword({ userName, token, setToken }: { userName: string, token: string, setToken: (value: any) => void }) {
-    const [response, setResponse] = useState<AxiosResponse | undefined | null>(undefined)
-
-    useEffect(() => {
-        if (!response) return
-        if (response?.status === 200) {
-            clientSideRedirect('/auth/login?origin=verify-email')
-            return
-        }
-        if (response?.status === 401) {
-            setToken(response)
-        }
-        throw new Error('Set Password Failed. Please try again.')
-    }, [response])
+export default function VerifySetPassword({ token }: { token: string }) {
+    const auth = useAuth()
 
     const formik = useFormik({
         initialValues: {
@@ -30,7 +16,7 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
         },
         validationSchema: setPasswordValidationSchema,
         onSubmit: (values) => {
-            setPassword(values, token, setResponse)
+            auth?.setPassword(values, token, '/auth/login?origin=verify-email')
         },
     })
 
@@ -41,7 +27,7 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
                     <form onSubmit={formik.handleSubmit} className="space-y-3">
                         <div className="flex01 rounded-lg bg-purple-50 px-6 pb-4 pt-8">
                             <h1 className="mb-3 text-2xl text-center">
-                                {`One more step, ${userName}!`}
+                                {`One more step, ${auth?.user?.data?.firstName}!`}
                             </h1>
                             <p className="text-center">
                                 Set your password to complete your registration.
@@ -60,7 +46,7 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
                                             id="password"
                                             type="password"
                                             name="password"
-                                            placeholder="Enter your first name"
+                                            placeholder="Enter your password"
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                             value={formik.values.password}
@@ -86,7 +72,7 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
                                             id="confirmPassword"
                                             type="password"
                                             name="confirmPassword"
-                                            placeholder="Enter your first name"
+                                            placeholder="Retype your password"
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                             value={formik.values.confirmPassword}
@@ -100,7 +86,7 @@ export default function VerifySetPassword({ userName, token, setToken }: { userN
                                     ) : null}
                                 </div>
                                 <div>
-                                    <Button className="mt-4 w-full px-3" disabled={formik.isSubmitting} type='submit'>
+                                    <Button className="mt-4 w-full px-3" disabled={auth?.isLoading!} type='submit'>
                                         Complete Registration <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
                                     </Button>
                                 </div>

@@ -3,7 +3,8 @@
 import UserRegistrationForm from "@/components/auth/user-registration-form"
 import { useAuth } from "@/lib/store/auth/auth.provider"
 import Spinner from "@/components/ui/spinner";
-import { clientSideRedirect } from "@/app/services/auth";
+import { clientSideRedirect } from "@/lib/store/auth/auth.action";
+import { useSearchParams } from "next/navigation";
 
 export default function UserRegistrationPage() {
     const auth = useAuth();
@@ -11,6 +12,16 @@ export default function UserRegistrationPage() {
     if (auth?.isLoading) return (
         <main className="flex items-center justify-center h-screen ">
             <Spinner />
+        </main>
+    )
+
+    if (useSearchParams().get('registration') == 'success') return (
+        <main className="flex items-center justify-center h-screen ">
+            <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+                <h1 className="text-2xl text-center text-[var(--primaryColor)]">Registration Successful</h1>
+                <p className="text-center">Please check your email to verify your account.</p>
+                <button onClick={() => clientSideRedirect('/')} className="text-blue-600">Go to Home</button>
+            </div>
         </main>
     )
 
