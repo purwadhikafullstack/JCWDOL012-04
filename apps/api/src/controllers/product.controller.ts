@@ -59,34 +59,6 @@ export class ProductController {
     }
   }
 
-  async getProductsAdmin(req: Request, res: Response) {
-    try {
-      const { page, pageSize, search, category, sort } = req.query;
-      const parsedPage = parseInt(page as string, 10);
-      const parsedPageSize = parseInt(pageSize as string, 10);
-      const skip = (parsedPage - 1) * parsedPageSize;
-      const products = (await productService.getAllAdminProducts(
-        parsedPageSize,
-        skip,
-        search as string,
-        category as string,
-        sort as string,
-      )) as Product[];
-      const totalProducts = await productService.getTotalProduct(
-        search as string,
-        category as string,
-      );
-      const productsWithTotalStock = productsTotalStock(products);
-      const response = {
-        products: productsWithTotalStock,
-        totalProducts: totalProducts,
-      };
-      return res.status(200).json(response);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async getProductCategories(req: Request, res: Response) {
     try {
       const productCategories = await productService.getProductCategories();
@@ -122,32 +94,6 @@ export class ProductController {
       const { search } = req.query;
       const products = await productService.searchProducts(search as string);
       return res.status(200).json(products);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async createProduct(req: Request, res: Response) {
-    try {
-      const {
-        name,
-        description,
-        price,
-        productCategoryId,
-        productImages,
-        productsWarehouses,
-      } = req.body;
-
-      const createdProduct = await ProductService.createProduct({
-        name,
-        description,
-        price,
-        productCategoryId,
-        productImages,
-        productsWarehouses,
-      });
-
-      res.status(201).json(createdProduct);
     } catch (error) {
       console.log(error);
     }

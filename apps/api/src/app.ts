@@ -12,6 +12,7 @@ import { PORT } from './config';
 import cartRouter from './routers/cart.router';
 import { prisma } from './services/prisma.service';
 import { join } from 'path';
+import path from 'path';
 import { ProductRouter } from './routers/product.router';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
@@ -33,7 +34,10 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use('/public', express.static(join(__dirname, './public')));
+    this.app.use(
+      '/public',
+      express.static(path.join(__dirname, '..', 'public')),
+    );
     this.app.use(cookieparser());
   }
 
