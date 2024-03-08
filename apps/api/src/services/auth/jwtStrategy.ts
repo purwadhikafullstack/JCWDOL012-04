@@ -2,13 +2,14 @@ import passport from "passport";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const JwtStrategy = require("passport-jwt").Strategy,
-    ExtractJwt = require("passport-jwt").ExtractJwt;
+const JwtStrategy = require("passport-jwt").Strategy;
 
 const isProduction = process.env.NODE_ENV === "production";
 const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
 
-function cookieExtractor(req: any) {
+function tokenExtractor(req: any) {
+    console.log(req.query.token)
+    if (req.query.token) return req.query.token;
     let token = null;
     if (req.headers.cookie) {
         token = req.cookies['palugada-auth-token'];
@@ -18,7 +19,7 @@ function cookieExtractor(req: any) {
 
 const jwtLogin = new JwtStrategy(
     {
-        jwtFromRequest: cookieExtractor,
+        jwtFromRequest: tokenExtractor,
         secretOrKey: secretKey!
     },
     async (payload: any, done: any) => {

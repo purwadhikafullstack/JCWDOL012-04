@@ -19,6 +19,7 @@ export interface UsersModel {
     createdAt: Date;
     updatedAt: Date;
     archived: boolean;
+    googleId: string;
 
     userCities?: UserCitiesModel[];
     transactions?: TransactionsModel[];
