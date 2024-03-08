@@ -3,7 +3,7 @@
 import { useFormik } from "formik";
 import { setPasswordValidationSchema } from "./validation";
 import { PiArrowRightBold, PiSealWarningLight } from "react-icons/pi";
-import { Button } from "../ui/button";
+import { Button } from "../ui/button-c";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 
 export default function VerifySetPassword({ token }: { token: string }) {

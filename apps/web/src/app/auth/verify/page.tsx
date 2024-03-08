@@ -2,7 +2,7 @@
 
 import { clientSideRedirect } from "@/lib/store/auth/auth.action"
 import VerifySetPassword from "@/components/auth/verify-email"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button-c"
 import Spinner from "@/components/ui/spinner"
 import { useAuth } from "@/lib/store/auth/auth.provider"
 import Link from "next/link"

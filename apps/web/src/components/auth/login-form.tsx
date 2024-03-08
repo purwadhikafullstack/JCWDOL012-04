@@ -2,7 +2,7 @@
 
 import { PiArrowRightBold, PiAt, PiKey, PiSealWarningLight } from "react-icons/pi";
 
-import { Button, GoogleLoginButton } from '../ui/button';
+import { Button, GoogleLoginButton } from '../ui/button-c';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useSearchParams } from 'next/navigation';
