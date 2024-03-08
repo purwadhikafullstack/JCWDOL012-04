@@ -30,6 +30,8 @@ localAuthRouter.get('/verify-token', requireJwtAuth,
     }
 )
 
-localAuthRouter.post('/set-password', requireJwtAuth, unverifiedUserGuard, setPassword)
+localAuthRouter.post('/set-password',
+    requireJwtAuth,
+    setPassword)
 
 export { localAuthRouter };

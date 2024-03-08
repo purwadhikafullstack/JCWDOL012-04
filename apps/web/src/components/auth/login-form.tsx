@@ -29,7 +29,7 @@ export default function LoginForm() {
     })
 
     return (
-        <div className="flex-1 rounded-lg bg-purple-50 px-6 pb-4 pt-8">
+        <div className="flex-1 rounded-lg bg-purple-50 px-6 py-8 ">
             <form onSubmit={formik.handleSubmit} className="space-y-3">
                 <h1 className="mb-9 text-2xl text-center">
                     Login To Your Account

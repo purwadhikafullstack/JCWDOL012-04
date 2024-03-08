@@ -86,7 +86,7 @@ export default function VerifySetPassword({ token }: { token: string }) {
                                     ) : null}
                                 </div>
                                 <div>
-                                    <Button className="mt-4 w-full px-3" disabled={auth?.isLoading!} type='submit'>
+                                    <Button className="my-6 w-full px-3" disabled={auth?.isLoading!} type='submit'>
                                         Complete Registration <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
                                     </Button>
                                 </div>
