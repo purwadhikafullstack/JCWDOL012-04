@@ -65,7 +65,7 @@ export const SearchBar = ({
   }, [debouncedSearch]);
 
   return (
-    <nav className="flex fixed items-center w-full h-[70px] bg-white shadow-md border z-[10] space-x-2 lg:space-x-2 lg:px-[20px]">
+    <nav className="flex md:fixed items-center w-full h-[70px] bg-white shadow-md border z-[10] space-x-2 lg:space-x-2 lg:px-[20px] ">
       <div
         id="dummy"
         className="md:ml-[100px] lg:ml-[180px] xl:ml-[200px] 2xl:ml-[230px]"
@@ -119,9 +119,8 @@ export const SearchBar = ({
         </Link>
         <div
           id="search-suggestion"
-          className={`${
-            isFocus ? '' : 'hidden'
-          } absolute flex flex-col bg-white w-[220px] md:w-[350px] md:mr-[35px] top-[60px] shadow-md rounded-md border`}
+          className={`${isFocus ? '' : 'hidden'
+            } absolute flex flex-col bg-white w-[220px] md:w-[350px] md:mr-[35px] top-[60px] shadow-md rounded-md border`}
         >
           {productNames.map((product, index) => {
             return (

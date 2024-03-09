@@ -7,9 +7,9 @@ import Image from 'next/image';
 
 export default function CartIcon() {
     const { cart } = useContext(CartContext);
-    const total = Array.isArray(cart)?cart.reduce((acc: number, item: ShoppingCartModel) => acc + item.quantity, 0):[];
+    const total = Array.isArray(cart) ? cart.reduce((acc: number, item: ShoppingCartModel) => acc + item.quantity, 0) : [];
     return (
-        <Link className='flex relative w-[40px] m-2 hover:bg-slate-300 p-2 rounded-xl' href="/cart">
+        <Link className='flex relative w-[40px] hover:bg-slate-300 p-2 rounded-xl' href="/cart">
             <Image src="/images/cart.png" alt="cart" width={24} height={24} />
             <span className='bg-red-500 text-sm rounded-xl text-white w-fit px-2 font-bold absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2'>{total}</span>
         </Link>

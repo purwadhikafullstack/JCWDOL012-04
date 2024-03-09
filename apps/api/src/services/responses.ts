@@ -46,6 +46,14 @@ export function resNotFound(res: Response, message: string, data: null | object 
     });
 }
 
+export function resUnprocessable(res: Response, message: string, data: null | object | any[], code?: number) {
+    return res.status(422).send({
+        code,
+        msg: message,
+        data: data
+    });
+}
+
 export function resInternalServerError(res: Response, message: string, data: null | object | any[]) {
     return res.status(500).send({
         msg: message,

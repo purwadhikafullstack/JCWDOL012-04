@@ -14,6 +14,10 @@
   },
   // "include": ["src/**/*"],
   "include": ["**/*.ts","src/**/*.ts"
+<<<<<<< HEAD
 , "src/controllers/transaction/.controller.ts"  ],
+=======
+  ],
+>>>>>>> development
   "exclude": ["node_modules"]
 }

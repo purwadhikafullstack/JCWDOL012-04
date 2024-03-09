@@ -36,9 +36,19 @@ const googleLogin = new GoogleStrategy(
         try {
             const oldUser = await prisma.users.findUnique({ where: { email: profile.email } });
             // console.log(oldUser)
-            if (oldUser) {
-                return done(null, oldUser);
+            if (oldUser && !oldUser.googleId) {
+                const updatedUser = await prisma.users.update({
+                    where: {
+                        id: oldUser.id
+                    },
+                    data: {
+                        googleId: profile.id,
+                        isVerified: true
+                    }
+                });
+                return done(null, updatedUser);
             }
+            return done(null, oldUser);
         } catch (error) {
             console.error(error);
             done(error, null);

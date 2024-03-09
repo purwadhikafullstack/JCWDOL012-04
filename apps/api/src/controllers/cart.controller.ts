@@ -3,8 +3,8 @@ import CartService from '../services/cart.service';
 import { Users } from '@prisma/client';
 import accCheck from '../lib/account.check';
 import globalStockCheck from '../lib/globalStock.check';
-import productCheck from '@/lib/product.check';
-import cartCheck from '@/lib/cart.check';
+import productCheck from '../lib/product.check';
+import cartCheck from '../lib/cart.check';
 
 export default class CartController {
     CartService: CartService;

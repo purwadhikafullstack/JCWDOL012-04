@@ -1,5 +1,5 @@
-import { requireJwtAuth } from "@/middlewares/requireJwtAuth";
-import { generateJWT } from "@/services/auth";
+import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
+import { generateJWT } from "@/services/auth/auth";
 import { Users } from "@prisma/client";
 import { Router } from "express";
 import { Request, Response } from "express";
@@ -26,7 +26,7 @@ googleAuthRouter.get(
         }),
     function (req: Request, res: Response) {
         const token = generateJWT(req.user as Users);
-        res.cookie('palugada-auth-token', token)
+        res.cookie('palugada-auth-token', token, { maxAge: 1000 * 60 * 60 * 24 })
         res.redirect('/auth/google/success')
     },
 )

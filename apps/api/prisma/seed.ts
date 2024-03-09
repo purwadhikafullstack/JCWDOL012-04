@@ -45,7 +45,11 @@ async function main() {
     await prisma.cities.create({
       data: {
         id: parseInt(item.city_id),
+<<<<<<< HEAD
         name: item.type+" "+item.city_name,
+=======
+        name: item.city_name,
+>>>>>>> development
         provinceId: parseInt(item.province_id)
       }
     });
@@ -362,7 +366,11 @@ async function main() {
     'MANUAL_ADMIN',
     'AUTOMATED'
   ]
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> development
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;
