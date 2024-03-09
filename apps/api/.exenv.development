@@ -1,5 +1,0 @@
-NODE_ENV=development
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=88888888
-DATABASE_URL="postgresql://$DB_USERNAME:$DB_PASSWORD@localhost:$DB_PORT/palugadaStore?schema=public"

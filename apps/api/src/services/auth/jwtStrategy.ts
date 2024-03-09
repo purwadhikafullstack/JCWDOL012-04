@@ -10,11 +10,8 @@ const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_S
 function tokenExtractor(req: any) {
     console.log(req.query.token)
     if (req.query.token) return req.query.token;
-    let token = null;
-    if (req.headers.cookie) {
-        token = req.cookies['palugada-auth-token'];
-    }
-    return token;
+    if (req.headers.cookie) return req.cookies['palugada-auth-token'];
+    return null;
 }
 
 const jwtLogin = new JwtStrategy(

@@ -50,9 +50,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             setIsLoading(true);
             verifyToken(setUser, setError, setIsLoading);
         }
-    }, []);
+    }, [hasCookie]);
 
     const logOut = () => {
+        setIsLoading(true);
         setUser(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }));
         logOutAction();
         window.location.href = "/auth/login";
