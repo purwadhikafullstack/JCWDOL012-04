@@ -1,17 +1,15 @@
 import { Request,Response } from 'express';
 import CartService from '../services/cart.service';
-import { PrismaClient, Users } from '@prisma/client';
+import { Users } from '@prisma/client';
 import accCheck from '../lib/account.check';
 import globalStockCheck from '../lib/globalStock.check';
 import productCheck from '@/lib/product.check';
 import cartCheck from '@/lib/cart.check';
 
 export default class CartController {
-    prisma: PrismaClient;
     CartService: CartService;
     user: any;
     constructor(){
-        this.prisma = new PrismaClient();
         this.CartService = new CartService();
 
         //simulating user login

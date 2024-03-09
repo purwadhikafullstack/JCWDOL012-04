@@ -18,6 +18,7 @@ import cookieparser from 'cookie-parser';
 import { googleAuthRouter } from './routers/authGoogle.router';
 import { localAuthRouter } from './routers/localAuth.router';
 import { requireJwtAuth } from './middlewares/requireJwtAuth';
+import transactionRouter from './routers/transaction.router';
 
 export default class App {
   private app: Express;
@@ -73,6 +74,7 @@ export default class App {
       res.send(`Hello, Purwadhika Student !`);
     });
     this.app.use('/api/cart', cartRouter);
+    this.app.use('/api/transaction', transactionRouter);
 
 
     this.app.use('/api', productRouter.getRouter());

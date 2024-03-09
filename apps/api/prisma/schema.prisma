@@ -40,18 +40,21 @@ model Cities {
 }
 
 model UserCities {
-  id               Int      @id @default(autoincrement())
-  userId           Int
-  user             Users    @relation(fields: [userId], references: [id])
-  city             Cities   @relation(fields: [cityId], references: [id])
-  cityId           Int
-  address          String
-  latitude         String
-  longitude        String
-  isPrimaryAddress Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  archived         Boolean  @default(false)
+  id                 Int         @id @default(autoincrement())
+  userId             Int
+  user               Users       @relation(fields: [userId], references: [id])
+  city               Cities      @relation(fields: [cityId], references: [id])
+  cityId             Int
+  address            String
+  latitude           String
+  longitude          String
+  isPrimaryAddress   Boolean     @default(false)
+  closestWarehouseId Int?
+  
+  warehouse          Warehouses? @relation(fields: [closestWarehouseId], references: [id])
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  archived           Boolean     @default(false)
 }
 
 model Warehouses {
@@ -66,6 +69,7 @@ model Warehouses {
   updatedAt DateTime @updatedAt
   archived  Boolean  @default(false)
 
+  usercities         UserCities[]
   warehouseAdmin     Users[]
   productsWarehouses ProductsWarehouses[]
   transactions       Transactions[]
