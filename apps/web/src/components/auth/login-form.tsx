@@ -1,7 +1,6 @@
 'use client'
 
 import { PiArrowRightBold, PiAt, PiKey, PiSealWarningLight } from "react-icons/pi";
-
 import { Button, GoogleLoginButton } from '../ui/button-c';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -13,6 +12,7 @@ import { useAuth } from "@/lib/store/auth/auth.provider";
 export default function LoginForm() {
     const origin = useSearchParams().get('origin')
     const auth = useAuth()
+    console.log(auth)
 
     const formik = useFormik({
         initialValues: {
@@ -100,7 +100,7 @@ export default function LoginForm() {
                     </div>
                 </div>
                 <LoginButton isDisabled={auth?.isLoading!} />
-                {auth?.error.status
+                {auth?.error?.status && auth.error?.status !== 401
                     ? (
                         <div className="flex items-center mt-2 text-red-500">
                             <PiSealWarningLight className="h-5 w-5 mr-2" />

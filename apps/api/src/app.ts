@@ -17,6 +17,7 @@ import cartRouter from './routers/cart.router';
 import { prisma } from './services/prisma.service';
 import { join } from 'path';
 import { ProductRouter } from './routers/product.router';
+import { profileRouter } from './routers/profile.router';
 
 export default class App {
   private app: Express;
@@ -74,10 +75,10 @@ export default class App {
     });
     this.app.use('/api/cart', cartRouter);
 
-
     this.app.use('/api', productRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
+    this.app.use('/profile', profileRouter);
   }
 
   public start(): void {

@@ -2,8 +2,9 @@
 
 import { UsersModel } from "@/model/UsersModel";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
-import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction } from "./auth.action";
+import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction, changeNameAction, changePasswordAction } from "./auth.action";
 import { getCookie } from "@/utils/helper";
+import { usePathname } from "next/navigation";
 
 export type AuthContextType = {
     isLoading: boolean;
@@ -15,6 +16,8 @@ export type AuthContextType = {
     logIn: (values: { email: string, password: string }) => void;
     logOut: () => void;
     registerWithEmail: (values: { email: string, firstName: string, lastName: string }) => void;
+    changeName: (values: { firstName: string, lastName: string, password: string }) => void;
+    changePassword: (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => void;
 } | null;
 
 export type UserAuthType = {
@@ -40,6 +43,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [user, setUser] = useState<UserAuthType | null>(initialUserAuth);
     const [error, setError] = useState<UserAuthErrorType>({ status: null, message: null });
+    const path = usePathname();
 
     useEffect(() => {
         if (!hasCookie) {
@@ -79,8 +83,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         registerWithEmailAction(values, setUser, setError, setIsLoading);
     }
 
+    const changeName = async (values: { firstName: string, lastName: string, password: string }) => {
+        setIsLoading(true);
+        await changeNameAction(values, setUser, setError, setIsLoading);
+    }
+
+    const changePassword = async (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => {
+        setIsLoading(true);
+        await changePasswordAction(values, setUser, setError, setIsLoading);
+    }
+
     return (
-        <AuthContext.Provider value={{ isLoading, user, error, setUser, logIn, logOut, verifyActivationToken, setPassword, registerWithEmail }}>
+        <AuthContext.Provider value={{ isLoading, user, error, setUser, logIn, logOut, verifyActivationToken, setPassword, registerWithEmail, changeName, changePassword }}>
             {children}
         </AuthContext.Provider>
     )
