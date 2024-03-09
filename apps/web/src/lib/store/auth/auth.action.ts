@@ -64,7 +64,7 @@ export function verifyToken(
 ) {
     auth.get(`/verify-token${token ? `?token=${token}` : ''}`)
         .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: token ? false : true, data: response.data.data.user }))
+            setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: response.data.data.user }))
             setLoadingState ? setLoadingState(false) : null
         })
         .catch((error) => {
