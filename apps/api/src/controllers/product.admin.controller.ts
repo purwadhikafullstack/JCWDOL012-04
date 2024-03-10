@@ -222,6 +222,30 @@ export class AdminProductController {
     }
   }
 
+  async getFullProductCategories(req: Request, res: Response) {
+    try {
+      const { page, pageSize, sort } = req.query;
+      const parsedPage = parseInt(page as string, 10);
+      const parsedPageSize = parseInt(pageSize as string, 10);
+      const skip = (parsedPage - 1) * parsedPageSize;
+      const productCategories =
+        await adminProductService.getFullProductCategories(
+          parsedPageSize,
+          skip,
+          sort as string,
+        );
+      const totalProductCategories =
+        await adminProductService.getTotalProductCategories();
+      const response = {
+        productCategories,
+        totalProductCategories,
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async getProductCategory(req: Request, res: Response) {
     try {
       const proCatId = parseInt(req.params.id);
@@ -253,8 +277,7 @@ export class AdminProductController {
 
   async deleteProductCategory(req: Request, res: Response) {
     try {
-      const { id: rawId } = req.params;
-      const id = parseInt(rawId);
+      const id = parseInt(req.params.id);
       const deletedProductCategory =
         await adminProductService.deleteProductCategory(id);
       return res.status(200).json(deletedProductCategory);

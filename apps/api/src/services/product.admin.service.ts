@@ -1,4 +1,4 @@
-import { Prisma, ProductCategories } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from './prisma.service';
 
 interface CreateProductInput {
@@ -119,8 +119,49 @@ export default class AdminProductService {
       },
     });
   }
+  async getFullProductCategories(
+    parsedPageSize: number,
+    skip: number,
+    sort: string,
+  ) {
+    return this.prisma.productCategories.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        products: {
+          select: {
+            id: true,
+          },
+          where: {
+            archived: false,
+          },
+        },
+      },
+      where: {
+        archived: false,
+      },
+      take: parsedPageSize,
+      skip,
+      orderBy: {
+        name: sort as 'asc' | 'desc',
+      },
+    });
+  }
+
+  async getTotalProductCategories() {
+    return this.prisma.productCategories.count({
+      where: {
+        archived: false,
+      },
+    });
+  }
   async getProductCategories() {
-    return this.prisma.productCategories.findMany();
+    return this.prisma.productCategories.findMany({
+      where: {
+        archived: false,
+      },
+    });
   }
   async getProductCategory(proCatId: number) {
     return this.prisma.productCategories.findUnique({
@@ -145,9 +186,12 @@ export default class AdminProductService {
     });
   }
   async deleteProductCategory(productCatId: number) {
-    return this.prisma.productCategories.delete({
+    return this.prisma.productCategories.update({
       where: {
         id: productCatId,
+      },
+      data: {
+        archived: true,
       },
     });
   }
