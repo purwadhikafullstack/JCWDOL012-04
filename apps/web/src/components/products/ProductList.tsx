@@ -40,7 +40,6 @@ export default function ProductList({
   const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
 
   useEffect(() => {
-    console.log('useEffect executed');
     async function fetchProducts() {
       try {
         const response = await fetchData(

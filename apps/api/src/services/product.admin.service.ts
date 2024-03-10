@@ -119,8 +119,15 @@ export default class AdminProductService {
       },
     });
   }
-  async getProductCategory() {
+  async getProductCategories() {
     return this.prisma.productCategories.findMany();
+  }
+  async getProductCategory(proCatId: number) {
+    return this.prisma.productCategories.findUnique({
+      where: {
+        id: proCatId,
+      },
+    });
   }
   async updateProductCategory(
     productCatId: number,
@@ -143,5 +150,8 @@ export default class AdminProductService {
         id: productCatId,
       },
     });
+  }
+  async getProductWarehouse() {
+    return prisma.warehouses.findMany();
   }
 }

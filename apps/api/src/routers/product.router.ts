@@ -45,6 +45,10 @@ export class ProductRouter {
       '/product-categories',
       this.ProductController.getProductCategories,
     );
+    this.router.get(
+      '/admin/product-categories/:id',
+      this.AdminProductController.getProductCategory,
+    );
     this.router.patch(
       '/admin/product-categories/:id',
       this.AdminProductController.updateProductCategory,
@@ -52,6 +56,10 @@ export class ProductRouter {
     this.router.delete(
       '/admin/product-categories/:id',
       this.AdminProductController.deleteProductCategory,
+    );
+    this.router.get(
+      '/admin/product-warehouses',
+      this.AdminProductController.getProductWarehouse,
     );
   }
 

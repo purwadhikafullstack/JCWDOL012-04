@@ -3,6 +3,7 @@ import ProductService from '@/services/product.service';
 import multer from 'multer';
 import { Request, Response } from 'express';
 import { productsTotalStock } from '@/lib/productsTotalStock';
+import { ProductsWarehouses } from '@prisma/client';
 
 const productService = new ProductService();
 const adminProductService = new AdminProductService();
@@ -72,13 +73,21 @@ export class AdminProductController {
           description,
           price: rawPrice,
           productCategoryId: rawProductCategoryId,
-          productsWarehouses,
         } = req.body;
+        const productsWarehouses = req.body.productsWarehouses
+          ? req.body.productsWarehouses.map((warehouse: any) => ({
+              warehouseId: parseInt(warehouse.warehouseId),
+              stock: parseInt(warehouse.stock),
+            }))
+          : [];
+
+        console.log(productsWarehouses);
         const existedProduct = await adminProductService.findProductName(name);
-        if (existedProduct)
+        if (existedProduct) {
           return res
             .status(400)
             .json({ error: 'Product with the same name already exists.' });
+        }
         const price = parseFloat(rawPrice);
         const productCategoryId = parseFloat(rawProductCategoryId);
         const productImages = Array.isArray(req.files)
@@ -97,7 +106,8 @@ export class AdminProductController {
         res.status(201).json(createdProduct);
       });
     } catch (error) {
-      console.log(error);
+      console.error('Unexpected error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
@@ -204,8 +214,20 @@ export class AdminProductController {
 
   async getProductCategories(req: Request, res: Response) {
     try {
-      const productCategories = await adminProductService.getProductCategory();
+      const productCategories =
+        await adminProductService.getProductCategories();
       return res.status(200).json(productCategories);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getProductCategory(req: Request, res: Response) {
+    try {
+      const proCatId = parseInt(req.params.id);
+      const productCategory =
+        await adminProductService.getProductCategory(proCatId);
+      res.status(200).json(productCategory);
     } catch (error) {
       console.log(error);
     }
@@ -213,9 +235,8 @@ export class AdminProductController {
 
   async updateProductCategory(req: Request, res: Response) {
     try {
-      const { id: rawId } = req.params;
+      const id = parseInt(req.params.id);
       const { name, description } = req.body;
-      const id = parseInt(rawId);
       const existedProductCategory =
         await adminProductService.findProductCategoryName(name);
       if (existedProductCategory)
@@ -237,6 +258,15 @@ export class AdminProductController {
       const deletedProductCategory =
         await adminProductService.deleteProductCategory(id);
       return res.status(200).json(deletedProductCategory);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getProductWarehouse(req: Request, res: Response) {
+    try {
+      const productWarehouses = await adminProductService.getProductWarehouse();
+      return res.status(200).json(productWarehouses);
     } catch (error) {
       console.log(error);
     }
