@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useFormik } from "formik";
 import { userRegistrationValidationSchema } from "./validation";
 import { PiArrowRightBold, PiAt, PiSealWarningLight } from "react-icons/pi";
-import { Button } from "../ui/button";
-import { GoogleLoginButton } from "../ui/button";
+import { Button } from "../ui/button-c";
+import { GoogleLoginButton } from "../ui/button-c";
 import LineWithText from "../ui/line";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 

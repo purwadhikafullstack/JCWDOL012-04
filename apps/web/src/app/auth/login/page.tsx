@@ -15,9 +15,9 @@ export default function LoginPage() {
         </main>
     )
 
-    if (!auth?.user?.isAuthenticated && !auth?.isLoading) return (
-        <main className="flex items-center justify-center my-16 md:my-0 md:h-screen ">
-            <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+    if (!auth?.user?.isAuthenticated) return (
+        <main className="flex items-center justify-center min-h-screen px-5  ">
+            <div className=" mx-auto  flex w-full max-w-[400px] flex-col  ">
                 <LoginForm />
             </div>
         </main>
