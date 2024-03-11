@@ -43,7 +43,7 @@ export async function validatePassword(req: Request, res: Response, next: NextFu
         //Change password request
         passwordMatch = await bcrypt.compare(currentPassword, user.password ? user.password : '');
     } else {
-        //Change email request
+        //Change email or profile picture request
         passwordMatch = await bcrypt.compare(req.body.password, user.password ? user.password : '');
     }
 
@@ -90,5 +90,23 @@ export async function changeEmail(req: Request, res: Response, next: NextFunctio
     } catch (error) {
         console.log('Error', error)
         resInternalServerError(res, 'Error updating email', null)
+    }
+}
+
+export async function updateProfilePicture(req: Request, res: Response, next: NextFunction) {
+    const user = req.user as Users;
+    const file = req.file;
+    if (!file) return resUnprocessable(res, 'File is not acceptable', null)
+    try {
+        const updatedUser = await prisma.users.update({
+            where: { id: user.id },
+            data: {
+                profilePicture: file?.filename
+            }
+        })
+        resSuccess(res, 'Profile picture updated successfully', updatedUser, 1)
+    } catch (error) {
+        console.log('Error', error)
+        resInternalServerError(res, 'Error updating profile picture', null)
     }
 }

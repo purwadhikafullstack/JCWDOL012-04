@@ -44,8 +44,8 @@ export async function changePasswordAction(
     await profile.patch('change-password', values)
         .then((response: AxiosResponse) => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState ? () => setLoadingState(false) : null
             clientSideRedirect('/profile')
+            setLoadingState ? () => setLoadingState(false) : null
         })
         .catch((error) => {
             if (error.response.status === 401) {
@@ -100,11 +100,11 @@ export async function updateEmailAction(
             clientSideRedirect('/auth/login?origin=change-email-success')
         })
         .catch((error) => {
-            if (error.response.status === 401) {
+            if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
                 setError({ status: error.response.status, message: error.response.data })
                 clientSideRedirect('/auth/login?origin=401')
-            } else if (error.response.status === 422 || error.response.status === 500) {
+            } else if (error?.response?.status === 422 || error.response.status === 500) {
                 setError({ status: error.response.status, message: error.response.data.msg })
             } else {
                 setLoadingState ? setLoadingState(false) : null
@@ -125,10 +125,38 @@ export async function verifyChangeEmailToken(
             setLoadingState(false)
         })
         .catch((error) => {
-            if (error.response.status === 401) {
+            if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
                 setError({ status: error.response.status, message: error.response.data })
-                clientSideRedirect('/auth/login')
+                clientSideRedirect('/auth/login?origin=401')
+            } else if (error?.response?.status === 422 || error.response.status === 500) {
+                setError({ status: error.response.status, message: error.response.data.msg })
+            } else {
+                setLoadingState(false)
+                throw new Error('An unhandled error occured')
+            } setLoadingState(false)
+        })
+}
+
+export async function updateProfilePictureAction(
+    values: { file: File },
+    setUserState: Dispatch<SetStateAction<UserAuthType>>,
+    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
+    setLoadingState: Dispatch<SetStateAction<boolean>>
+) {
+    const formData = new FormData()
+    formData.append('file', values.file)
+    await profile.patch('/change/profile-picture', formData)
+        .then((response: AxiosResponse) => {
+            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
+            setLoadingState(false)
+            clientSideRedirect('/profile')
+        })
+        .catch((error) => {
+            if (error?.response?.status === 401) {
+                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
+                setError({ status: error.response.status, message: error.response.data })
+                clientSideRedirect('/auth/login?origin=401')
             } else if (error.response.status === 422 || error.response.status === 500) {
                 setError({ status: error.response.status, message: error.response.data.msg })
             } else {

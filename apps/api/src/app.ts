@@ -34,10 +34,7 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(
-      '/public',
-      express.static(path.join(__dirname, '..', 'public')),
-    );
+    this.app.use(express.static('public'))
     this.app.use(cookieparser());
   }
 

@@ -3,7 +3,7 @@
 import { UsersModel } from "@/model/UsersModel";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction } from "./auth.action";
-import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken } from "./auth.profile.action";
+import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -21,6 +21,7 @@ export type AuthContextType = {
     changePassword: (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => void;
     changeEmail: (values: { newEmail: string, password: string }) => void;
     updateEmail: (values: { password: string }, token: string) => void;
+    updateProfilePicture: (values: { file: File }) => void;
 } | null;
 
 export type UserAuthType = {
@@ -119,6 +120,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         await updateEmailAction(values, token, setUser, setError, setIsLoading);
     }
 
+    const updateProfilePicture = async (values: { file: File }) => {
+        setIsLoading(true);
+        await updateProfilePictureAction(values, setUser, setError, setIsLoading);
+    }
+
     return (
         <AuthContext.Provider value={
             {
@@ -134,7 +140,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 changeName,
                 changePassword,
                 changeEmail,
-                updateEmail
+                updateEmail,
+                updateProfilePicture
             }
         }>
             {children}

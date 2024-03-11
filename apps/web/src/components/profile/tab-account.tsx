@@ -17,10 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import ChangeProfilePictDialog from "./change-profile-pict"
 import { ChangePasswordDialog } from "./change-password"
 import { ChangeErrorNoPassword } from "./change-error"
+import Image from "next/image"
 
 export default function TabAccount() {
     const auth = useAuth()
     const user = auth?.user?.data
+    const BASE_IMAGE_URL = process.env.NEXT_PUBLIC_BASE_IMAGE_URL
 
     return (
         <>
@@ -35,10 +37,18 @@ export default function TabAccount() {
                         </div>
                         <Avatar className="flex flex-col items-center justify-center gap-1">
                             <AvatarImage
-                                src="/profile-pict.jpg"
+                                src={`${BASE_IMAGE_URL}profile-pictures/${user?.profilePicture}`}
                                 className="max-w-[150px] rounded-full"
                             />
-                            <AvatarFallback>JD</AvatarFallback>
+                            <AvatarFallback>
+                                <div className="overflow-hidden w-[150px] h-[150px] rounded-full">
+                                    <img
+                                        src={`${BASE_IMAGE_URL}profile-pictures/no-picture.jpeg`}
+                                        alt="No Profile Picture"
+                                        className="h-full w-full object-cover"
+                                    />
+                                </div>
+                            </AvatarFallback>
                             <ChangeProfilePictDialog />
                         </Avatar>
                     </CardHeader>
