@@ -88,7 +88,7 @@ model Users {
   createdAt                  DateTime    @default(now())
   updatedAt                  DateTime    @updatedAt
   archived                   Boolean     @default(false)
-  googleId                   String?
+  googleId                   String?     @unique
 
   userCities   UserCities[]
   transactions Transactions[]

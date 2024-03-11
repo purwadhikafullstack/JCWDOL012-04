@@ -28,6 +28,7 @@ export default function Verify() {
         </main>
 
     )
+
     if (auth?.user?.isAuthenticated && auth.user.data?.password) return (
         <main className="flex items-center justify-center h-screen ">
             {clientSideRedirect('/')}

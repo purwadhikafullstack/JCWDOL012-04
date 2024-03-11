@@ -16,9 +16,11 @@ import ChangeEmailDialog from "./change-email"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import ChangeProfilePictDialog from "./change-profile-pict"
 import { ChangePasswordDialog } from "./change-password"
+import { ChangeErrorNoPassword } from "./change-error"
 
 export default function TabAccount() {
-    const user = useAuth()?.user?.data
+    const auth = useAuth()
+    const user = auth?.user?.data
 
     return (
         <>
@@ -49,21 +51,21 @@ export default function TabAccount() {
                             <Label htmlFor="lastName">Last Name</Label>
                             <div className="flex gap-1">
                                 <Input id="lastName" defaultValue={user?.lastName} disabled />
-                                <ChangeNameDialog />
+                                {user?.password ? <ChangeNameDialog /> : <ChangeErrorNoPassword isLoading={auth?.isLoading!} label="Change Name" />}
                             </div>
                         </div>
                         <div className="space-y-1">
                             <Label htmlFor="email">Email</Label>
                             <div className="flex gap-1">
                                 <Input id="email" defaultValue={user?.email} disabled />
-                                <ChangeEmailDialog />
+                                {user?.password ? <ChangeEmailDialog /> : <ChangeErrorNoPassword isLoading={auth?.isLoading!} label="Change Email" />}
                             </div>
                         </div>
                         <div className="space-y-1">
                             <Label htmlFor="password">Password</Label>
                             <div className="flex gap-1">
                                 <Input id="password" defaultValue="******" disabled />
-                                <ChangePasswordDialog />
+                                {user?.password ? <ChangePasswordDialog /> : <ChangeErrorNoPassword isLoading={auth?.isLoading!} label="Change Password" />}
                             </div>
                         </div>
                     </CardContent>

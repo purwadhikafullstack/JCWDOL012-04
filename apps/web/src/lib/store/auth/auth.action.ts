@@ -4,21 +4,15 @@ import { Dispatch, SetStateAction } from "react"
 import { UserAuthErrorType, UserAuthType } from "./auth.provider"
 
 const BASE_AUTH_URL = process.env.NEXT_PUBLIC_BASE_AUTH_URL
-const BASE_PROFILE_URL = process.env.NEXT_PUBLIC_BASE_PROFILE_URL
 
 const auth = axios.create({
     baseURL: BASE_AUTH_URL,
     withCredentials: true
 })
 
-const profile = axios.create({
-    baseURL: BASE_PROFILE_URL,
-    withCredentials: true
-})
-
 export function logInAction(
     values: { email: string, password: string },
-    setUserState: Dispatch<SetStateAction<null | UserAuthType>>,
+    setUserState: Dispatch<SetStateAction<UserAuthType>>,
     setError: Dispatch<SetStateAction<UserAuthErrorType>>,
     setLoadingState?: Dispatch<SetStateAction<boolean>>
 ) {
@@ -37,7 +31,7 @@ export function logInAction(
 
 export function registerWithEmailAction(
     values: { email: string, firstName: string, lastName: string },
-    setUserState: Dispatch<SetStateAction<null | UserAuthType>>,
+    setUserState: Dispatch<SetStateAction<UserAuthType>>,
     setError: Dispatch<SetStateAction<UserAuthErrorType>>,
     setLoadingState?: Dispatch<SetStateAction<boolean>>
 ) {
@@ -63,10 +57,11 @@ export function googleLogin() {
 }
 
 export function verifyToken(
-    setUserState: Dispatch<SetStateAction<null | UserAuthType>>,
+    setUserState: Dispatch<SetStateAction<UserAuthType>>,
     setError: Dispatch<SetStateAction<UserAuthErrorType>>,
     setLoadingState?: Dispatch<SetStateAction<boolean>>,
-    token?: string
+    token?: string,
+    path?: string,
 ) {
     auth.get(`/verify-token${token ? `?token=${token}` : ''}`)
         .then((response: AxiosResponse) => {
@@ -74,15 +69,23 @@ export function verifyToken(
             setLoadingState ? setLoadingState(false) : null
         })
         .catch((error) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-            setError({ status: error?.response?.status, message: error?.response?.data?.message })
-            setLoadingState ? setLoadingState(false) : null
+            if (error.response.status === 401) {
+                console.log(path)
+                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
+                setError({ status: error.response.status, message: error.response.data })
+                if (path?.includes('/profile')) clientSideRedirect('/auth/login?origin=401')
+            } else if (error.response.status === 422 || error.response.status === 500) {
+                setError({ status: error.response.status, message: error.response.data.msg })
+            } else {
+                setLoadingState ? setLoadingState(false) : null
+                throw new Error('An unhandled error occured')
+            } setLoadingState ? setLoadingState(false) : null
         })
 }
 
 export function setPasswordAction(
     value: { password: string },
-    setUserState: Dispatch<SetStateAction<null | UserAuthType>>,
+    setUserState: Dispatch<SetStateAction<UserAuthType>>,
     setError: Dispatch<SetStateAction<UserAuthErrorType>>,
     setLoadingState?: Dispatch<SetStateAction<boolean>>,
     token?: string,
@@ -104,56 +107,4 @@ export function setPasswordAction(
 
 export function clientSideRedirect(route: string) {
     return window.location.href = route
-}
-
-export async function changeNameAction(
-    values: { firstName: string, lastName: string, password: string },
-    setUserState: Dispatch<SetStateAction<null | UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
-) {
-    await profile.patch('change-name', values)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState ? () => setLoadingState(false) : null
-            clientSideRedirect('/profile')
-        })
-        .catch((error) => {
-            if (error.response.status === 401) {
-                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
-                clientSideRedirect('/auth/login')
-            } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
-            } else {
-                setLoadingState ? setLoadingState(false) : null
-                throw new Error('An unhandled error occured')
-            } setLoadingState ? setLoadingState(false) : null
-        })
-}
-
-export async function changePasswordAction(
-    values: { currentPassword: string, newPassword: string, retypeNewPassword: string },
-    setUserState: Dispatch<SetStateAction<null | UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
-) {
-    await profile.patch('change-password', values)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState ? () => setLoadingState(false) : null
-            clientSideRedirect('/profile')
-        })
-        .catch((error) => {
-            if (error.response.status === 401) {
-                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
-                clientSideRedirect('/auth/login')
-            } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
-            } else {
-                setLoadingState ? setLoadingState(false) : null
-                throw new Error('An unhandled error occured')
-            } setLoadingState ? setLoadingState(false) : null
-        })
 }

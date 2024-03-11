@@ -22,11 +22,11 @@ export default function ChangeEmailDialog() {
 
     const formik = useFormik({
         initialValues: {
-            currentPassword: '',
+            password: '',
             newEmail: ''
         },
         validationSchema: Yup.object({
-            currentPassword: Yup.string()
+            password: Yup.string()
                 .min(6, 'Must be 6 characters or more')
                 .required('Current password is required'),
             newEmail: Yup.string()
@@ -34,7 +34,7 @@ export default function ChangeEmailDialog() {
                 .required('Type your new email address')
         }),
         onSubmit: async (values) => {
-            console.log(values)
+            auth?.changeEmail(values)
         }
     })
 
@@ -54,20 +54,20 @@ export default function ChangeEmailDialog() {
                 {!auth?.isLoading &&
                     (<form onSubmit={formik.handleSubmit}>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="currentPassword" >
+                            <Label htmlFor="password" >
                                 Password
                             </Label>
                             <Input
-                                name="currentPassword"
+                                name="password"
                                 type="password"
-                                value={formik.values.currentPassword}
+                                value={formik.values.password}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 placeholder="Enter your password"
                                 className="col-span-3"
                             />
-                            {formik.errors.currentPassword && formik.touched.currentPassword
-                                ? (<div className="col-span-4 text-red-500 text-xs">{formik.errors.currentPassword}</div>)
+                            {formik.errors.password && formik.touched.password
+                                ? (<div className="col-span-4 text-red-500 text-xs">{formik.errors.password}</div>)
                                 : null}
                         </div>
                         <div className="grid gap-4 py-4">
@@ -98,7 +98,7 @@ export default function ChangeEmailDialog() {
                             </div>
 
                             <DialogFooter className="mt-4">
-                                <Button type="submit" onSubmit={(e) => console.log(e)}>Submit</Button>
+                                <Button type="submit" >Submit</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

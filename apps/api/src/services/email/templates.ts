@@ -6,10 +6,28 @@ const CLIENT_URL = isProduction ? process.env.WEB_CLIENT_BASE_URL_PROD : process
 export const sendVerificationEmail = async (email: string, token: string) => transporter.sendMail(
     {
         from: 'suryaadiwiguna.dev@gmail.com',
-        to: 'suryaadiwiguna@gmail.com',
+        to: email,
         subject: 'Verify your email',
-        text: `Thanks for signing up! Please click the link below to verify your email.
+        text: `Thanks for signing up! Please click the link below within 1 hour to verify your email.
         \n\n ${CLIENT_URL}/auth/verify?token=${token}`,
+    },
+    (err, info) => {
+        if (err) {
+            console.log(err)
+            return err
+        } else {
+            console.log(info)
+            return info
+        }
+    })
+
+export const sendChangeEmailInstructions = async (email: string, token: string) => transporter.sendMail(
+    {
+        from: 'Palugada Store - Account Services',
+        to: email,
+        subject: 'Change your email',
+        text: `You requested to change the email of your Palugada Store account. Please click the link below within 1 hour to verify your new email.
+        \n${CLIENT_URL}/auth/verify/change-email?token=${token}`,
     },
     (err, info) => {
         if (err) {
