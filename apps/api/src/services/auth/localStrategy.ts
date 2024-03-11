@@ -12,7 +12,6 @@ const localLogin = new LocalStrategy({
     passReqToCallback: true
 },
     async (req: any, email: string, password: string, done: any) => {
-        console.log(req.body)
         try {
             const user = await prisma.users.findUnique({ where: { email } });
             if (!user) return done(null, false, { message: "Invalid email or password" });

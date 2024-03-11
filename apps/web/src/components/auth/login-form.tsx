@@ -14,7 +14,6 @@ import { Alert, AlertDescription } from "../ui/alert";
 export default function LoginForm() {
     const origin = useSearchParams().get('origin')
     const auth = useAuth()
-    console.log(auth)
 
     const formik = useFormik({
         initialValues: {

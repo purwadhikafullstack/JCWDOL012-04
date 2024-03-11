@@ -34,7 +34,6 @@ export default function ChangeProfilePictDialog() {
                 .test('fileSize', 'File size too large. Must be under 2 MB.', (value) => value && (value as File).size <= MAX_FILE_SIZE)
         }),
         onSubmit: async (values: { file: File }) => {
-            console.log(values)
             auth?.updateProfilePicture(values)
         }
     })
