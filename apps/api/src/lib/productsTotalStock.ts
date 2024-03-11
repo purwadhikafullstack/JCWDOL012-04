@@ -1,3 +1,5 @@
+import ProductService from '@/services/product.service';
+
 interface Product {
   id: number;
   name: string;
@@ -25,4 +27,19 @@ export function productsTotalStock(products: Product[]) {
     );
     return { ...product, totalStock };
   });
+}
+
+export async function userProductsTotalStock(
+  products: Product[],
+  productService: ProductService,
+) {
+  return Promise.all(
+    products.map(async (product) => {
+      const totalStock = await productService.getTotalStock(product.id);
+      return {
+        ...product,
+        totalStock: totalStock || 0,
+      };
+    }),
+  );
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { CartContainer } from '@/components/products/CartContainer';
 import { Loading } from '@/components/Loading';
 import { fetchData } from '@/utils/api';
 import { formatToRupiah } from '@/utils/helper';
@@ -152,7 +151,7 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
             price={data.price}
             totalStock={data.totalStock}
           /> */}
-          <CartAdd productId={data.id}/>
+          <CartAdd productId={data.id} />
         </div>
       ) : (
         <Loading />

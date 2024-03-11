@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import ProductService from '@/services/product.service';
-import { productsTotalStock } from '@/lib/productsTotalStock';
+import {
+  productsTotalStock,
+  userProductsTotalStock,
+} from '@/lib/productsTotalStock';
 
 const productService = new ProductService();
 
@@ -25,13 +28,13 @@ interface productsWarehouse {
 
 export class ProductController {
   //products
-  async getProducts(req: Request, res: Response) {
+  async getProductsUser(req: Request, res: Response) {
     try {
       const { page, pageSize, search, category, sort } = req.query;
       const parsedPage = parseInt(page as string, 10);
       const parsedPageSize = parseInt(pageSize as string, 10);
       const skip = (parsedPage - 1) * parsedPageSize;
-      const products = (await productService.getAllProducts(
+      const products = (await productService.getAllUserProducts(
         parsedPageSize,
         skip,
         search as string,
@@ -42,7 +45,10 @@ export class ProductController {
         search as string,
         category as string,
       );
-      const productsWithTotalStock = productsTotalStock(products);
+      const productsWithTotalStock = await userProductsTotalStock(
+        products,
+        productService,
+      );
       const response = {
         products: productsWithTotalStock,
         totalProducts: totalProducts,
