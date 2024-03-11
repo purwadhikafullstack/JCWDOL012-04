@@ -16,6 +16,7 @@ import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
 import cartRouter from './routers/cart.router';
 import { prisma } from './services/prisma.service';
 import { join } from 'path';
+import path from 'path';
 import { ProductRouter } from './routers/product.router';
 import { profileRouter } from './routers/profile.router';
 
@@ -33,9 +34,11 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use(
+      '/public',
+      express.static(path.join(__dirname, '..', 'public')),
+    );
     this.app.use(cookieparser());
-    // this.app.use(passport.initialize());
-    this.app.use('/public', express.static(join(__dirname, './public')));
   }
 
   private handleError(): void {
@@ -60,7 +63,6 @@ export default class App {
       },
     );
   }
-
 
   private routes(): void {
     const productRouter = new ProductRouter();

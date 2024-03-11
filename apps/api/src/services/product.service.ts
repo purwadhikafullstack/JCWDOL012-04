@@ -1,9 +1,12 @@
-import { PrismaClient, Prisma } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Prisma } from '@prisma/client';
+import { prisma } from './prisma.service';
 
 export default class ProductService {
-  async getAllProducts(
+  prisma;
+  constructor() {
+    this.prisma = prisma;
+  }
+  async getAllUserProducts(
     parsedPageSize: number,
     skip: number,
     search: string,
@@ -13,16 +16,6 @@ export default class ProductService {
     const query: any = {
       include: {
         productImages: true,
-        productsWarehouses: {
-          select: {
-            stock: true,
-            warehouse: {
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
         productCategory: true,
       },
       take: parsedPageSize,
@@ -38,27 +31,27 @@ export default class ProductService {
         },
       },
     };
-
     if (sort) {
       query.orderBy = {
         price: sort as Prisma.SortOrder,
       };
     }
-
-    return prisma.products.findMany(query);
+    return this.prisma.products.findMany(query);
   }
 
   async getTotalStock(id: number) {
-    return prisma.productsWarehouses.aggregate({
+    const totalStock = await this.prisma.productsWarehouses.aggregate({
       _sum: {
         stock: true,
       },
-      where: {},
+      where: {
+        productId: id,
+      },
     });
+    return totalStock._sum.stock || 0;
   }
-
   async getTotalProduct(search: string, category: string) {
-    return prisma.products.count({
+    return this.prisma.products.count({
       where: {
         name: {
           contains: search,
@@ -71,13 +64,11 @@ export default class ProductService {
       },
     });
   }
-
   async getProductCategories() {
-    return prisma.productCategories.findMany();
+    return this.prisma.productCategories.findMany();
   }
-
   async getProduct(id: number) {
-    return prisma.products.findUnique({
+    return this.prisma.products.findUnique({
       where: {
         id: id,
       },
@@ -99,7 +90,7 @@ export default class ProductService {
   }
 
   async searchProducts(search: string) {
-    return prisma.products.findMany({
+    return this.prisma.products.findMany({
       select: {
         name: true,
       },

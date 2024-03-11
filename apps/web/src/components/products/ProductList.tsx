@@ -79,14 +79,14 @@ export default function ProductList({
       <SearchBar category={category} sort={sort} />
       <div
         id="products-container"
-        className="flex flex-wrap justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[50px] max-w-[1440px]"
+        className="flex flex-wrap justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"
       >
         {data.map((product, index) => {
           return (
             <Link key={index} href={`/products/${product.id}`}>
               <div
                 id="product"
-                className="flex flex-col w-[150px] xl:w-[180px] h-[205px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] hover:bg-slate-200 duration-200"
+                className="flex flex-col w-[150px] xl:w-[180px] h-[205px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] bg-white hover:bg-slate-200 duration-200"
               >
                 <div id="product-image" className="relative w-full h-[120px]">
                   {/* <Image
@@ -117,8 +117,8 @@ export default function ProductList({
                       <Image
                         src={
                           product.totalStock > 0
-                            ? '/images/icons/box.png'
-                            : '/images/icons/warning.png'
+                            ? '/images/icon/box.png'
+                            : '/images/icon/warning.png'
                         }
                         fill
                         alt="box"
