@@ -28,6 +28,7 @@ model Provinces {
 
 model Cities {
   id         Int       @id @default(autoincrement())
+  type       CityType  @default(KOTA)
   name       String
   province   Provinces @relation(fields: [provinceId], references: [id])
   provinceId Int
@@ -37,6 +38,11 @@ model Cities {
 
   users      UserCities[]
   warehouses Warehouses[]
+}
+
+enum CityType {
+  KABUPATEN
+  KOTA
 }
 
 model UserCities {
@@ -51,7 +57,8 @@ model UserCities {
   isPrimaryAddress Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  archived         Boolean  @default(false)
+  archieved        Boolean  @default(false)
+  label            String
 }
 
 model Warehouses {
@@ -88,7 +95,7 @@ model Users {
   createdAt                  DateTime    @default(now())
   updatedAt                  DateTime    @updatedAt
   archived                   Boolean     @default(false)
-  googleId                   String?
+  googleId                   String?     @unique
 
   userCities   UserCities[]
   transactions Transactions[]

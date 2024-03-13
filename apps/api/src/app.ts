@@ -15,9 +15,10 @@ import { localAuthRouter } from './routers/auth/localAuth.router';
 import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
 import cartRouter from './routers/cart.router';
 import { prisma } from './services/prisma.service';
-import { join } from 'path';
-import path from 'path';
 import { ProductRouter } from './routers/product.router';
+import { profileRouter } from './routers/profile.router';
+import { userRouter } from './routers/user.router';
+import { dataRouter } from './routers/data.router';
 
 export default class App {
   private app: Express;
@@ -33,10 +34,7 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(
-      '/public',
-      express.static(path.join(__dirname, '..', 'public')),
-    );
+    this.app.use(express.static('public'))
     this.app.use(cookieparser());
   }
 
@@ -75,10 +73,12 @@ export default class App {
       res.send(`Hello, Purwadhika Student !`);
     });
     this.app.use('/api/cart', cartRouter);
-
     this.app.use('/api', productRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
+    this.app.use('/profile', profileRouter);
+    this.app.use('/user', userRouter)
+    this.app.use('/data', dataRouter)
   }
 
   public start(): void {

@@ -10,12 +10,13 @@ const isProduction = process.env.NODE_ENV === "production";
 const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
 const prisma = new PrismaClient();
 
-export function generateJWT(user: Users) {
+export function generateJWT(user: Users, info?: string | { [key: string]: any }) {
     const token = jwt.sign(
         {
             expiresIn: "1d",
             id: user.id,
             email: user.email,
+            info: info,
             googleId: user?.googleId
         },
         secretKey!

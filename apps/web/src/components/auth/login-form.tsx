@@ -1,7 +1,6 @@
 'use client'
 
-import { PiArrowRightBold, PiAt, PiKey, PiSealWarningLight } from "react-icons/pi";
-
+import { PiArrowRightBold, PiAt, PiKey, PiSeal, PiSealWarning, PiSealWarningLight } from "react-icons/pi";
 import { Button, GoogleLoginButton } from '../ui/button-c';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -9,6 +8,8 @@ import { useSearchParams } from 'next/navigation';
 import Link from "next/link";
 import LineWithText from "../ui/line";
 import { useAuth } from "@/lib/store/auth/auth.provider";
+import { PiSealCheck } from "react-icons/pi";
+import { Alert, AlertDescription } from "../ui/alert";
 
 export default function LoginForm() {
     const origin = useSearchParams().get('origin')
@@ -31,16 +32,10 @@ export default function LoginForm() {
     return (
         <div className="flex-1 rounded-lg bg-purple-50 px-6 py-8 ">
             <form onSubmit={formik.handleSubmit} className="space-y-3">
-                <h1 className="mb-9 text-2xl text-center">
+                <h1 className="mb-6 text-2xl text-center">
                     Login To Your Account
                 </h1>
-                {origin === 'verify-email' && (
-                    <div className='rounded-md bg-purple-300 p-4 text-center'>
-                        <p >
-                            Congratulations! Your account is verified. Please login to continue.
-                        </p>
-                    </div>
-                )}
+                <LoginBanner origin={origin} />
                 <div className="w-full">
                     <div>
                         <label
@@ -100,7 +95,7 @@ export default function LoginForm() {
                     </div>
                 </div>
                 <LoginButton isDisabled={auth?.isLoading!} />
-                {auth?.error.status
+                {auth?.error?.status && auth.error?.status !== 401
                     ? (
                         <div className="flex items-center mt-2 text-red-500">
                             <PiSealWarningLight className="h-5 w-5 mr-2" />
@@ -126,4 +121,31 @@ function LoginButton({ isDisabled }: { isDisabled: boolean }) {
             Log in <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
     );
+}
+
+function LoginBanner({ origin }: { origin: string | null }) {
+    if (!origin) return null
+
+    if (origin === 'verify-email') return (
+        <Alert className=" border-purple-800">
+            <PiSealCheck className="h-5 w-5 mr-2 " />
+            <AlertDescription>Congratulations! Your account is now verified. Please login to continue.</AlertDescription>
+        </Alert>
+    )
+
+    if (origin === '401') return (
+        <Alert variant={'destructive'} >
+            <PiSealWarning className="h-5 w-5 mr-2 " />
+            <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+        </Alert>
+    )
+
+    if (origin === 'change-email-success') return (
+        <Alert className=" border-purple-800">
+            <PiSealCheck className="h-5 w-5 mr-2 " />
+            <AlertDescription>Your email has been successfully changed. Please login to continue.</AlertDescription>
+        </Alert>
+    )
+
+    return null
 }

@@ -31,7 +31,9 @@ async function main() {
     .then(data => data.rajaongkir.results)
     .catch(err => console.error(err));
 
-  for(const item of provincesRO)  {
+  console.log(provincesRO)
+
+  for (const item of provincesRO) {
     await prisma.provinces.create({
       data: {
         id: parseInt(item.province_id),
@@ -41,11 +43,12 @@ async function main() {
     console.log(`Created province ${item.province}`);
   }
 
-  for(const item of citiesRO)  {
+  for (const item of citiesRO) {
     await prisma.cities.create({
       data: {
         id: parseInt(item.city_id),
         name: item.city_name,
+        type: item.type.toUpperCase(),
         provinceId: parseInt(item.province_id)
       }
     });
@@ -136,7 +139,8 @@ async function main() {
           address: 'address' + j,
           latitude: 'latitude' + j,
           longitude: 'longitude' + j,
-          isPrimaryAddress: isPrimaryAddressTemp
+          isPrimaryAddress: isPrimaryAddressTemp,
+          label: 'Address label' + j
         }
       });
       console.log(`Created address${j} for customer${i}`);
@@ -274,7 +278,7 @@ async function main() {
     'MANUAL_ADMIN',
     'AUTOMATED'
   ]
-  
+
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;
