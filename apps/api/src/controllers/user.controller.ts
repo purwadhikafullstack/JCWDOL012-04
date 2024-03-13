@@ -16,7 +16,6 @@ export async function getUserAddresses(req: Request, res: Response) {
                 { label: 'asc' }
             ]
         });
-        console.log(addresses)
         resSuccess(res, 'User addresses retrieved successfully', addresses, 1)
     } catch (error) {
         console.log('Error getting user addresses', error)

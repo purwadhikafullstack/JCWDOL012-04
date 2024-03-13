@@ -70,7 +70,6 @@ export function verifyToken(
         })
         .catch((error) => {
             if (error.response.status === 401) {
-                console.log(path)
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
                 setError({ status: error.response.status, message: error.response.data })
                 if (path?.includes('/profile')) clientSideRedirect('/auth/login?origin=401')
