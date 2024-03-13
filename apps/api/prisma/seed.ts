@@ -48,6 +48,7 @@ async function main() {
       data: {
         id: parseInt(item.city_id),
         name: item.city_name,
+        type: item.type.toUpperCase(),
         provinceId: parseInt(item.province_id)
       }
     });
@@ -138,7 +139,8 @@ async function main() {
           address: 'address' + j,
           latitude: 'latitude' + j,
           longitude: 'longitude' + j,
-          isPrimaryAddress: isPrimaryAddressTemp
+          isPrimaryAddress: isPrimaryAddressTemp,
+          label: 'Address label' + j
         }
       });
       console.log(`Created address${j} for customer${i}`);

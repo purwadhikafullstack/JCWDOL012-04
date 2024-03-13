@@ -50,10 +50,10 @@ export async function changePasswordAction(
         .catch((error) => {
             if (error.response.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
+                setError({ status: error?.response?.status, message: error.response?.data })
                 clientSideRedirect('/auth/login')
             } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
+                setError({ status: error.response?.status, message: error.response.data?.msg })
             } else {
                 setLoadingState ? setLoadingState(false) : null
                 throw new Error('An unhandled error occured')

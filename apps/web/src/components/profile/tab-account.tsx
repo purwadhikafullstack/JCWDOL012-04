@@ -18,6 +18,7 @@ import ChangeProfilePictDialog from "./change-profile-pict"
 import { ChangePasswordDialog } from "./change-password"
 import { ChangeErrorNoPassword } from "./change-error"
 import Image from "next/image"
+import Spinner from "../ui/spinner"
 
 export default function TabAccount() {
     const auth = useAuth()
@@ -30,7 +31,7 @@ export default function TabAccount() {
                 <Card>
                     <CardHeader className="flex items-center sm:flex-row sm:justify-between gap-3">
                         <div className="flex flex-col justify-center items-center sm:items-start">
-                            <CardTitle>{`Hi, ${user?.firstName ? `${user.firstName}!` : "..."}`}</CardTitle>
+                            <CardTitle>{`Hi, ${user?.firstName ? `${user.firstName}!` : ""}`} {user?.firstName ? null : <Spinner />}</CardTitle>
                             <CardDescription>
                                 Make changes to your account here.
                             </CardDescription>

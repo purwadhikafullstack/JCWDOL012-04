@@ -1,10 +1,8 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
 import { setPassword } from "@/middlewares/auth/verification";
 import { changeEmail, changeName, sendChangeEmail, updateProfilePicture, validateEmailChangeRequest, validatePassword } from "@/controllers/profile.controller";
-import { resSuccess } from "@/services/responses";
 import { uploader } from "@/middlewares/uploader";
-import { Users } from "@prisma/client";
 
 const profileRouter = Router();
 
