@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { addAddress, getUserAddresses } from "@/controllers/user.controller";
+import { addAddress, archieveAddress, getUserAddresses } from "@/controllers/user.controller";
 
 const userRouter = Router();
 
@@ -12,6 +12,11 @@ userRouter.get('/address',
 userRouter.post('/address/add',
     requireJwtAuth,
     addAddress
+)
+
+userRouter.patch('/address/:id/archieve',
+    requireJwtAuth,
+    archieveAddress
 )
 
 export { userRouter };

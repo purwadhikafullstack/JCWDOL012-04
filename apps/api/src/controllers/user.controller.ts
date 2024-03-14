@@ -70,3 +70,23 @@ export async function addAddress(req: Request, res: Response) {
         resInternalServerError(res, 'Error adding user address', null);
     }
 }
+
+export async function archieveAddress(req: Request, res: Response) {
+    const user = req.user as Users;
+    const { id } = req.params;
+    try {
+        const archievedAddress = await prisma.userCities.update({
+            where: {
+                id: parseInt(id)
+            },
+            data: {
+                archieved: true
+            }
+        });
+        resSuccess(res, 'Address archieved successfully', archievedAddress, 1);
+    } catch (error) {
+        console.log('Error archieving user address', error);
+        resInternalServerError(res, 'Error archieving user address', null);
+    }
+
+}

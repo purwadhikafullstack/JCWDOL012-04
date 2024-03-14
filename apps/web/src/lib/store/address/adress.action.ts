@@ -57,6 +57,17 @@ export async function addAddressAction(
         .catch((error) => handleError(error, setError))
 }
 
+export async function deleteAddressAction(
+    id: number | string,
+    setAddressState: Dispatch<SetStateAction<AddressContext['userAddress']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>
+) {
+    await user.patch(`/address/${id}/archieve`)
+        .then((response) => setAddressState(prevState => prevState.filter(address => address.id !== response.data.data.id)))
+        .then(() => clientSideRedirect('/profile?tab=address'))
+        .catch((error) => handleError(error, setError))
+}
+
 function handleError(
     error: AxiosError<{ message?: string }>,
     setError: Dispatch<SetStateAction<AddressContext['error']>>

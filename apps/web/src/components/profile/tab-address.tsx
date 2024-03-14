@@ -9,6 +9,7 @@ import { Badge } from "../ui/badge"
 import { AddAddress } from "./address/add"
 import Spinner from "../ui/spinner"
 import { APIProvider } from "@vis.gl/react-google-maps"
+import DeleteAddressDialog from "./address/dialog-delete"
 
 export default function TabAddress() {
     const auth = useAuth()
@@ -32,7 +33,7 @@ export default function TabAddress() {
                         : (<CardContent className="space-y-2">
                             {address.userAddress.map((address, index) => (
                                 address.archieved ? null :
-                                    <Card key={index + 9873}>
+                                    <Card key={index + 98}>
                                         <CardHeader>
                                             <div className="flex flex-row gap-3 flex-wrap">
                                                 <CardTitle className="text-sm">{address.label}</CardTitle>
@@ -43,7 +44,7 @@ export default function TabAddress() {
                                         <CardContent className="flex flex-wrap gap-3 my-[-15px]">
                                             <Button variant={'link'} className="text-xs p-0">Edit</Button>
                                             <Button variant={'link'} className="text-xs p-0">Set As Primary</Button>
-                                            <Button variant={'link'} className="text-xs p-0 text-red-500">Delete</Button>
+                                            <DeleteAddressDialog id={address.id!} />
                                         </CardContent>
                                     </Card>))}
                         </CardContent>)}

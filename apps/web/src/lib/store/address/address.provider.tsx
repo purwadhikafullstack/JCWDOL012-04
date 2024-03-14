@@ -3,7 +3,7 @@
 import { UserCitiesModel } from "@/model/UserCitiesModel";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "../auth/auth.provider";
-import { addAddressAction, fetchAddressAction, fetchCities, fetchProvinces } from "./adress.action";
+import { addAddressAction, deleteAddressAction, fetchAddressAction, fetchCities, fetchProvinces } from "./adress.action";
 import { ProvincesModel } from "@/model/ProvincesModel";
 import { CitiesModel } from "@/model/CitiesModel";
 
@@ -75,7 +75,8 @@ export default function AddressProvider({ children }: { children: React.ReactNod
 
     const deleteAddress = async (id: number | string) => {
         setIsLoading(true);
-        // delete address
+        deleteAddressAction(id, setAddress, setError);
+        setIsLoading(false);
     }
 
     const getProvinces: AddressContext['getProvinces'] = async () => {
