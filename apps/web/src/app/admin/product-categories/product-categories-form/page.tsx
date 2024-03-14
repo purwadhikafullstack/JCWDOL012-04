@@ -7,6 +7,7 @@ import { Loading } from '@/components/Loading';
 import * as Yup from 'yup';
 import axios from 'axios';
 import Link from 'next/link';
+import { createData } from '@/utils/api';
 
 export default function ProductCategoriesForm() {
   const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
@@ -27,28 +28,25 @@ export default function ProductCategoriesForm() {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await axios.post(
-          `${baseURL}/admin/product-categories`,
+        const response = await createData(
+          'admin/product-categories',
           values,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
+          'application/json',
         );
+        console.log(response);
 
         if (response.status === 201) {
           setIsModalOpen(true);
           const data = response.data;
-          console.log('Product category updated successfully:', data);
+          console.log('Product category created successfully:', data);
         } else {
           console.error(
-            'Failed to edit product category:',
+            'Failed to create product category:',
             response.statusText,
           );
         }
       } catch (error: any) {
-        console.error('Error editing product:', error);
+        console.error('Error creating product:', error);
         if (error.response && error.response.status === 400) {
           setError('Product category name is already taken');
         } else {

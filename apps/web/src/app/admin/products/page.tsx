@@ -5,7 +5,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/store/auth/auth.provider';
-import { fetchData } from '@/utils/api';
+import { archiveData, fetchData } from '@/utils/api';
 import { ProductsModel } from '@/model/ProductsModel';
 import { formatToRupiah } from '@/utils/helper';
 import { AdminSearchBar } from '@/components/admin/AdminSearchBar';
@@ -55,9 +55,7 @@ export default function Products({
 
   const handleArchive = async () => {
     try {
-      await axios.put(`${baseURL}/admin/products/${selectedId}`, {
-        archived: true,
-      });
+      await archiveData(`admin/products/${selectedId}`);
       fetchProducts();
     } catch (error) {
       console.log(error);
@@ -79,7 +77,7 @@ export default function Products({
         <div className="text-3xl font-semibold">All Products</div>
         <Link
           href={'/admin/products/product-form'}
-          className={`${role === 'SUPER_ADMN' ? '' : 'hidden'}`}
+          className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'}`}
         >
           <div className="bg-[var(--primaryColor)] w-[200px] lg:w-auto text-white px-[17px] py-[10px] rounded-md font-semibold border cursor-pointer hover:bg-transparent hover:text-[var(--primaryColor)] hover:border-[var(--primaryColor)] duration-200">
             + Add New Product

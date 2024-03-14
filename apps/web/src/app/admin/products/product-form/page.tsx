@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
-import { fetchData } from '@/utils/api';
+import { createData, fetchData } from '@/utils/api';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { WarehousesModel } from '@/model/WarehousesModel';
 import { useFormik } from 'formik';
@@ -20,8 +20,8 @@ const CreateProductForm = () => {
   >([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [productImagesError, setProductImagesError] = useState<string>('');
   const auth = useAuth();
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
   const isAuthorLoading = auth?.isLoading;
@@ -65,14 +65,10 @@ const CreateProductForm = () => {
           formData.append('productImages', image);
         });
         console.log(values);
-        const response = await axios.post(
-          `${baseURL}/admin/products`,
+        const response = await createData(
+          `admin/products`,
           formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
+          'multipart/form-data',
         );
 
         if (response.status === 201) {
@@ -132,6 +128,11 @@ const CreateProductForm = () => {
       'image/*': ['.png', '.jpeg', '.jpg', '.gif'],
     },
     onDrop: (acceptedFiles) => {
+      if (formik.values.productImages.length + acceptedFiles.length > 4) {
+        setProductImagesError('Product images reaches limit');
+        return;
+      }
+
       const invalidFiles = acceptedFiles.some((file) => {
         const extension = `.${file.name.split('.').pop()}`;
         return !['.png', '.gif', '.jpeg', '.jpg'].includes(
@@ -139,11 +140,15 @@ const CreateProductForm = () => {
         );
       });
 
-      if (!invalidFiles) {
-        formik.setFieldValue('productImages', acceptedFiles);
-      } else {
-        console.error('Invalid file(s) detected:', acceptedFiles);
+      if (invalidFiles) {
+        setProductImagesError('Invalid file(s) detected:');
+        return;
       }
+
+      formik.setFieldValue('productImages', [
+        ...(formik.values.productImages || []),
+        ...acceptedFiles,
+      ]);
     },
     maxFiles: 4,
     maxSize: 1024 * 1024,
@@ -313,8 +318,9 @@ const CreateProductForm = () => {
             })}
           >
             <input {...getInputProps()} />
-            <p className="text-gray-500">
-              Drag n drop some files here, or click to select files
+            <p className="text-gray-500 text-justify">
+              Drag n drop some files here, or click to select files (.jpg,
+              .jpeg, .png, .gif) max size : 1MB
             </p>
           </div>
           {formik.touched.productImages && formik.errors.productImages ? (
@@ -323,6 +329,7 @@ const CreateProductForm = () => {
             </div>
           ) : null}
         </div>
+        <div className="text-red-500 text-sm mt-3">{productImagesError}</div>
 
         <div className="mt-4 flex space-x-4 mb-[20px]">
           {formik.values.productImages.map((image, index) => (

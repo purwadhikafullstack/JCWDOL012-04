@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { fetchData } from '@/utils/api';
+import { fetchData, updateData } from '@/utils/api';
 import Link from 'next/link';
 import { Loading } from '@/components/Loading';
 
@@ -65,14 +65,10 @@ export default function ProductCategoriesUpdateForm({
         })}
         onSubmit={async (values) => {
           try {
-            const response = await axios.patch(
-              `${baseURL}/admin/product-categories/${productCategory?.id}`,
+            const response = await updateData(
+              `admin/product-categories/${productCategory.id}`,
               values,
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              },
+              'application/json',
             );
 
             if (response.status === 201) {

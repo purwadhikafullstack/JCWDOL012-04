@@ -275,12 +275,17 @@ export class AdminProductController {
     try {
       const id = parseInt(req.params.id);
       const { name, description } = req.body;
-      const existedProductCategory =
-        await adminProductService.findProductCategoryName(name);
-      if (existedProductCategory)
-        return res
-          .status(400)
-          .json({ error: 'Product Category already exist' });
+      const currentProductCategory =
+        await adminProductService.getProductCategory(id);
+      if (name !== currentProductCategory?.name) {
+        const duplicateProduct =
+          await adminProductService.findProductCategoryName(name);
+        if (duplicateProduct) {
+          return res
+            .status(400)
+            .json({ error: 'Product with the same name already exists.' });
+        }
+      }
       const updatedProductCategory =
         await adminProductService.updateProductCategory(id, name, description);
       res.status(201).json(updatedProductCategory);

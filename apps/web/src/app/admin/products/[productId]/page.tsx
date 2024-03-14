@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import { useFormik } from 'formik';
 import { useAuth } from '@/lib/store/auth/auth.provider';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchData } from '@/utils/api';
+import { archiveData, fetchData, updateData } from '@/utils/api';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { WarehousesModel } from '@/model/WarehousesModel';
 import { ProductsModel } from '@/model/ProductsModel';
@@ -27,8 +27,8 @@ export default function ProductDetails({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [hasFormChanged, setHasFormChanged] = useState<boolean>(false);
+  const [productImagesError, setProductImagesError] = useState<string>('');
   const auth = useAuth();
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
   const isAuthorLoading = auth?.isLoading;
@@ -106,14 +106,10 @@ export default function ProductDetails({
         });
 
         console.log('req body', values);
-        const response = await axios.patch(
-          `${baseURL}/admin/products/${params.productId}`,
+        const response = await updateData(
+          `admin/products/${params.productId}`,
           formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
+          'multipart/form-data',
         );
 
         if (response.status === 200) {
@@ -153,7 +149,13 @@ export default function ProductDetails({
       'image/*': ['.png', '.gif', '.jpeg', '.jpg'],
     },
     maxFiles: 4,
+    maxSize: 1024 * 1024,
     onDrop: (acceptedFiles) => {
+      if (formik.values.productImages.length + acceptedFiles.length > 4) {
+        setProductImagesError('Product images reaches limit');
+        return;
+      }
+
       const invalidFiles = acceptedFiles.some((file) => {
         const extension = `.${file.name.split('.').pop()}`;
         return !['.png', '.gif', '.jpeg', '.jpg'].includes(
@@ -161,16 +163,16 @@ export default function ProductDetails({
         );
       });
 
-      if (!invalidFiles) {
-        formik.setFieldValue('productImages', [
-          ...(formik.values.productImages || []),
-          ...acceptedFiles,
-        ]);
-      } else {
-        console.error('Invalid file(s) detected:', acceptedFiles);
+      if (invalidFiles) {
+        setProductImagesError('Invalid file(s) detected:');
+        return;
       }
+
+      formik.setFieldValue('productImages', [
+        ...(formik.values.productImages || []),
+        ...acceptedFiles,
+      ]);
     },
-    maxSize: 1024 * 1024,
   });
 
   const deleteProductImage = async (index: number) => {
@@ -183,7 +185,7 @@ export default function ProductDetails({
 
       if (deletedImage && deletedImage.id) {
         try {
-          await axios.put(`${baseURL}admin/product-images/${deletedImage.id}`);
+          await archiveData(`admin/product-images/${deletedImage.id}`);
           console.log('Image deleted successfully');
         } catch (error) {
           console.error('Error deleting image:', error);
@@ -191,6 +193,15 @@ export default function ProductDetails({
       }
     }
   };
+  if (isAuthorLoading) return <Loading />;
+
+  if (
+    product === null ||
+    warehouses.length === 0 ||
+    productCategories.length === 0
+  ) {
+    return <Loading />;
+  }
 
   if (!isAuthenticated || role === 'CUSTOMER')
     return (
@@ -198,15 +209,6 @@ export default function ProductDetails({
         Unauthorized | 401
       </div>
     );
-
-  if (
-    product === null ||
-    isAuthorLoading ||
-    warehouses.length === 0 ||
-    productCategories.length === 0
-  ) {
-    return <Loading />;
-  }
 
   return (
     <div className="w-full md:px-[20px] max-w-[1440px] mx-auto">
@@ -402,9 +404,13 @@ export default function ProductDetails({
                 {...getRootProps({})}
               >
                 <input {...getInputProps()} />
-                <p className="text-gray-500">
-                  Drag n drop some files here, or click to select files
+                <p className="text-gray-500 text-justify">
+                  Drag n drop some files here, or click to select files (.jpg,
+                  .jpeg, .png, .gif) max size : 1MB
                 </p>
+              </div>
+              <div className="text-red-500 text-sm mt-3">
+                {productImagesError}
               </div>
             </div>
             <button

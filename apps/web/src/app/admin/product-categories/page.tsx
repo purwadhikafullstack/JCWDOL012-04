@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/store/auth/auth.provider';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
-import { fetchData } from '@/utils/api';
+import { archiveData, fetchData } from '@/utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCatBar } from '@/components/admin/ProductCatBar';
 import { Loading } from '@/components/Loading';
@@ -54,9 +54,7 @@ export default function ProductCategories({
 
   const handleArchive = async () => {
     try {
-      await axios.put(`${baseURL}/admin/product-categories/${selectedId}`, {
-        archived: true,
-      });
+      await archiveData(`admin/product-categories/${selectedId}`);
       fetchProductCategories();
     } catch (error) {
       console.log(error);
