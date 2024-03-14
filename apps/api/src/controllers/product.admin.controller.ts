@@ -58,7 +58,7 @@ const upload = multer({
   limits: {
     fileSize: 1024 * 1024,
   },
-}).array('productImages', 5);
+}).array('productImages', 4);
 
 export class AdminProductController {
   async createProduct(req: Request, res: Response) {
@@ -75,31 +75,26 @@ export class AdminProductController {
           productCategoryId: rawProductCategoryId,
         } = req.body;
         const productsWarehouses = req.body.productsWarehouses
-          ? req.body.productsWarehouses.map((warehouse: any) => ({
-              warehouseId: parseInt(warehouse.warehouseId),
-              stock: parseInt(warehouse.stock),
-            }))
+          ? JSON.parse(req.body.productsWarehouses)
           : [];
-
-        console.log(productsWarehouses);
         const existedProduct = await adminProductService.findProductName(name);
         if (existedProduct) {
           return res
             .status(400)
             .json({ error: 'Product with the same name already exists.' });
         }
-        const price = parseFloat(rawPrice);
-        const productCategoryId = parseFloat(rawProductCategoryId);
+
         const productImages = Array.isArray(req.files)
           ? req.files.map((file: Express.Multer.File) => ({
-              path: `public/images/products/${file.filename}`,
+              path: `http://localhost:8000/public/images/products/${file.filename}`,
             }))
           : [];
+
         const createdProduct = await AdminProductService.createProduct({
           name,
           description,
-          price,
-          productCategoryId,
+          price: parseFloat(rawPrice),
+          productCategoryId: parseFloat(rawProductCategoryId),
           productImages,
           productsWarehouses,
         });
@@ -139,44 +134,63 @@ export class AdminProductController {
     }
   }
 
+  async getAdminProduct(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      const product = await adminProductService.getAdminProduct(id);
+      res.status(200).json(product);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async updateProduct(req: Request, res: Response) {
     try {
-      const { productId: rawProductId } = req.params;
-      const productId = parseInt(rawProductId);
-      const {
-        name,
-        description,
-        price: rawPrice,
-        productCategoryId: rawProductCategoryId,
-        productsWarehouses,
-      } = req.body;
+      upload(req, res, async (err: any) => {
+        if (err) {
+          console.error('File upload error:', err);
+          return res.status(400).json({ error: err.message });
+        }
 
-      const duplicateProduct = await adminProductService.findProductName(name);
-      if (duplicateProduct) {
-        return res
-          .status(400)
-          .json({ error: 'Product with the same name already exists.' });
-      }
+        const id = parseInt(req.params.id);
+        const {
+          name,
+          description,
+          price: rawPrice,
+          productCategoryId: rawProductCategoryId,
+        } = req.body;
 
-      const updatedProductImages = Array.isArray(req.files)
-        ? req.files.map((file: Express.Multer.File) => ({
-            path: `public/images/products/${file.filename}`,
-          }))
-        : [];
+        console.log('req.body ->', req.body);
+        const currentProduct = await adminProductService.getAdminProduct(id);
+        console.log('curr product name =>', currentProduct?.name);
+        console.log('product name =>', name);
+        if (name !== currentProduct?.name) {
+          const duplicateProduct =
+            await adminProductService.findProductName(name);
+          if (duplicateProduct) {
+            return res
+              .status(400)
+              .json({ error: 'Product with the same name already exists.' });
+          }
+        }
 
-      const updatedProduct = await adminProductService.updateProduct(
-        productId,
-        {
+        const updatedProductImages = Array.isArray(req.files)
+          ? req.files.map((file: Express.Multer.File) => ({
+              path: `http://localhost:8000/public/images/products/${file.filename}`,
+            }))
+          : [];
+
+        const updatedProduct = await adminProductService.updateProduct({
+          id,
           name,
           description,
           price: parseFloat(rawPrice),
           productCategoryId: parseFloat(rawProductCategoryId),
-          productsWarehouses,
           productImages: updatedProductImages,
-        },
-      );
+        });
 
-      res.status(200).json(updatedProduct);
+        res.status(200).json(updatedProduct);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -290,6 +304,17 @@ export class AdminProductController {
     try {
       const productWarehouses = await adminProductService.getProductWarehouse();
       return res.status(200).json(productWarehouses);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deleteProductImage(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      const deletedProductImage =
+        await adminProductService.deleteProductImages(id);
+      return res.status(200).json(deletedProductImage);
     } catch (error) {
       console.log(error);
     }

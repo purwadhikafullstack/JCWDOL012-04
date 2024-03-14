@@ -1,4 +1,9 @@
-import { Prisma } from '@prisma/client';
+import {
+  Prisma,
+  Products,
+  ProductImages,
+  ProductsWarehouses,
+} from '@prisma/client';
 import { prisma } from './prisma.service';
 
 interface CreateProductInput {
@@ -8,6 +13,15 @@ interface CreateProductInput {
   productCategoryId: number;
   productImages: { path: string }[];
   productsWarehouses: { warehouseId: number; stock: number }[];
+}
+
+interface UpdateProductInput {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  productCategoryId: number;
+  productImages: { path: string }[];
 }
 
 export default class AdminProductService {
@@ -25,7 +39,11 @@ export default class AdminProductService {
   ) {
     const query: any = {
       include: {
-        productImages: true,
+        productImages: {
+          where: {
+            archived: false,
+          },
+        },
         productsWarehouses: true,
         productCategory: true,
       },
@@ -40,6 +58,7 @@ export default class AdminProductService {
             contains: category,
           },
         },
+        archived: false,
       },
     };
     if (sort) {
@@ -48,6 +67,24 @@ export default class AdminProductService {
       };
     }
     return this.prisma.products.findMany(query);
+  }
+
+  async getAdminProduct(id: number) {
+    return this.prisma.products.findUnique({
+      where: {
+        id,
+        archived: false,
+      },
+      include: {
+        productImages: {
+          where: {
+            archived: false,
+          },
+        },
+        productsWarehouses: true,
+        productCategory: true,
+      },
+    });
   }
 
   static async createProduct(input: CreateProductInput) {
@@ -80,19 +117,36 @@ export default class AdminProductService {
     return createdProduct;
   }
 
-  async updateProduct(productId: number, product: any) {
+  async updateProduct(input: UpdateProductInput) {
+    const { id, name, description, price, productCategoryId, productImages } =
+      input;
+    const updatedProduct = await prisma.products.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name,
+        description,
+        price,
+        productCategoryId,
+        productImages: {
+          create: productImages,
+        },
+      },
+      include: {
+        productImages: true,
+      },
+    });
+    return updatedProduct;
+  }
+
+  async deleteProduct(productId: number) {
     return this.prisma.products.update({
       where: {
         id: productId,
       },
-      data: product,
-    });
-  }
-
-  async deleteProduct(productId: number) {
-    return this.prisma.products.delete({
-      where: {
-        id: productId,
+      data: {
+        archived: true,
       },
     });
   }
@@ -101,6 +155,7 @@ export default class AdminProductService {
     return this.prisma.products.findFirst({
       where: {
         name: productName,
+        archived: false,
       },
     });
   }
@@ -108,6 +163,7 @@ export default class AdminProductService {
     return this.prisma.productCategories.findFirst({
       where: {
         name: productCatName,
+        archived: false,
       },
     });
   }
@@ -196,6 +252,20 @@ export default class AdminProductService {
     });
   }
   async getProductWarehouse() {
-    return prisma.warehouses.findMany();
+    return prisma.warehouses.findMany({
+      where: {
+        archived: false,
+      },
+    });
+  }
+  async deleteProductImages(id: number) {
+    return this.prisma.productImages.update({
+      where: {
+        id: id,
+      },
+      data: {
+        archived: true,
+      },
+    });
   }
 }

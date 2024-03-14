@@ -1,7 +1,9 @@
 'use client';
 import { useFormik } from 'formik';
 import { useState } from 'react';
+import { useAuth } from '@/lib/store/auth/auth.provider';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Loading } from '@/components/Loading';
 import * as Yup from 'yup';
 import axios from 'axios';
 import Link from 'next/link';
@@ -9,6 +11,11 @@ import Link from 'next/link';
 export default function ProductCategoriesForm() {
   const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const auth = useAuth();
+  const isAuthenticated = auth?.user?.isAuthenticated;
+  const role = auth?.user?.data?.role;
+  const isAuthorLoading = auth?.isLoading;
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -33,18 +40,32 @@ export default function ProductCategoriesForm() {
         if (response.status === 201) {
           setIsModalOpen(true);
           const data = response.data;
-          console.log('Product category created successfully:', data);
+          console.log('Product category updated successfully:', data);
         } else {
           console.error(
-            'Failed to create product category:',
+            'Failed to edit product category:',
             response.statusText,
           );
         }
-      } catch (error) {
-        console.error('Error creating product:', error);
+      } catch (error: any) {
+        console.error('Error editing product:', error);
+        if (error.response && error.response.status === 400) {
+          setError('Product category name is already taken');
+        } else {
+          setError('An error occurred while editing the product category');
+        }
       }
     },
   });
+
+  if (isAuthorLoading) return <Loading />;
+
+  if (!isAuthenticated || role !== 'SUPER_ADMIN')
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+        Unauthorized | 401
+      </div>
+    );
 
   return (
     <div className="w-full h-screen flex justify-center items-center bg-gradient-to-r from-violet-500 to-fuchsia-500 ">
@@ -74,6 +95,9 @@ export default function ProductCategoriesForm() {
           {formik.touched.name && formik.errors.name ? (
             <div className="text-red-500 text-sm">{formik.errors.name}</div>
           ) : null}
+          {error && (
+            <div className="text-red-500 text-sm mb-[10px]">{error}</div>
+          )}
         </div>
         <div className="mb-4">
           <label

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/store/auth/auth.provider';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { fetchData } from '@/utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,11 +24,15 @@ export default function ProductCategories({
   const [selectedId, setSelectedId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const auth = useAuth();
   const page = (searchParams.page || '1') as string;
   const pageSize = (searchParams.pageSize || '15') as string;
   const sort = (searchParams.sort || 'asc') as string;
   const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
   const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
+  const isAuthenticated = auth?.user?.isAuthenticated;
+  const role = auth?.user?.data?.role;
+  const isAuthorLoading = auth?.isLoading;
 
   const fetchProductCategories = useCallback(async () => {
     try {
@@ -58,11 +63,23 @@ export default function ProductCategories({
     }
   };
 
+  if (isAuthorLoading) return <Loading />;
+
+  if (!isAuthenticated || role === 'CUSTOMER')
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+        Unauthorized | 401
+      </div>
+    );
+
   return (
     <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
       <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products Categories</div>
-        <Link href={'/admin/product-categories/product-categories-form'}>
+        <Link
+          href={'/admin/product-categories/product-categories-form'}
+          className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'}`}
+        >
           <div className="bg-[var(--primaryColor)] w-[200px] lg:w-auto text-white px-[17px] py-[10px] rounded-md font-semibold border cursor-pointer hover:bg-transparent hover:text-[var(--primaryColor)] hover:border-[var(--primaryColor)] duration-200">
             + Add New Category
           </div>
@@ -103,7 +120,11 @@ export default function ProductCategories({
                     <div className=" hidden md:flex">
                       {procat.products?.length}
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div
+                      className={`${
+                        role === 'SUPER_ADMIN' ? '' : 'hidden'
+                      } flex items-center space-x-3`}
+                    >
                       <div
                         className="border border-white p-[7px] rounded-md hover:scale-125 duration-200"
                         onClick={(e) => {
