@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { addAddress, archieveAddress, getUserAddresses } from "@/controllers/user.controller";
+import { addAddress, archieveAddress, getUserAddresses, setAsPrimaryAddress } from "@/controllers/user.controller";
 
 const userRouter = Router();
 
@@ -17,6 +17,11 @@ userRouter.post('/address/add',
 userRouter.patch('/address/:id/archieve',
     requireJwtAuth,
     archieveAddress
+)
+
+userRouter.patch('/address/:id/set-primary',
+    requireJwtAuth,
+    setAsPrimaryAddress
 )
 
 export { userRouter };

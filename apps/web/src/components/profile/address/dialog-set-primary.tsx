@@ -4,22 +4,22 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useAddress } from "@/lib/store/address/address.provider"
 import { useState } from "react"
 
-export default function DeleteAddressDialog({ id }: { id: string | number }) {
+export default function SetAsPrimaryAddressDialog({ id }: { id: string | number }) {
     const address = useAddress()
-    const deleteAddress = () => address.deleteAddress(id)
+    const setAsPrimary = () => address.setAsPrimary(id)
     const [open, setOpen] = useState(false)
 
     return (
         <Dialog open={open} onOpenChange={setOpen} >
             <DialogTrigger>
-                <Button variant={'link'} className="text-xs p-0 text-red-500">Delete</Button>
+                <Button variant={'link'} className="text-xs p-0">Set As Primary Address</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Delete Address</DialogTitle>
+                    <DialogTitle>Primary Address</DialogTitle>
                 </DialogHeader>
                 <DialogDescription>
-                    Are you sure you want to delete this address?
+                    Are you sure you want to set it as primary address?
                 </DialogDescription>
                 <DialogFooter>
                     <div>
@@ -30,7 +30,7 @@ export default function DeleteAddressDialog({ id }: { id: string | number }) {
                             : null}
                     </div>
                     <Button variant={'outline'} onClick={() => setOpen(false)}>Cancel</Button>
-                    <Button disabled={address.isLoading} variant={'destructive'} onClick={deleteAddress}>Delete</Button>
+                    <Button disabled={address.isLoading} variant={'default'} onClick={setAsPrimary}>Set As Primary Address</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

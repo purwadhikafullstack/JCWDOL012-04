@@ -3,7 +3,7 @@
 import { UserCitiesModel } from "@/model/UserCitiesModel";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "../auth/auth.provider";
-import { addAddressAction, deleteAddressAction, fetchAddressAction, fetchCities, fetchProvinces } from "./adress.action";
+import { addAddressAction, deleteAddressAction, fetchAddressAction, fetchCities, fetchProvinces, setAsPrimaryAddressAction } from "./adress.action";
 import { ProvincesModel } from "@/model/ProvincesModel";
 import { CitiesModel } from "@/model/CitiesModel";
 
@@ -22,6 +22,7 @@ export type AddressContext = {
     getCities: (provinceId: number | string) => void;
     addAddress: (values: UserCitiesModel) => void;
     updateAddress: (values: UserCitiesModel) => void;
+    setAsPrimary: (id: number | string) => void;
     deleteAddress: (id: number | string) => void;
 }
 
@@ -40,6 +41,7 @@ const initialAddressContext = {
     getCities: (provinceId: number | string) => { },
     addAddress: (values: UserCitiesModel) => { },
     updateAddress: (values: UserCitiesModel) => { },
+    setAsPrimary: (id: number | string) => { },
     deleteAddress: (id: number | string) => { }
 }
 
@@ -79,6 +81,11 @@ export default function AddressProvider({ children }: { children: React.ReactNod
         setIsLoading(false);
     }
 
+    const setAsPrimary = async (id: number | string) => {
+        setIsLoading(true);
+        setAsPrimaryAddressAction(id, setAddress, setError);
+    }
+
     const getProvinces: AddressContext['getProvinces'] = async () => {
         setIsLoading(true);
         await fetchProvinces(setProvinces, setError);
@@ -92,7 +99,7 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     }
 
     return (
-        <AddressContext.Provider value={{ isLoading, userAddress, error, data: { provinces, cities }, addAddress, updateAddress, deleteAddress, getProvinces, getCities }}>
+        <AddressContext.Provider value={{ isLoading, userAddress, error, data: { provinces, cities }, addAddress, updateAddress, setAsPrimary, deleteAddress, getProvinces, getCities }}>
             {children}
         </AddressContext.Provider>
     )

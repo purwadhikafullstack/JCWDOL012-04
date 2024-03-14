@@ -88,5 +88,33 @@ export async function archieveAddress(req: Request, res: Response) {
         console.log('Error archieving user address', error);
         resInternalServerError(res, 'Error archieving user address', null);
     }
+}
 
+export async function setAsPrimaryAddress(req: Request, res: Response) {
+    const user = req.user as Users;
+    const { id } = req.params;
+    try {
+        const updatedAddress = await prisma.$transaction([
+            prisma.userCities.updateMany({
+                where: {
+                    userId: user.id
+                },
+                data: {
+                    isPrimaryAddress: false
+                }
+            }),
+            prisma.userCities.update({
+                where: {
+                    id: parseInt(id)
+                },
+                data: {
+                    isPrimaryAddress: true
+                }
+            })
+        ]);
+        resSuccess(res, 'Address set as primary successfully', updatedAddress, 1);
+    } catch (error) {
+        console.log('Error setting user address as primary', error);
+        resInternalServerError(res, 'Error setting user address as primary', null);
+    }
 }

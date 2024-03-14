@@ -52,7 +52,6 @@ export async function addAddressAction(
     setError: Dispatch<SetStateAction<AddressContext['error']>>
 ) {
     await user.post('/address/add', values)
-        .then((response) => setAddressState(prevState => [...prevState, response.data.data]))
         .then(() => clientSideRedirect('/profile?tab=address'))
         .catch((error) => handleError(error, setError))
 }
@@ -63,7 +62,16 @@ export async function deleteAddressAction(
     setError: Dispatch<SetStateAction<AddressContext['error']>>
 ) {
     await user.patch(`/address/${id}/archieve`)
-        .then((response) => setAddressState(prevState => prevState.filter(address => address.id !== response.data.data.id)))
+        .then(() => clientSideRedirect('/profile?tab=address'))
+        .catch((error) => handleError(error, setError))
+}
+
+export async function setAsPrimaryAddressAction(
+    id: number | string,
+    setAddressState: Dispatch<SetStateAction<AddressContext['userAddress']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>
+) {
+    await user.patch(`/address/${id}/set-primary`)
         .then(() => clientSideRedirect('/profile?tab=address'))
         .catch((error) => handleError(error, setError))
 }

@@ -10,6 +10,7 @@ import { AddAddress } from "./address/add"
 import Spinner from "../ui/spinner"
 import { APIProvider } from "@vis.gl/react-google-maps"
 import DeleteAddressDialog from "./address/dialog-delete"
+import SetAsPrimaryAddressDialog from "./address/dialog-set-primary"
 
 export default function TabAddress() {
     const auth = useAuth()
@@ -43,7 +44,7 @@ export default function TabAddress() {
                                         </CardHeader>
                                         <CardContent className="flex flex-wrap gap-3 my-[-15px]">
                                             <Button variant={'link'} className="text-xs p-0">Edit</Button>
-                                            <Button variant={'link'} className="text-xs p-0">Set As Primary</Button>
+                                            {address.isPrimaryAddress ? null : <SetAsPrimaryAddressDialog id={address.id!} />}
                                             <DeleteAddressDialog id={address.id!} />
                                         </CardContent>
                                     </Card>))}
