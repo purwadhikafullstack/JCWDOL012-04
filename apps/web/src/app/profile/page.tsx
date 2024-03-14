@@ -9,6 +9,7 @@ import TabAccount from "@/components/profile/tab-account"
 import TabAddress from "@/components/profile/tab-address"
 import AddressProvider from "@/lib/store/address/address.provider"
 import { useSearchParams } from "next/navigation"
+import Maps from "@/components/profile/address/maps"
 
 export default function ProfilePage() {
     const origin = useSearchParams().get('tab')
@@ -23,7 +24,11 @@ export default function ProfilePage() {
                 </TabsList>
                 <TabAccount />
                 <TabAddress />
+                <div className="h-[200px] w-full">
+                    <Maps />
+                </div>
             </Tabs>
+
         </AddressProvider>
     )
 }

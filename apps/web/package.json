@@ -22,6 +22,7 @@
     "@tailwindcss/forms": "^0.5.7",
     "@types/lodash": "^4.14.202",
     "@types/react-dropzone": "^5.1.0",
+    "@vis.gl/react-google-maps": "^0.7.1",
     "axios": "^1.6.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
