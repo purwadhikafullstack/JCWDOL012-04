@@ -1,28 +1,5 @@
-import {
-  Prisma,
-  Products,
-  ProductImages,
-  ProductsWarehouses,
-} from '@prisma/client';
+import { Prisma, ProductsWarehouses } from '@prisma/client';
 import { prisma } from './prisma.service';
-
-interface CreateProductInput {
-  name: string;
-  description: string;
-  price: number;
-  productCategoryId: number;
-  productImages: { path: string }[];
-  productsWarehouses: { warehouseId: number; stock: number }[];
-}
-
-interface UpdateProductInput {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  productCategoryId: number;
-  productImages: { path: string }[];
-}
 
 export default class AdminProductService {
   prisma;
@@ -87,15 +64,14 @@ export default class AdminProductService {
     });
   }
 
-  static async createProduct(input: CreateProductInput) {
-    const {
-      name,
-      description,
-      price,
-      productCategoryId,
-      productImages,
-      productsWarehouses,
-    } = input;
+  static async createProduct(
+    name: string,
+    description: string,
+    price: number,
+    productCategoryId: number,
+    productImages: { path: string }[],
+    productsWarehouses: ProductsWarehouses,
+  ) {
     const createdProduct = await prisma.products.create({
       data: {
         name,
@@ -117,9 +93,14 @@ export default class AdminProductService {
     return createdProduct;
   }
 
-  async updateProduct(input: UpdateProductInput) {
-    const { id, name, description, price, productCategoryId, productImages } =
-      input;
+  async updateProduct(
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    productCategoryId: number,
+    productImages: { path: string }[],
+  ) {
     const updatedProduct = await prisma.products.update({
       where: {
         id: id,
@@ -156,115 +137,6 @@ export default class AdminProductService {
       where: {
         name: productName,
         archived: false,
-      },
-    });
-  }
-  async findProductCategoryName(productCatName: string) {
-    return this.prisma.productCategories.findFirst({
-      where: {
-        name: productCatName,
-        archived: false,
-      },
-    });
-  }
-  async createProductCategory(name: string, description: string) {
-    return this.prisma.productCategories.create({
-      data: {
-        name,
-        description,
-      },
-    });
-  }
-  async getFullProductCategories(
-    parsedPageSize: number,
-    skip: number,
-    sort: string,
-  ) {
-    return this.prisma.productCategories.findMany({
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        products: {
-          select: {
-            id: true,
-          },
-          where: {
-            archived: false,
-          },
-        },
-      },
-      where: {
-        archived: false,
-      },
-      take: parsedPageSize,
-      skip,
-      orderBy: {
-        name: sort as 'asc' | 'desc',
-      },
-    });
-  }
-
-  async getTotalProductCategories() {
-    return this.prisma.productCategories.count({
-      where: {
-        archived: false,
-      },
-    });
-  }
-  async getProductCategories() {
-    return this.prisma.productCategories.findMany({
-      where: {
-        archived: false,
-      },
-    });
-  }
-  async getProductCategory(proCatId: number) {
-    return this.prisma.productCategories.findUnique({
-      where: {
-        id: proCatId,
-      },
-    });
-  }
-  async updateProductCategory(
-    productCatId: number,
-    name: string,
-    description: string,
-  ) {
-    return this.prisma.productCategories.update({
-      where: {
-        id: productCatId,
-      },
-      data: {
-        name,
-        description,
-      },
-    });
-  }
-  async deleteProductCategory(productCatId: number) {
-    return this.prisma.productCategories.update({
-      where: {
-        id: productCatId,
-      },
-      data: {
-        archived: true,
-      },
-    });
-  }
-  async getProductWarehouse() {
-    return prisma.warehouses.findMany({
-      where: {
-        archived: false,
-      },
-    });
-  }
-  async deleteProductImages(id: number) {
-    return this.prisma.productImages.update({
-      where: {
-        id: id,
-      },
-      data: {
-        archived: true,
       },
     });
   }

@@ -3,16 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFormik } from 'formik';
 import { useAuth } from '@/lib/store/auth/auth.provider';
-import { motion, AnimatePresence } from 'framer-motion';
 import { archiveData, fetchData, updateData } from '@/utils/api';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { WarehousesModel } from '@/model/WarehousesModel';
 import { ProductsModel } from '@/model/ProductsModel';
 import { Loading } from '@/components/Loading';
 import * as Yup from 'yup';
-import Link from 'next/link';
 import Image from 'next/image';
-import axios from 'axios';
+import { SuccessModal } from '@/components/admin/SuccessModal';
 
 export default function ProductDetails({
   params,
@@ -105,7 +103,6 @@ export default function ProductDetails({
           }
         });
 
-        console.log('req body', values);
         const response = await updateData(
           `admin/products/${params.productId}`,
           formData,
@@ -425,44 +422,12 @@ export default function ProductDetails({
             </button>
           </div>
         </div>
-        <AnimatePresence>
-          {isModalOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.7, y: 0, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed top-0 left-0 w-full h-full bg-black opacity-70 z-50"
-              ></motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: -100, x: -187 }}
-                animate={{ opacity: 1, y: -50, x: -187 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.2 }}
-                className="fixed flex flex-col items-center space-y-5 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md w-[370px] h-[170px] shadow-md z-50"
-              >
-                <div className="flex font-semibold justify-center items-center bg-[var(--primaryColor)] w-full text-white h-[45px] rounded-t-md">
-                  Success
-                </div>
-                <div className="text-lg font-semibold">
-                  Product Edited Successfully
-                </div>
-                <Link href={'/admin/products'}>
-                  <button
-                    className="bg-[var(--primaryColor)] text-white px-5 py-2 border border-[var(--primaryColor)] rounded-md hover:bg-white hover:text-[var(--primaryColor)] duration-200"
-                    onClick={() => {
-                      setIsModalOpen(false);
-                    }}
-                  >
-                    Close
-                  </button>
-                </Link>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        <SuccessModal
+          isModalOpen={isModalOpen}
+          item="Product Edited"
+          path="/admin/product-categories"
+          setIsModalOpen={setIsModalOpen}
+        />
       </form>
     </div>
   );

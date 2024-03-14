@@ -31,6 +31,8 @@ async function main() {
     .then((data) => data.rajaongkir.results)
     .catch((err) => console.error(err));
 
+  console.log(provincesRO);
+
   for (const item of provincesRO) {
     await prisma.provinces.create({
       data: {
@@ -46,6 +48,7 @@ async function main() {
       data: {
         id: parseInt(item.city_id),
         name: item.city_name,
+        type: item.type.toUpperCase(),
         provinceId: parseInt(item.province_id),
       },
     });
@@ -140,6 +143,7 @@ async function main() {
           latitude: 'latitude' + j,
           longitude: 'longitude' + j,
           isPrimaryAddress: isPrimaryAddressTemp,
+          label: 'Address label' + j,
         },
       });
       console.log(`Created address${j} for customer${i}`);

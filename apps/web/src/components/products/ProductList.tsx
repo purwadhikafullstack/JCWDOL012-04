@@ -2,33 +2,20 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { useEffect, useState } from 'react';
 import { formatToRupiah } from '@/utils/helper';
 import { fetchData } from '@/utils/api';
 import { Loading } from '@/components/Loading';
 import { SearchBar } from '@/components/searchBar/SearchBar';
 import { NotFound } from '@/components/NotFound';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  totalStock: number;
-  productImages: {
-    path: string;
-  }[];
-  productCategory: {
-    name: string;
-  };
-}
+import { ProductsModel } from '@/model/ProductsModel';
 
 export default function ProductList({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const [data, setData] = useState<Product[]>([]);
+  const [data, setData] = useState<ProductsModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
 
@@ -79,7 +66,7 @@ export default function ProductList({
       <SearchBar category={category} sort={sort} />
       <div
         id="products-container"
-        className="flex flex-wrap justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"
+        className="flex flex-wrap min-h-[700px] justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"
       >
         {data.map((product, index) => {
           return (

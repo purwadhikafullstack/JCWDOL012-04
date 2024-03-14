@@ -16,7 +16,6 @@ export function unverifiedUserGuard(req: Request, res: Response, next: NextFunct
 
 export async function setPassword(req: Request, res: Response, next: NextFunction) {
     try {
-
         const salt = await genSalt(10)
         const hashedPassword = await hash(req.body.password, salt)
         const { id } = req.user as Users
@@ -32,6 +31,6 @@ export async function setPassword(req: Request, res: Response, next: NextFunctio
         resSuccess(res, 'Password set successfully', user, 1)
     } catch (error) {
         console.log(error)
-        return resInternalServerError(res, 'An error occurred', null)
+        return resInternalServerError(res, 'Error setting password', null)
     }
 }

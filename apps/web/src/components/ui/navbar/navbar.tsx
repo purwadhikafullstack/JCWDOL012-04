@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const auth = useAuth()
   const isAuthPage = usePathname().includes('/auth')
-  console.log('isAuthPage', isAuthPage)
   let [links, setLinks] = useState<NavLinks | null | undefined>(undefined)
 
   useEffect(() => {

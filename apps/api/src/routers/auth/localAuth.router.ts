@@ -1,10 +1,10 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response } from "express";
 import requirelocalAuth from "@/middlewares/auth/requireLocalAuth";
 import { generateJWT, registerNewUser } from "@/services/auth/auth";
 import { Users } from "@prisma/client";
 import { resSuccess } from "@/services/responses";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { setPassword, unverifiedUserGuard } from "@/middlewares/auth/verification";
+import { setPassword } from "@/middlewares/auth/verification";
 
 const localAuthRouter = Router();
 
