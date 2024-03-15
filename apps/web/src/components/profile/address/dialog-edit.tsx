@@ -11,22 +11,26 @@ import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { useAddress } from "@/lib/store/address/address.provider"
 import Maps, { LatLng } from '@/components/profile/address/maps'
-import { AddressInitialValues, AddressValidationSchema } from "./fom-validation"
+import { AddressValidationSchema } from "./fom-validation"
+import { UserCitiesModel } from "@/model/UserCitiesModel"
 
-export function AddAddress() {
+export function EditAddress({ initialAddress }: { initialAddress: UserCitiesModel }) {
     const auth = useAuth()
     const address = useAddress()
-    const [RawLatLng, setRawLatLng] = useState<LatLng>({ lat: - 6.175211007317426, lng: 106.82715358395524 })
+    const [RawLatLng, setRawLatLng] = useState<LatLng>(initialAddress ? { lat: Number(initialAddress.latitude), lng: Number(initialAddress.longitude) } : { lat: - 6.175211007317426, lng: 106.82715358395524 })
     const { provinces, cities } = address.data
 
     const formik = useFormik({
-        initialValues: AddressInitialValues,
+        initialValues: {
+            ...initialAddress,
+            provinceId: initialAddress.city?.provinceId.toString()
+        },
         validationSchema: AddressValidationSchema,
-        onSubmit: async (values) => await address.addAddress(values)
+        onSubmit: async (values) => await address.updateAddress(initialAddress?.id!, values)
     })
 
     useEffect(() => {
-        if (provinces.length > 0) return
+        if (provinces.length) return
         if (provinces.length <= 0) address.getProvinces()
         if (cities.length <= 0) address.getCities()
     }, [])
@@ -34,7 +38,7 @@ export function AddAddress() {
     return (
         <Dialog>
             <DialogTrigger asChild >
-                <Button variant="default" disabled={auth?.isLoading} className="text-xs sm:text-sm">New Address</Button>
+                <Button variant="link" disabled={auth?.isLoading} className="text-xs p-0">Edit Address</Button>
             </DialogTrigger>
             <DialogContent className="max-w-[90vw] sm:max-w-[75vw] overflow-y-scroll max-h-[90vh]"
                 onInteractOutside={(e) => {
@@ -50,9 +54,9 @@ export function AddAddress() {
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle>Add Address</DialogTitle>
+                    <DialogTitle>Edit Address</DialogTitle>
                     <DialogDescription>
-                        Add your new address. Click Save when you're done.
+                        Make changes to your address, and then click Save Changes when you're done.
                     </DialogDescription>
                 </DialogHeader>
                 {!auth?.isLoading &&
@@ -65,7 +69,7 @@ export function AddAddress() {
                                 <Input
                                     name="label"
                                     type="text"
-                                    defaultValue={formik.values.label}
+                                    value={formik.values.label}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     placeholder="E.g. Home, Office, Apartment, etc."
@@ -101,7 +105,7 @@ export function AddAddress() {
                                 <Label htmlFor="cityId" >City</Label>
                                 <Select
                                     name="cityId"
-                                    value={formik.values.cityId}
+                                    value={String(formik.values.cityId)}
                                     onValueChange={(e) => formik.setFieldValue('cityId', e.toString())}
                                     disabled={!formik.values.provinceId}
                                 >
@@ -109,11 +113,13 @@ export function AddAddress() {
                                         <SelectValue placeholder={cities.length ? "Select a city or district" : "Select a province first"} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {cities
-                                            .filter((city) => city.provinceId === Number(formik.values.provinceId))
-                                            .map((city, index) =>
-                                                <SelectItem key={index} value={city.id.toString()} >{city.type === "KABUPATEN" ? `${city.name} (Kab.)` : city.name}</SelectItem>
-                                            )}
+                                        <SelectGroup>
+                                            {cities
+                                                .filter((city) => city.provinceId === Number(formik.values.provinceId))
+                                                .map((city, index) =>
+                                                    <SelectItem key={index} value={city.id.toString()} >{city.type === "KABUPATEN" ? `${city.name} (Kab.)` : city.name}</SelectItem>
+                                                )}
+                                        </SelectGroup >
                                     </SelectContent>
                                 </Select>
                                 {formik.errors.cityId && formik.touched.cityId ? (<div className="text-red-500 text-xs">{formik.errors.cityId}</div>) : null}
@@ -136,7 +142,7 @@ export function AddAddress() {
                             {formik.errors.latitude && formik.touched.latitude ? (<div className="text-red-500 text-xs">{formik.errors.latitude}</div>) : null}
                             <div className="text-xs text-gray-500">Search or drag the marker to pinpoint your address. Click Set Pinpoint when you're done.</div>
                             <div className="h-[256px] w-full">
-                                <Maps onMarkerUpdated={setRawLatLng} />
+                                <Maps onMarkerUpdated={setRawLatLng} initialCoordinates={{ lat: Number(initialAddress.latitude), lng: Number(initialAddress.longitude) }} />
                             </div>
                             <Button variant={'outline'} onClick={(e) => {
                                 setPinpoint()
@@ -166,7 +172,7 @@ export function AddAddress() {
 
                             <DialogFooter>
                                 {auth?.isLoading || address.isLoading && (<div className="mx-auto"><Spinner /></div>)}
-                                <Button type="submit" className="min-w-[160px]" disabled={auth?.isLoading || address.isLoading} >Save</Button>
+                                <Button type="submit" className="min-w-[160px]" disabled={auth?.isLoading || address.isLoading} >Save Changes</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

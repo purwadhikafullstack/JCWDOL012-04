@@ -11,10 +11,12 @@ import Spinner from "../ui/spinner"
 import { APIProvider } from "@vis.gl/react-google-maps"
 import DeleteAddressDialog from "./address/dialog-delete"
 import SetAsPrimaryAddressDialog from "./address/dialog-set-primary"
+import { EditAddress } from "./address/dialog-edit"
 
 export default function TabAddress() {
     const auth = useAuth()
     const address = useAddress()
+    const { userAddress } = useAddress()
 
     return (
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} >
@@ -32,7 +34,7 @@ export default function TabAddress() {
                     {auth?.isLoading || address.isLoading
                         ? <CardContent className="text-center"><Spinner /></CardContent>
                         : (<CardContent className="space-y-2">
-                            {address.userAddress.map((address, index) => (
+                            {userAddress.map((address, index) => (
                                 address.archieved ? null :
                                     <Card key={index + 98}>
                                         <CardHeader>
@@ -43,7 +45,7 @@ export default function TabAddress() {
                                             <CardDescription>{address.address}</CardDescription>
                                         </CardHeader>
                                         <CardContent className="flex flex-wrap gap-3 my-[-15px]">
-                                            <Button variant={'link'} className="text-xs p-0">Edit</Button>
+                                            <EditAddress initialAddress={address} />
                                             {address.isPrimaryAddress ? null : <SetAsPrimaryAddressDialog id={address.id!} />}
                                             <DeleteAddressDialog id={address.id!} />
                                         </CardContent>

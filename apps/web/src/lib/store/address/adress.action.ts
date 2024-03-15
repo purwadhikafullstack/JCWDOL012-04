@@ -28,11 +28,11 @@ export async function fetchAddressAction(
 }
 
 export async function fetchCities(
-    provinceId: string | number,
     setCities: Dispatch<SetStateAction<AddressContext['data']['cities']>>,
-    setError: Dispatch<SetStateAction<AddressContext['error']>>
+    setError: Dispatch<SetStateAction<AddressContext['error']>>,
+    provinceId?: string | number,
 ) {
-    await data.get(`/${provinceId}/cities`)
+    await data.get(provinceId ? `/${provinceId}/cities` : '/cities')
         .then((response) => setCities(response.data?.data))
         .catch((error) => handleError(error, setError))
 }
@@ -72,6 +72,17 @@ export async function setAsPrimaryAddressAction(
     setError: Dispatch<SetStateAction<AddressContext['error']>>
 ) {
     await user.patch(`/address/${id}/set-primary`)
+        .then(() => clientSideRedirect('/profile?tab=address'))
+        .catch((error) => handleError(error, setError))
+}
+
+export async function updateAddressAction(
+    id: number | string,
+    values: AddressContext['userAddress'][0],
+    setAddressState: Dispatch<SetStateAction<AddressContext['userAddress']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>
+) {
+    await user.patch(`/address/${id}/update`, values)
         .then(() => clientSideRedirect('/profile?tab=address'))
         .catch((error) => handleError(error, setError))
 }

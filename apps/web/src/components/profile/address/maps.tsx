@@ -9,13 +9,16 @@ export type LatLng = { lat: number, lng: number }
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 export default function Maps(
-    { onMarkerUpdated }: { onMarkerUpdated?: Dispatch<SetStateAction<LatLng>> }
+    {
+        onMarkerUpdated,
+        initialCoordinates
+    }: {
+        onMarkerUpdated?: Dispatch<SetStateAction<LatLng>>,
+        initialCoordinates?: LatLng
+    }
 ) {
-    const defaultPosition = { lat: - 6.175211007317426, lng: 106.82715358395524 }
-    const [position, setPosition] = useState<LatLng>({ lat: - 6.175211007317426, lng: 106.82715358395524 })
+    const [position, setPosition] = useState<LatLng>(initialCoordinates ? initialCoordinates : { lat: - 6.175211007317426, lng: 106.82715358395524 })
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
-    console.log(selectedPlace)
-    console.log(position)
 
     useEffect(() => {
         if (!selectedPlace) return;
@@ -30,8 +33,6 @@ export default function Maps(
 
     return (
         <APIProvider apiKey={API_KEY!} >
-            {/* <div className='h-[250px]'> */}
-
             <Map
                 defaultCenter={position}
                 center={position}
@@ -48,7 +49,6 @@ export default function Maps(
                     position={position}
                     draggable={true}
                     onDragEnd={(event) => {
-                        // console.log(event)
                         const lat = event.latLng?.lat().valueOf()
                         const lng = event.latLng?.lng().valueOf()
                         setPosition({ lat, lng } as LatLng)

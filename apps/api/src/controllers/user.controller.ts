@@ -14,7 +14,10 @@ export async function getUserAddresses(req: Request, res: Response) {
             orderBy: [
                 { isPrimaryAddress: 'desc' },
                 { label: 'asc' }
-            ]
+            ],
+            include: {
+                city: true
+            }
         });
         resSuccess(res, 'User addresses retrieved successfully', addresses, 1)
     } catch (error) {
@@ -117,4 +120,52 @@ export async function setAsPrimaryAddress(req: Request, res: Response) {
         console.log('Error setting user address as primary', error);
         resInternalServerError(res, 'Error setting user address as primary', null);
     }
+}
+
+export async function updateAddress(req: Request, res: Response) {
+    const user = req.user as Users;
+    const { isPrimaryAddress, cityId, address, latitude, longitude, label, archieved } = req.body;
+    const { id } = req.params;
+    try {
+        if (isPrimaryAddress) {
+            const updatedAddress = await prisma.$transaction([
+                prisma.userCities.updateMany({
+                    where: { userId: user.id },
+                    data: {
+                        isPrimaryAddress: false
+                    }
+                }),
+                prisma.userCities.update({
+                    where: { id: parseInt(id) },
+                    data: {
+                        address,
+                        latitude,
+                        longitude,
+                        label,
+                        archieved,
+                        isPrimaryAddress,
+                        cityId: parseInt(cityId)
+                    }
+                })
+            ]);
+            resSuccess(res, 'Address updated successfully', updatedAddress, 1);
+        } else {
+            const updatedAddress = await prisma.userCities.update({
+                where: { id: parseInt(id) },
+                data: {
+                    address,
+                    latitude,
+                    longitude,
+                    label,
+                    archieved,
+                    cityId: parseInt(cityId)
+                }
+            });
+            resSuccess(res, 'Address updated successfully', updatedAddress, 1);
+        }
+    } catch (error) {
+        console.log('Error updating user address', error);
+        resInternalServerError(res, 'Error updating user address', null);
+    }
+
 }
