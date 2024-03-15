@@ -3,7 +3,6 @@
 import { APIProvider, AdvancedMarker, Map, useMapsLibrary, MapControl, ControlPosition } from '@vis.gl/react-google-maps';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 
-
 export type LatLng = { lat: number, lng: number }
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY

@@ -136,7 +136,7 @@ function LoginBanner({ origin }: { origin: string | null }) {
     if (origin === '401') return (
         <Alert variant={'destructive'} >
             <PiSealWarning className="h-5 w-5 mr-2 " />
-            <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+            <AlertDescription>Your session is invalid or has expired. Please log in.</AlertDescription>
         </Alert>
     )
 

@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction, createContext, useContext, useEffect, useStat
 import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction } from "./auth.action";
 import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
-import { usePathname, useSearchParams } from "next/navigation";
+import { notFound, usePathname, useSearchParams } from "next/navigation";
 
 export type AuthContextType = {
     isLoading: boolean;
@@ -66,6 +66,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             validateChangeEmailToken(tokenQuery);
             return;
         }
+        if (path.includes('/profile') && !isLoading && !user.isAuthenticated) {
+            window.location.href = "/auth/login?origin=401"
+        }
+
     }, [path])
 
     const logOut = () => {
