@@ -199,14 +199,37 @@ export default function CreateProductForm() {
           touched={formik.touched.price}
           errors={formik.errors.price}
         />
-        <FormSelect
-          handleChange={formik.handleChange}
-          handleBlur={formik.handleBlur}
-          value={formik.values.productCategoryId}
-          productCategories={productCategories}
-          touched={formik.touched.productCategoryId}
-          errors={formik.errors.productCategoryId}
-        />
+        <div className="mb-4">
+          <label
+            htmlFor="productCategoryId"
+            className="block text-sm font-semibold text-gray-600 mb-1"
+          >
+            Product Category
+          </label>
+          <select
+            id="productCategoryId"
+            name="productCategoryId"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.productCategoryId}
+            className="w-full border px-3 py-2 rounded"
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            {productCategories.map((category: any) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          {formik.touched.productCategoryId &&
+          formik.errors.productCategoryId ? (
+            <div className="text-red-500 text-sm">
+              {formik.errors.productCategoryId}
+            </div>
+          ) : null}
+        </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-600 mb-1">
             Product Warehouses
@@ -224,6 +247,15 @@ export default function CreateProductForm() {
                 value={warehouse.stock}
                 className="w-full border px-3 py-2 rounded"
               />
+              {formik.errors.productsWarehouses &&
+                formik.errors.productsWarehouses[index] &&
+                //@ts-ignore
+                formik.errors.productsWarehouses[index].stock && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {/* @ts-ignore */}
+                    {formik.errors.productsWarehouses[index].stock}
+                  </p>
+                )}
             </div>
           ))}
         </div>
