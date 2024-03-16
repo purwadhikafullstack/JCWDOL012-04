@@ -79,7 +79,7 @@ export default function ProductList({
   return (
     <>
       <SearchBar category={category} sort={sort} />
-      <div className="flex flex-col justify-center items-center mx-auto pt-[95px] max-w-[1024px]"      >
+      <div className="flex flex-col justify-center items-center mx-auto pt-[20px] md:pt-[95px] max-w-[1024px]"      >
         <HeroCarousel />
         <LineWithText text=' ' />
       </div>
