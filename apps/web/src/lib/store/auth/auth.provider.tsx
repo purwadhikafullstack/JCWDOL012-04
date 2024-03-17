@@ -2,10 +2,10 @@
 
 import { UsersModel } from "@/model/UsersModel";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
-import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction } from "./auth.action";
+import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction, initChangeRequestAction, verifyResetPasswordRequest, resetNewPassword } from "./auth.action";
 import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
-import { notFound, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export type AuthContextType = {
     isLoading: boolean;
@@ -22,6 +22,11 @@ export type AuthContextType = {
     changeEmail: (values: { newEmail: string, password: string }) => void;
     updateEmail: (values: { password: string }, token: string) => void;
     updateProfilePicture: (values: { file: File }) => void;
+    resetPassword: {
+        initChangeRequest: (values: { email: string }) => void;
+        verifyRequest: (token: string) => void;
+        setNewPassword: (values: { newPassword: string }, token: string) => void;
+    }
 } | null;
 
 export type UserAuthType = {
@@ -49,6 +54,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [error, setError] = useState<UserAuthErrorType>({ status: null, message: null });
     const path = usePathname();
     const tokenQuery = useSearchParams().get('token')
+    const router = useRouter();
 
     useEffect(() => {
         if (!hasCookie) {
@@ -64,19 +70,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     useEffect(() => {
         if (tokenQuery && path.includes('/auth/verify/change-email')) {
             validateChangeEmailToken(tokenQuery);
-            return;
         }
         if (path.includes('/profile') && !isLoading && !user.isAuthenticated) {
-            window.location.href = "/auth/login?origin=401"
+            return router.push('/auth/login?origin=401')
         }
-
-    }, [path])
+        if (path.includes('/auth/reset-password') && !isLoading && user.isAuthenticated) {
+            return router.push('/')
+        }
+    }, [path, user])
 
     const logOut = () => {
         setIsLoading(true);
         setUser(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }));
         logOutAction();
-        window.location.href = "/auth/login";
+        router.push('/');
     }
 
     const logIn = (values: { email: string, password: string }) => {
@@ -129,6 +136,21 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         await updateProfilePictureAction(values, setUser, setError, setIsLoading);
     }
 
+    const resetPassword = {
+        initChangeRequest: async (values: { email: string }) => {
+            setIsLoading(true);
+            await initChangeRequestAction(values, setError, setIsLoading);
+        },
+        verifyRequest: async (token: string) => {
+            setIsLoading(true);
+            await verifyResetPasswordRequest(token, setUser, setError, setIsLoading)
+        },
+        setNewPassword: async (value: { newPassword: string }, token: string) => {
+            setIsLoading(true);
+            resetNewPassword(value, token, setUser, setError, setIsLoading);
+        },
+    }
+
     return (
         <AuthContext.Provider value={
             {
@@ -145,7 +167,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 changePassword,
                 changeEmail,
                 updateEmail,
-                updateProfilePicture
+                updateProfilePicture,
+                resetPassword
             }
         }>
             {children}

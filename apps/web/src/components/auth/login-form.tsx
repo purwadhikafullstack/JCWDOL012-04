@@ -105,11 +105,19 @@ export default function LoginForm() {
             </form>
             <LineWithText text="or" />
             <GoogleLoginButton />
-            <div className="mt-4">
-                Don't have an account?{' '}
-                <Link className="bold text-purple-800" href="/auth/register">
-                    Create one
-                </Link>
+            <div className="mt-4 text-sm">
+                <div>
+                    <span>{`Don't have an account? `}</span>
+                    <Link className="bold text-purple-800" href="/auth/register">
+                        Create one
+                    </Link>
+                </div>
+                <div>
+                    <span>{`Forgot password? `}</span>
+                    <Link className="bold text-purple-800" href="/auth/reset-password">
+                        Reset password
+                    </Link>
+                </div>
             </div>
         </div>
     );

@@ -96,6 +96,7 @@ model Users {
   updatedAt                  DateTime    @updatedAt
   archived                   Boolean     @default(false)
   googleId                   String?     @unique
+  isRequestingChangePassword Boolean     @default(false)
 
   userCities   UserCities[]
   transactions Transactions[]
