@@ -1,4 +1,4 @@
-import { prisma } from './prisma.service';
+import { prisma } from '../prisma.service';
 
 export default class ProductCategoryService {
   prisma;

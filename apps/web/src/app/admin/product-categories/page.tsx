@@ -30,7 +30,6 @@ export default function ProductCategories({
   const pageSize = (searchParams.pageSize || '15') as string;
   const sort = (searchParams.sort || 'asc') as string;
   const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
   const isAuthorLoading = auth?.isLoading;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ProductService from '@/services/product.service';
+import ProductService from '@/services/products/product.service';
 import { userProductsTotalStock } from '@/lib/productsHelper';
 import { Products } from '@prisma/client';
 

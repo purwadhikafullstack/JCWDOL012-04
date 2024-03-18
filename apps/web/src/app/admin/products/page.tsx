@@ -8,7 +8,6 @@ import { formatToRupiah } from '@/utils/helper';
 import { AdminSearchBar } from '@/components/admin/AdminSearchBar';
 import { Loading } from '@/components/Loading';
 import { NotFound } from '@/components/NotFound';
-import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ConfirmModal } from '@/components/admin/ConfirmModal';

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { sameProductCategory } from '@/lib/productsHelper';
-import ProductCategoryService from '@/services/product.category.service';
+import ProductCategoryService from '@/services/products/product.category.service';
 
 const productCategoryService = new ProductCategoryService();
 

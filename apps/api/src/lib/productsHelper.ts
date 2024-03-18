@@ -1,4 +1,4 @@
-import ProductService from '@/services/product.service';
+import ProductService from '@/services/products/product.service';
 import { Products } from '@prisma/client';
 import { Response } from 'express';
 

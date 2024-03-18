@@ -11,7 +11,6 @@ import { SuccessModal } from '@/components/admin/SuccessModal';
 import * as Yup from 'yup';
 import Image from 'next/image';
 import { FormInput } from '@/components/admin/product-form/FormInput';
-import { FormSelect } from '@/components/admin/product-form/FormSelect';
 
 export default function CreateProductForm() {
   const [warehouses, setWarehouses] = useState<WarehousesModel[]>([]);

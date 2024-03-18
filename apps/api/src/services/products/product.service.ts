@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from './prisma.service';
+import { prisma } from '../prisma.service';
 
 export default class ProductService {
   prisma;
@@ -27,6 +27,7 @@ export default class ProductService {
       where: {
         name: {
           contains: search,
+          mode: 'insensitive',
         },
         productCategory: {
           name: {
@@ -111,6 +112,7 @@ export default class ProductService {
       where: {
         name: {
           contains: search,
+          mode: 'insensitive',
         },
         archived: false,
       },

@@ -1,5 +1,5 @@
 import { Prisma, ProductsWarehouses } from '@prisma/client';
-import { prisma } from './prisma.service';
+import { prisma } from '../prisma.service';
 
 export default class AdminProductService {
   prisma;

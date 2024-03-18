@@ -7,8 +7,8 @@ import {
   mapProImages,
   sameProduct,
 } from '@/lib/productsHelper';
-import ProductService from '@/services/product.service';
-import AdminProductService from '@/services/product.admin.service';
+import ProductService from '@/services/products/product.service';
+import AdminProductService from '@/services/products/product.admin.service';
 
 const productService = new ProductService();
 const adminProductService = new AdminProductService();

@@ -1,6 +1,7 @@
-import { ProductController } from '@/controllers/product.controller';
-import { AdminProductController } from '@/controllers/product.admin.controller';
-import { ProductCategoryController } from '@/controllers/product.category.controller';
+import { ProductController } from '@/controllers/products/product.controller';
+import { AdminProductController } from '@/controllers/products/product.admin.controller';
+import { ProductCategoryController } from '@/controllers/products/product.category.controller';
+import { ProductStockController } from '@/controllers/products/product.stock.controller';
 import { Router } from 'express';
 import { requireJwtAuth } from '@/middlewares/auth/requireJwtAuth';
 
@@ -9,11 +10,13 @@ export class ProductRouter {
   private ProductController: ProductController;
   private AdminProductController: AdminProductController;
   private ProductCategoryController: ProductCategoryController;
+  private ProductStockController: ProductStockController;
 
   constructor() {
     this.ProductController = new ProductController();
     this.AdminProductController = new AdminProductController();
     this.ProductCategoryController = new ProductCategoryController();
+    this.ProductStockController = new ProductStockController();
     this.router = Router();
     this.initializeRoutes();
   }
@@ -23,6 +26,16 @@ export class ProductRouter {
       '/admin/products',
       requireJwtAuth,
       this.AdminProductController.createProduct,
+    );
+    this.router.post(
+      '/admin/product-warehouses/:id',
+      requireJwtAuth,
+      this.ProductStockController.updateStock,
+    );
+    this.router.post(
+      '/admin/product-categories',
+      requireJwtAuth,
+      this.ProductCategoryController.createProductCategory,
     );
     this.router.get('/products', this.ProductController.getProductsUser);
     this.router.get(
@@ -50,11 +63,6 @@ export class ProductRouter {
       requireJwtAuth,
       this.AdminProductController.deleteProduct,
     );
-    this.router.post(
-      '/admin/product-categories',
-      requireJwtAuth,
-      this.ProductCategoryController.createProductCategory,
-    );
     this.router.get(
       '/admin/product-categories',
       requireJwtAuth,
@@ -81,7 +89,6 @@ export class ProductRouter {
     );
     this.router.get(
       '/admin/product-warehouses',
-      requireJwtAuth,
       this.ProductCategoryController.getProductWarehouse,
     );
     this.router.put(
