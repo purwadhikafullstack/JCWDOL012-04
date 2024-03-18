@@ -42,7 +42,7 @@ export const AdminSearchBar = ({
   return (
     <div
       id="search-bar"
-      className="bg-white flex items-center justify-between px-[10px] md:px-[20px] sticky top-[64px] shadow-md z-10 w-full lg:w-[740px] xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
+      className="bg-white flex items-center justify-between px-[10px] md:px-[20px] sticky top-[73px] shadow-md z-10 w-full lg:w-[740px] xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
     >
       <div id="search-left" className="flex items-center flex-1">
         <input
@@ -88,7 +88,7 @@ export const AdminSearchBar = ({
           id="product-categories-container"
           className={`${
             isOpenCat ? '' : 'hidden'
-          }  absolute flex flex-col bg-white top-[55px] shadow-md border right-0 md:right-[200px] lg:right-[205px] xl:right-[555px] rounded-md`}
+          }  absolute flex flex-col bg-white top-[55px] shadow-md border right-0 md:right-[200px] lg:right-[205px] xl:right-[555px] rounded-md max-h-[300px] overflow-y-auto overflow-x-hidden`}
         >
           {productCategories.map((procat, index) => {
             return (

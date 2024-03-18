@@ -1,14 +1,8 @@
 import ProductService from '@/services/product.service';
+import { Products } from '@prisma/client';
+import { Response } from 'express';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  productCategoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  archived: boolean;
+interface Product extends Products {
   productsWarehouses: productsWarehouse[];
 }
 
@@ -42,4 +36,27 @@ export async function userProductsTotalStock(
       };
     }),
   );
+}
+
+export function parseProWare(productWarehouses: any) {
+  return productWarehouses ? JSON.parse(productWarehouses) : [];
+}
+
+export function mapProImages(productImages: any) {
+  return Array.isArray(productImages)
+    ? productImages.map((file: Express.Multer.File) => ({
+        path: `http://localhost:8000/public/images/products/${file.filename}`,
+      }))
+    : [];
+}
+
+export function sameProduct(res: Response) {
+  return res
+    .status(400)
+    .json({ error: 'Product with the same name already exists.' });
+}
+export function sameProductCategory(res: Response) {
+  return res
+    .status(400)
+    .json({ error: 'Product Category name already exist!' });
 }

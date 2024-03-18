@@ -1,29 +1,17 @@
 import { Request, Response } from 'express';
 import ProductService from '@/services/product.service';
-import {
-  productsTotalStock,
-  userProductsTotalStock,
-} from '@/lib/productsTotalStock';
+import { userProductsTotalStock } from '@/lib/productsHelper';
+import { Products } from '@prisma/client';
 
 const productService = new ProductService();
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  productCategoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  archived: boolean;
-  productsWarehouses: productsWarehouse[];
-}
-
-interface productsWarehouse {
-  stock: number;
-  warehouse: {
-    id: number;
-  };
+interface Product extends Products {
+  productsWarehouses: {
+    stock: number;
+    warehouse: {
+      id: number;
+    };
+  }[];
 }
 
 export class ProductController {
