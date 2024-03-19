@@ -2,11 +2,8 @@
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { useAuth } from '@/lib/store/auth/auth.provider';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Loading } from '@/components/Loading';
 import * as Yup from 'yup';
-import axios from 'axios';
-import Link from 'next/link';
 import { createData } from '@/utils/api';
 import { SuccessModal } from '@/components/admin/SuccessModal';
 
@@ -134,6 +131,7 @@ export default function ProductCategoriesForm() {
         item="Product Category Created"
         path="/admin/product-categories"
         setIsModalOpen={setIsModalOpen}
+        preventDefault={false}
       />
     </div>
   );

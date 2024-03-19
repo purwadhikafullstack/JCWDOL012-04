@@ -2,12 +2,9 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/store/auth/auth.provider';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { fetchData, updateData } from '@/utils/api';
-import Link from 'next/link';
 import { Loading } from '@/components/Loading';
 import { SuccessModal } from '@/components/admin/SuccessModal';
 
@@ -152,6 +149,7 @@ export default function ProductCategoriesUpdateForm({
         item="Product Category Edited"
         path="/admin/product-categories"
         setIsModalOpen={setIsModalOpen}
+        preventDefault={false}
       />
     </div>
   );

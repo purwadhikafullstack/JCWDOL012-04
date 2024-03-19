@@ -90,7 +90,7 @@ export const SearchBar = ({
           onBlur={() => {
             setTimeout(() => {
               setIsFocus(false);
-            }, 100);
+            }, 200);
           }}
         />
         <Link
@@ -119,16 +119,14 @@ export const SearchBar = ({
         </Link>
         <div
           id="search-suggestion"
-          className={`${isFocus ? '' : 'hidden'
-            } absolute flex flex-col bg-white w-[220px] md:w-[350px] md:mr-[35px] top-[60px] shadow-md rounded-md border`}
+          className={`${
+            isFocus ? '' : 'hidden'
+          } absolute flex flex-col bg-white w-[220px] md:w-[350px] md:mr-[35px] top-[60px] shadow-md rounded-md border`}
         >
           {productNames.map((product, index) => {
             return (
               <Link
                 key={index}
-                onClick={() => {
-                  setIsFocus(false);
-                }}
                 href={`?page=1&pagesize=15&search=${product.name}`}
               >
                 <div className="px-[20px] py-[7px] hover:bg-slate-200 cursor-pointer">

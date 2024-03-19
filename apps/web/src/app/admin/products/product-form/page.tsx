@@ -318,6 +318,7 @@ export default function CreateProductForm() {
           item="Product Created"
           path="/admin/products"
           setIsModalOpen={setIsModalOpen}
+          preventDefault={false}
         />
       </form>
     </div>

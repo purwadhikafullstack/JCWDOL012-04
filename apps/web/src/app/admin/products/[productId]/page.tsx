@@ -191,7 +191,12 @@ export default function ProductDetails({
     }
   };
   if (isAuthorLoading) return <Loading />;
-
+  if (!isAuthenticated || role === 'CUSTOMER')
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+        Unauthorized | 401
+      </div>
+    );
   if (
     product === null ||
     warehouses.length === 0 ||
@@ -199,13 +204,6 @@ export default function ProductDetails({
   ) {
     return <Loading />;
   }
-
-  if (!isAuthenticated || role === 'CUSTOMER')
-    return (
-      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
-        Unauthorized | 401
-      </div>
-    );
 
   return (
     <div className="w-full md:px-[20px] max-w-[1440px] mx-auto">
@@ -425,8 +423,9 @@ export default function ProductDetails({
         <SuccessModal
           isModalOpen={isModalOpen}
           item="Product Edited"
-          path="/admin/product-categories"
+          path="/admin/products"
           setIsModalOpen={setIsModalOpen}
+          preventDefault={false}
         />
       </form>
     </div>

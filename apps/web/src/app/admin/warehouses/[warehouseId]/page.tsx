@@ -184,10 +184,11 @@ export default function WarehouseDetail({
         })}
       </div>
       <SuccessModal
-        path={`/admin/warehouses/1?page=${page}&pageSize=15`}
+        path={`/admin/warehouses/${params.warehouseId}?page=${page}&pageSize=15`}
         item="Product Stock Updated"
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+        preventDefault={true}
       />
       <Pagination page={page} hasNextPage={hasNextPage} />
     </div>
