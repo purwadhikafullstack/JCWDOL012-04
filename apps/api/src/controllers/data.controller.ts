@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import distance from "@/lib/distance";
+import { resInternalServerError, resSuccess, resUnprocessable } from "@/services/responses";
 
 const prisma = new PrismaClient();
 
@@ -25,3 +27,28 @@ export async function getCities(req: Request, res: Response) {
     }
 }
 
+export async function getClosestWarehouse(req: Request, res: Response) {
+    console.log(req.query);
+    const latitude = req.query.lat ? String(req.query.lat) : null;
+    const longitude = req.query.lng ? String(req.query.lng) : null;
+    console.log(latitude, longitude);
+    console.log('parseFloat', parseFloat("latitude"))
+    if (!latitude || !longitude) return resUnprocessable(res, 'Please provide shipping address', null);
+
+    const warehouses = await prisma.warehouses.findMany({
+        where: {
+            archived: false
+        }
+    });
+    if (!warehouses) return resInternalServerError(res, 'No warehouse is available', null);
+
+    const closestWarehouse = warehouses.reduce((prev, current) => {
+        const prevDistance = distance(latitude, longitude, prev.latitude, prev.longitude);
+        const currentDistance = distance(latitude, longitude, current.latitude, current.longitude);
+        return prevDistance < currentDistance ? prev : current;
+    });
+
+    if (closestWarehouse) return resSuccess(res, 'Closest warehouse found', closestWarehouse);
+
+    return resInternalServerError(res, 'Error getting closest warehouse', null);
+}

@@ -4,9 +4,9 @@ type NavLinks = {
     href: string,
 }[]
 
-type RajaOngkirCostResults = {
-    code: string,
-    name: string,
+interface RajaOngkirCostResults {
+    code: string;
+    name: string;
     costs: {
         service: string,
         description: string,
@@ -15,5 +15,12 @@ type RajaOngkirCostResults = {
             etd: string,
             note: string
         }[]
-    }[]
-}[]
+    }[];
+}
+
+type RajaOngkirRequestCost = {
+    origin: string,
+    destination: string,
+    weight: number,
+    courier: string
+}
