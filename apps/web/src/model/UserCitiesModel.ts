@@ -1,3 +1,5 @@
+import { CitiesModel } from "./CitiesModel";
+
 export interface UserCitiesModel {
     id?: number;
     userId?: number;
@@ -10,4 +12,5 @@ export interface UserCitiesModel {
     updatedAt?: Date;
     archieved?: boolean;
     label: string;
+    city?: CitiesModel
 }

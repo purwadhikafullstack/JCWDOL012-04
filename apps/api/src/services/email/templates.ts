@@ -38,3 +38,23 @@ export const sendChangeEmailInstructions = async (email: string, token: string) 
             return info
         }
     })
+
+export const sendResetPasswordInstructions = async (email: string, token: string) => transporter.sendMail(
+    {
+        from: 'Palugada Store - Account Services',
+        to: email,
+        subject: 'Reset your password',
+        text: `You requested to reset the password of your Palugada Store account. Please click the link below within 1 hour to reset your password.
+        \n${CLIENT_URL}/auth/verify/reset-password?token=${token}`,
+    },
+    (err, info) => {
+        if (err) {
+            console.log(err)
+            return err
+        } else {
+            console.log(info)
+            return info
+        }
+    }
+)
+

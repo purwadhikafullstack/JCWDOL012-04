@@ -11,7 +11,7 @@ export default function Logout() {
             return
         }
         else if (!auth?.user?.isAuthenticated) {
-            window.location.href = "/auth/login"
+            window.location.href = "/"
         } else if (auth?.user?.isAuthenticated) {
             auth.logOut()
         } else {

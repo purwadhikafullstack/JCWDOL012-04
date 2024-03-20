@@ -4,7 +4,7 @@ import { generateJWT, registerNewUser } from "@/services/auth/auth";
 import { Users } from "@prisma/client";
 import { resSuccess } from "@/services/responses";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { setPassword } from "@/middlewares/auth/verification";
+import { resetPassword, setPassword, verifyChangePasswordRequest } from "@/controllers/auth.controller";
 
 const localAuthRouter = Router();
 
@@ -20,17 +20,33 @@ localAuthRouter.post('/login',
 
 localAuthRouter.post('/register', registerNewUser)
 
-localAuthRouter.get('/logout', (req: Request, res: Response) => {
-    req.logout(() => res.send('Logged out'))
-})
+localAuthRouter.get('/logout',
+    (req: Request, res: Response) => {
+        req.logout(() => res.send('Logged out'))
+    })
 
-localAuthRouter.get('/verify-token', requireJwtAuth,
+localAuthRouter.get('/verify-token',
+    requireJwtAuth,
     (req: Request, res: Response) => {
         resSuccess(res, 'Authenticated', { user: req.user! }, 1)
     }
 )
 
 localAuthRouter.post('/set-password',
+    requireJwtAuth,
+    setPassword
+)
+
+localAuthRouter.post('/reset-password',
+    resetPassword
+)
+
+localAuthRouter.get('/reset-password/verify-request',
+    requireJwtAuth,
+    verifyChangePasswordRequest
+)
+
+localAuthRouter.patch('/reset-password/set-new-password',
     requireJwtAuth,
     setPassword)
 

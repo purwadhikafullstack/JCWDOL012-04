@@ -27,12 +27,35 @@ export async function fetchAddressAction(
         .catch((error) => handleError(error, setError))
 }
 
-export async function fetchCities(
-    provinceId: string | number,
-    setCities: Dispatch<SetStateAction<AddressContext['data']['cities']>>,
-    setError: Dispatch<SetStateAction<AddressContext['error']>>
+export async function getChoosenAddress(
+    primaryAddress: AddressContext['userAddress'][0],
+    setChoosenAddress: Dispatch<SetStateAction<AddressContext['choosenAddress']>>
 ) {
-    await data.get(`/${provinceId}/cities`)
+    if (localStorage.getItem('palugada-cust-choosen-address')) {
+        setChoosenAddress(JSON.parse(localStorage.getItem('palugada-cust-choosen-address')!))
+    } else if (primaryAddress) {
+        localStorage.setItem('palugada-cust-choosen-address', JSON.stringify({ id: primaryAddress.id }))
+        setChoosenAddress(primaryAddress)
+    } else {
+        setChoosenAddress(null)
+    }
+}
+
+export async function updateChoosenAddressAction(
+    address: AddressContext['userAddress'][0] | null,
+    setChoosenAddress: Dispatch<SetStateAction<AddressContext['choosenAddress']>>
+) {
+    localStorage.setItem('palugada-cust-choosen-address', JSON.stringify({ id: address?.id }))
+    setChoosenAddress(address)
+}
+
+
+export async function fetchCities(
+    setCities: Dispatch<SetStateAction<AddressContext['data']['cities']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>,
+    provinceId?: string | number,
+) {
+    await data.get(provinceId ? `/${provinceId}/cities` : '/cities')
         .then((response) => setCities(response.data?.data))
         .catch((error) => handleError(error, setError))
 }
@@ -52,7 +75,37 @@ export async function addAddressAction(
     setError: Dispatch<SetStateAction<AddressContext['error']>>
 ) {
     await user.post('/address/add', values)
-        .then((response) => setAddressState(prevState => [...prevState, response.data.data]))
+        .then(() => clientSideRedirect('/profile?tab=address'))
+        .catch((error) => handleError(error, setError))
+}
+
+export async function deleteAddressAction(
+    id: number | string,
+    setAddressState: Dispatch<SetStateAction<AddressContext['userAddress']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>
+) {
+    await user.patch(`/address/${id}/archieve`)
+        .then(() => clientSideRedirect('/profile?tab=address'))
+        .catch((error) => handleError(error, setError))
+}
+
+export async function setAsPrimaryAddressAction(
+    id: number | string,
+    setAddressState: Dispatch<SetStateAction<AddressContext['userAddress']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>
+) {
+    await user.patch(`/address/${id}/set-primary`)
+        .then(() => clientSideRedirect('/profile?tab=address'))
+        .catch((error) => handleError(error, setError))
+}
+
+export async function updateAddressAction(
+    id: number | string,
+    values: AddressContext['userAddress'][0],
+    setAddressState: Dispatch<SetStateAction<AddressContext['userAddress']>>,
+    setError: Dispatch<SetStateAction<AddressContext['error']>>
+) {
+    await user.patch(`/address/${id}/update`, values)
         .then(() => clientSideRedirect('/profile?tab=address'))
         .catch((error) => handleError(error, setError))
 }

@@ -9,6 +9,11 @@ dataRouter.get('/provinces',
     getProvinces
 )
 
+dataRouter.get('/cities',
+    requireJwtAuth,
+    getCities
+)
+
 dataRouter.get('/:provinceId/cities',
     requireJwtAuth,
     getCities
