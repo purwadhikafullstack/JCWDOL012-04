@@ -1,5 +1,5 @@
 import { prisma } from "./prisma.service";
-import { UserCities } from "@prisma/client";
+import { UserCities, Users } from "@prisma/client";
 
 export default class UserCitiesTransactionService {
 
@@ -10,6 +10,18 @@ export default class UserCitiesTransactionService {
             }
         });
         return user ?? [];
+    }
+
+    async getUsersByUserId(userId: number): Promise<Users> {
+        const user:Users = await prisma.users.findUnique({
+            where: {
+                id: userId
+            },
+            include: {
+                userCities: true
+            }
+        }) as Users;
+        return user;
     }
 
     async getById(id: number): Promise<UserCities | null> {

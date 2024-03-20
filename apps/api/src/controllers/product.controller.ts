@@ -1,27 +1,11 @@
 import { Request, Response } from 'express';
 import ProductService from '@/services/product.service';
 import { productsTotalStock } from '@/lib/productsTotalStock';
+import { Products, ProductsWarehouses } from '@prisma/client';
 
 const productService = new ProductService();
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  productCategoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  archived: boolean;
-  productsWarehouses: productsWarehouse[];
-}
-
-interface productsWarehouse {
-  stock: number;
-  warehouse: {
-    id: number;
-  };
-}
+type productWithWarehouses = Products & { productsWarehouses: ProductsWarehouses[] };
 
 export class ProductController {
   //products
@@ -37,7 +21,7 @@ export class ProductController {
         search as string,
         category as string,
         sort as string,
-      )) as Product[];
+      )) as productWithWarehouses[];
       const totalProducts = await productService.getTotalProduct(
         search as string,
         category as string,

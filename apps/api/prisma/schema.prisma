@@ -40,21 +40,21 @@ model Cities {
 }
 
 model UserCities {
-  id                 Int         @id @default(autoincrement())
+  id                 Int     @id @default(autoincrement())
   userId             Int
-  user               Users       @relation(fields: [userId], references: [id])
-  city               Cities      @relation(fields: [cityId], references: [id])
+  user               Users   @relation(fields: [userId], references: [id])
+  city               Cities  @relation(fields: [cityId], references: [id])
   cityId             Int
   address            String
   latitude           String
   longitude          String
-  isPrimaryAddress   Boolean     @default(false)
+  isPrimaryAddress   Boolean @default(false)
   closestWarehouseId Int?
-  
-  warehouse          Warehouses? @relation(fields: [closestWarehouseId], references: [id])
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
-  archived           Boolean     @default(false)
+
+  warehouse Warehouses? @relation(fields: [closestWarehouseId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  archived  Boolean     @default(false)
 }
 
 model Warehouses {
@@ -136,6 +136,7 @@ model Products {
   name                 String
   description          String
   price                Float
+  weight               Int
   productCategoryId    Int
   productCategory      ProductCategories      @relation(fields: [productCategoryId], references: [id])
   createdAt            DateTime               @default(now())
@@ -179,6 +180,7 @@ enum orderStatus {
 
 model Transactions {
   id                Int                    @id @default(autoincrement())
+  transactionUid    String                 @unique
   userId            Int
   user              Users                  @relation(fields: [userId], references: [id])
   paymentType       paymentType
@@ -218,6 +220,7 @@ model TransactionsProducts {
 
 enum mutationType {
   TRANSACTION
+  TRANSACTION_REVERSAL
   MANUAL_ADMIN
   AUTOMATED
 }

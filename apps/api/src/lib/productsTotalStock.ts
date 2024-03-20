@@ -1,26 +1,9 @@
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  productCategoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  archived: boolean;
-  productsWarehouses: productsWarehouse[];
-}
+import { Products, ProductsWarehouses } from "@prisma/client";
 
-interface productsWarehouse {
-  stock: number;
-  warehouse: {
-    id: number;
-  };
-}
-
-export function productsTotalStock(products: Product[]) {
-  return products.map((product) => {
+export function productsTotalStock(products: (Products & { productsWarehouses: ProductsWarehouses[] })[]) {
+  return products.map((product: Products & { productsWarehouses: ProductsWarehouses[] }) => {
     const totalStock = product.productsWarehouses.reduce(
-      (total: number, warehouse: productsWarehouse) => total + warehouse.stock,
+      (total: number, warehouse: ProductsWarehouses) => total + warehouse.stock,
       0,
     );
     return { ...product, totalStock };

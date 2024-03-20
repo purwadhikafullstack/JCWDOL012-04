@@ -6,7 +6,8 @@ const transactionRouter = Router();
 const transactionController = new TransactionController();
 
 transactionRouter.get('/address', (req: Request, res: Response): void => {
-    transactionController.getUserCitiesByUserId(req, res);
+    transactionController.getUsersByUserId(req, res);
 });
+
 
 export default transactionRouter;

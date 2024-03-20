@@ -11,7 +11,7 @@ export const sendVerificationEmail = async (email: string, token: string) => tra
         text: `Thanks for signing up! Please click the link below to verify your email.
         \n\n ${CLIENT_URL}/auth/verify?token=${token}`,
     },
-    (err, info) => {
+    (err:any, info:any) => {
         if (err) {
             console.log(err)
             return err

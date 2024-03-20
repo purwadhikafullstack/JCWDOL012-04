@@ -2,7 +2,7 @@ import { prisma } from "./prisma.service";
 import { TransactionsProducts } from "@prisma/client";
 
 export default class TransactionProductService {
-    async create(transactionProduct: TransactionsProducts): Promise<TransactionsProducts> {
+    async create(transactionProduct:any ): Promise<TransactionsProducts> {
         return await prisma.transactionsProducts.create({
             data: transactionProduct
         });

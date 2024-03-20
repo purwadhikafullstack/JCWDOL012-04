@@ -1,5 +1,6 @@
 import axios from "axios";
 import { UserCitiesModel } from "@/model/UserCitiesModel";
+import { UsersModel } from "@/model/UsersModel";
 import { ShoppingCartModel } from "@/model/ShoppingCartModel";
 import { TransactionsModel } from "@/model/TransactionsModel";
 import { MutationsModel } from "@/model/MutationsModel";
@@ -13,9 +14,9 @@ export default class TransactionApi{
         this.baseUrl = process.env.NEXT_PUBLIC_BASE_API_URL_3;
     }
 
-    async getAddress(): Promise<{status: number, data:UserCitiesModel[]}>{ 
+    async getUserCities(): Promise<{status: number, data:UsersModel}>{ 
         "use server"
-        return await api.get<UserCitiesModel[]>('/transaction/address', {
+        return await api.get<UsersModel>('/transaction/address', {
             params: {
                 _: new Date().getTime(),
             }
@@ -30,4 +31,5 @@ export default class TransactionApi{
             return error.status;
         });
     }
+`   1`
 }

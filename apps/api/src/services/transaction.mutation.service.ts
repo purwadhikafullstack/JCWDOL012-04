@@ -1,11 +1,30 @@
 import { prisma } from "./prisma.service";
 import { Mutations, mutationType } from "@prisma/client";
+import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
 
 export default class MutationOrderService {
     async create(mutationOrder: Mutations): Promise<Mutations> {
         return await prisma.mutations.create({
             data: mutationOrder
         });
+    }
+
+    async createShipment(mutationOrder: MutationCreateModel[]): Promise<boolean> {
+        try {
+            await prisma.$transaction(async (prisma) => {
+                for (const mutation of mutationOrder) {
+                    await prisma.mutations.create({
+                        data: mutation
+                    });
+                }
+            });
+            return true;
+        } catch (error) {
+            console.error("Create Shipment failed: ", error);
+            return false;
+        }
+
+     
     }
 
     async getByProductId(productId: number): Promise<Mutations[]> {

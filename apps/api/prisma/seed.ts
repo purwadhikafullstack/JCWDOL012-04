@@ -45,11 +45,7 @@ async function main() {
     await prisma.cities.create({
       data: {
         id: parseInt(item.city_id),
-<<<<<<< HEAD
         name: item.type+" "+item.city_name,
-=======
-        name: item.city_name,
->>>>>>> development
         provinceId: parseInt(item.province_id)
       }
     });
@@ -250,11 +246,13 @@ async function main() {
   for (let i = 1; i <= 30; i++) {
     let categoryTemp = Math.floor(Math.random() * 5) + 1;
     let priceTemp = Math.floor(Math.random() * 20000000) + 1000;
+    let weightTemp = Math.floor(Math.random() * 2500) + 500;
     await prisma.products.create({
       data: {
         name: 'product' + i,
         description: 'description' + i,
         price: priceTemp,
+        weight: weightTemp,
         productCategoryId: categoryTemp,
       }
     });
@@ -327,8 +325,10 @@ async function main() {
     let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
     let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
     let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENT_GATEWAY' : 'TRANSFER';
+    let transactionUid = `ORDER-${i}-${Date.now()}`
     await prisma.transactions.create({
       data: {
+        transactionUid: transactionUid,
         userId: userIdTemp,
         paymentType: paymentTypeTemp as Transactions['paymentType'],
         orderStatus: orderStatusTemp,
@@ -366,11 +366,6 @@ async function main() {
     'MANUAL_ADMIN',
     'AUTOMATED'
   ]
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> development
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;
