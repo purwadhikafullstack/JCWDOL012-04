@@ -15,7 +15,11 @@ export default class ProductService {
   ) {
     const query: any = {
       include: {
-        productImages: true,
+        productImages: {
+          where: {
+            archived: false,
+          },
+        },
         productCategory: true,
       },
       take: parsedPageSize,
@@ -29,6 +33,7 @@ export default class ProductService {
             contains: category,
           },
         },
+        archived: false,
       },
     };
     if (sort) {
@@ -61,11 +66,16 @@ export default class ProductService {
             contains: category,
           },
         },
+        archived: false,
       },
     });
   }
   async getProductCategories() {
-    return this.prisma.productCategories.findMany();
+    return this.prisma.productCategories.findMany({
+      where: {
+        archived: false,
+      },
+    });
   }
   async getProduct(id: number) {
     return this.prisma.products.findUnique({
@@ -73,7 +83,11 @@ export default class ProductService {
         id: id,
       },
       include: {
-        productImages: true,
+        productImages: {
+          where: {
+            archived: false,
+          },
+        },
         productsWarehouses: {
           select: {
             stock: true,
@@ -98,6 +112,7 @@ export default class ProductService {
         name: {
           contains: search,
         },
+        archived: false,
       },
       take: 7,
     });

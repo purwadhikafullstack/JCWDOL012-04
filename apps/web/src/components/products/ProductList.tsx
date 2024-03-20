@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { useEffect, useState } from 'react';
 import { formatToRupiah } from '@/utils/helper';
 import { fetchData } from '@/utils/api';
@@ -24,13 +23,14 @@ interface Product {
     name: string;
   };
 }
+import { ProductsModel } from '@/model/ProductsModel';
 
 export default function ProductList({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const [data, setData] = useState<Product[]>([]);
+  const [data, setData] = useState<ProductsModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
 

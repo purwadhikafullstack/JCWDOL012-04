@@ -1,22 +1,30 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useDropzone } from 'react-dropzone';
-import axios from 'axios';
-import { fetchData } from '@/utils/api';
+import { useFormik } from 'formik';
+import { createData, fetchData } from '@/utils/api';
+import { useAuth } from '@/lib/store/auth/auth.provider';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { WarehousesModel } from '@/model/WarehousesModel';
+import { Loading } from '@/components/Loading';
+import { SuccessModal } from '@/components/admin/SuccessModal';
+import * as Yup from 'yup';
+import Image from 'next/image';
+import { FormInput } from '@/components/admin/product-form/FormInput';
+import { FormSelect } from '@/components/admin/product-form/FormSelect';
 
-const CreateProductForm = () => {
-  const router = useRouter();
+export default function CreateProductForm() {
   const [warehouses, setWarehouses] = useState<WarehousesModel[]>([]);
   const [productCategories, setProductCategories] = useState<
     ProductCategoriesModel[]
   >([]);
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [productImagesError, setProductImagesError] = useState<string>('');
+  const auth = useAuth();
+  const isAuthenticated = auth?.user?.isAuthenticated;
+  const role = auth?.user?.data?.role;
+  const isAuthorLoading = auth?.isLoading;
 
   const formik = useFormik({
     initialValues: {
@@ -45,51 +53,40 @@ const CreateProductForm = () => {
     onSubmit: async (values) => {
       try {
         const formData = new FormData();
-        console.log(values.productsWarehouses[0].warehouseId);
-        console.log(values.productsWarehouses[0].stock);
-        console.log(values);
         formData.append('name', values.name);
         formData.append('description', values.description);
         formData.append('price', values.price);
         formData.append('productCategoryId', values.productCategoryId);
-        values.productsWarehouses.forEach((warehouse, index) => {
-          formData.append(
-            `productsWarehouses[${index}].warehouseId`,
-            warehouse.warehouseId.toString(),
-          );
-          formData.append(
-            `productsWarehouses[${index}].stock`,
-            warehouse.stock.toString(),
-          );
-        });
-
+        formData.append(
+          'productsWarehouses',
+          JSON.stringify(values.productsWarehouses),
+        );
         values.productImages.forEach((image) => {
           formData.append('productImages', image);
         });
-        console.log(formData);
-        const response = await axios.post(
-          `${baseURL}/admin/products`,
+        console.log(values);
+        const response = await createData(
+          `admin/products`,
           formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
+          'multipart/form-data',
         );
-
         if (response.status === 201) {
+          setIsModalOpen(true);
           const data = response.data;
           console.log('Product created successfully:', data);
-          router.push('/admin/products');
         } else {
           console.error('Failed to create product:', response.statusText);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error creating product:', error);
+        if (error.response && error.response.status === 400) {
+          setError('Product name is already taken');
+        } else {
+          setError('An error occurred while creating the product');
+        }
       }
     },
   });
-
   useEffect(() => {
     const fetchProductCategories = async () => {
       try {
@@ -100,10 +97,6 @@ const CreateProductForm = () => {
         console.error('Error fetching product categories:', error);
       }
     };
-    fetchProductCategories();
-  }, []);
-
-  useEffect(() => {
     const fetchWarehouses = async () => {
       try {
         const response = await fetchData('admin/product-warehouses');
@@ -120,218 +113,214 @@ const CreateProductForm = () => {
         console.error('Error fetching warehouses:', error);
       }
     };
-
+    fetchProductCategories();
     fetchWarehouses();
   }, []);
-
-  const allowedExtensions = ['.png', '.jpeg', '.jpg', '.gif'];
-
   const { getRootProps, getInputProps } = useDropzone({
-    // @ts-ignore
-    accept: allowedExtensions.map((ext) => `.${ext}`).join(','),
-    onDrop: (acceptedFiles) => {
-      const invalidFiles = acceptedFiles.filter(
-        (file) => !allowedExtensions.includes(`.${file.name.split('.').pop()}`),
-      );
-
-      if (invalidFiles.length > 0) {
-        console.error('Invalid file(s) detected:', invalidFiles);
-      } else {
-        formik.setFieldValue('productImages', acceptedFiles);
-      }
+    accept: {
+      'image/*': ['.png', '.jpeg', '.jpg', '.gif'],
     },
+    onDrop: (acceptedFiles) => {
+      if (formik.values.productImages.length + acceptedFiles.length > 4) {
+        setProductImagesError('Product images reaches limit');
+        return;
+      }
+      const invalidFiles = acceptedFiles.some((file) => {
+        const extension = `.${file.name.split('.').pop()}`;
+        return !['.png', '.gif', '.jpeg', '.jpg'].includes(
+          extension.toLowerCase(),
+        );
+      });
+      if (invalidFiles) {
+        setProductImagesError('Invalid file(s) detected:');
+        return;
+      }
+      formik.setFieldValue('productImages', [
+        ...(formik.values.productImages || []),
+        ...acceptedFiles,
+      ]);
+    },
+    maxFiles: 4,
+    maxSize: 1024 * 1024,
   });
-
-  return (
-    <form
-      onSubmit={formik.handleSubmit}
-      className="max-w-md mx-auto mt-8 p-10 bg-white rounded border shadow-md"
-    >
-      <div className="mb-6 text-center font-semibold text-2xl text-white bg-[var(--primaryColor)] py-2 rounded-md">
-        Product Form
+  if (isAuthorLoading) return <Loading />;
+  if (!isAuthenticated || role !== 'SUPER_ADMIN')
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+        Unauthorized | 401
       </div>
-      <div className="mb-4">
-        <label
+    );
+  if (productCategories.length === 0 || warehouses.length === 0) {
+    return <Loading />;
+  }
+  return (
+    <div className="w-full pt-[50px] pb-[200px] flex justify-center items-center bg-gradient-to-r from-violet-500 to-fuchsia-500 ">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="max-w-md mx-auto mt-8 p-10 bg-white rounded-md border shadow-md"
+      >
+        <div className="mb-6 text-center font-semibold text-2xl text-[var(--primaryColor)] py-2 rounded-md">
+          Product Form
+        </div>
+        <FormInput
           htmlFor="name"
-          className="block text-sm font-semibold text-gray-600 mb-1"
-        >
-          Name
-        </label>
-        <input
+          label="Name"
           type="text"
           id="name"
           name="name"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.name}
-          className="w-full border px-3 py-2 rounded"
+          handleChange={formik.handleChange}
+          handleBlur={formik.handleBlur}
+          values={formik.values.name}
+          touched={formik.touched.name}
+          errors={formik.errors.name}
         />
-        {formik.touched.name && formik.errors.name ? (
-          <div className="text-red-500 text-sm">{formik.errors.name}</div>
-        ) : null}
-      </div>
-
-      <div className="mb-4">
-        <label
+        {error && <div className="text-red-500 text-sm mb-[10px]">{error}</div>}
+        <FormInput
           htmlFor="description"
-          className="block text-sm font-semibold text-gray-600 mb-1"
-        >
-          Description
-        </label>
-        <input
+          label="Description"
           type="text"
           id="description"
           name="description"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.description}
-          className="w-full border px-3 py-2 rounded"
+          handleChange={formik.handleChange}
+          handleBlur={formik.handleBlur}
+          values={formik.values.description}
+          touched={formik.touched.description}
+          errors={formik.errors.description}
         />
-        {formik.touched.description && formik.errors.description ? (
-          <div className="text-red-500 text-sm">
-            {formik.errors.description}
-          </div>
-        ) : null}
-      </div>
-
-      <div className="mb-4">
-        <label
+        <FormInput
           htmlFor="price"
-          className="block text-sm font-semibold text-gray-600 mb-1"
-        >
-          Price
-        </label>
-        <input
+          label="Price"
           type="number"
           id="price"
           name="price"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.price}
-          className="w-full border px-3 py-2 rounded"
+          handleChange={formik.handleChange}
+          handleBlur={formik.handleBlur}
+          values={formik.values.price}
+          touched={formik.touched.price}
+          errors={formik.errors.price}
         />
-        {formik.touched.price && formik.errors.price ? (
-          <div className="text-red-500 text-sm">{formik.errors.price}</div>
-        ) : null}
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="productCategoryId"
-          className="block text-sm font-semibold text-gray-600 mb-1"
-        >
-          Product Category
-        </label>
-        <select
-          id="productCategoryId"
-          name="productCategoryId"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.productCategoryId}
-          className="w-full border px-3 py-2 rounded"
-        >
-          <option value="" disabled>
-            Select a category
-          </option>
-          {productCategories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
+        <div className="mb-4">
+          <label
+            htmlFor="productCategoryId"
+            className="block text-sm font-semibold text-gray-600 mb-1"
+          >
+            Product Category
+          </label>
+          <select
+            id="productCategoryId"
+            name="productCategoryId"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.productCategoryId}
+            className="w-full border px-3 py-2 rounded"
+          >
+            <option value="" disabled>
+              Select a category
             </option>
-          ))}
-        </select>
-        {formik.touched.productCategoryId && formik.errors.productCategoryId ? (
-          <div className="text-red-500 text-sm">
-            {formik.errors.productCategoryId}
-          </div>
-        ) : null}
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-semibold text-gray-600 mb-1">
-          Product Warehouses
-        </label>
-        {formik.values.productsWarehouses.map((warehouse, index) => (
-          <div key={index} className="mb-2">
-            <label className="block text-sm text-gray-600">
-              {warehouses[index].name}
-            </label>
-            <input
-              type="number"
-              name={`productsWarehouses[${index}].stock`}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={warehouse.stock}
-              className="w-full border px-3 py-2 rounded"
-            />
-            {formik.touched.productsWarehouses &&
-            formik.errors.productsWarehouses &&
-            formik.errors.productsWarehouses[index] &&
-            formik.errors.productsWarehouses[index].stock ? (
-              <div className="text-red-500 text-sm">
-                {formik.errors.productsWarehouses[index].stock}
-              </div>
-            ) : null}
-          </div>
-        ))}
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-semibold text-gray-600 mb-1">
-          Product Images
-        </label>
-        <div
-          {...getRootProps({
-            className:
-              'dropzone border-dashed border-2 p-4 rounded cursor-grab',
-          })}
-        >
-          <input {...getInputProps()} />
-          <p className="text-gray-500">
-            Drag n drop some files here, or click to select files
-          </p>
+            {productCategories.map((category: any) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          {formik.touched.productCategoryId &&
+          formik.errors.productCategoryId ? (
+            <div className="text-red-500 text-sm">
+              {formik.errors.productCategoryId}
+            </div>
+          ) : null}
         </div>
-        {formik.touched.productImages && formik.errors.productImages ? (
-          <div className="text-red-500 text-sm">
-            {formik.errors.productImages}
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-600 mb-1">
+            Product Warehouses
+          </label>
+          {formik.values.productsWarehouses.map((warehouse, index) => (
+            <div key={index} className="mb-2">
+              <label className="block text-sm text-gray-600">
+                {warehouses[index].name}
+              </label>
+              <input
+                type="number"
+                name={`productsWarehouses[${index}].stock`}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={warehouse.stock}
+                className="w-full border px-3 py-2 rounded"
+              />
+              {formik.errors.productsWarehouses &&
+                formik.errors.productsWarehouses[index] &&
+                //@ts-ignore
+                formik.errors.productsWarehouses[index].stock && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {/* @ts-ignore */}
+                    {formik.errors.productsWarehouses[index].stock}
+                  </p>
+                )}
+            </div>
+          ))}
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-600 mb-1">
+            Product Images
+          </label>
+          <div
+            {...getRootProps({
+              className:
+                'dropzone border-dashed border-2 p-4 rounded cursor-grab',
+            })}
+          >
+            <input {...getInputProps()} />
+            <p className="text-gray-500 text-justify">
+              Drag n drop some files here, or click to select files (.jpg,
+              .jpeg, .png, .gif) max size : 1MB
+            </p>
           </div>
-        ) : null}
-      </div>
-
-      <div className="mt-4 flex space-x-4 mb-[20px]">
-        {formik.values.productImages.map((image, index) => (
-          <div key={index} className="relative w-16 h-16">
-            <Image
-              src={URL.createObjectURL(image)}
-              alt={`Preview ${index + 1}`}
-              fill
-              className="object-cover rounded"
-            />
-            <button
-              type="button"
-              onClick={() =>
-                formik.setFieldValue(
-                  'productImages',
-                  formik.values.productImages.filter((_, i) => i !== index),
-                )
-              }
-              className="absolute top-[-5px] right-[-8px] px-[8px] bg-red-500 text-white rounded-full"
-            >
-              x
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <div>
-        <button
-          type="submit"
-          className="bg-[var(--primaryColor)] text-white px-4 py-2 rounded"
-        >
-          Submit
-        </button>
-      </div>
-    </form>
+          {formik.touched.productImages && formik.errors.productImages ? (
+            <div className="text-red-500 text-sm">
+              {formik.errors.productImages}
+            </div>
+          ) : null}
+        </div>
+        <div className="text-red-500 text-sm mt-3">{productImagesError}</div>
+        <div className="mt-4 flex space-x-4 mb-[20px]">
+          {formik.values.productImages.map((image, index) => (
+            <div key={index} className="relative w-16 h-16">
+              <Image
+                src={URL.createObjectURL(image)}
+                alt={`Preview ${index + 1}`}
+                fill
+                className="object-cover rounded"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  formik.setFieldValue(
+                    'productImages',
+                    formik.values.productImages.filter((_, i) => i !== index),
+                  )
+                }
+                className="absolute top-[-5px] right-[-8px] px-[8px] bg-red-500 text-white rounded-full"
+              >
+                x
+              </button>
+            </div>
+          ))}
+        </div>
+        <div>
+          <button
+            type="submit"
+            className="bg-[var(--primaryColor)] border text-white px-4 py-2 w-full hover:text-[var(--primaryColor)] hover:bg-white border-[var(--primaryColor)] rounded duration-200"
+          >
+            Submit
+          </button>
+        </div>
+        <SuccessModal
+          isModalOpen={isModalOpen}
+          item="Product Created"
+          path="/admin/products"
+          setIsModalOpen={setIsModalOpen}
+        />
+      </form>
+    </div>
   );
-};
-
-export default CreateProductForm;
+}
