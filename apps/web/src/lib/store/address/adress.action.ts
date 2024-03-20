@@ -27,6 +27,29 @@ export async function fetchAddressAction(
         .catch((error) => handleError(error, setError))
 }
 
+export async function getChoosenAddress(
+    primaryAddress: AddressContext['userAddress'][0],
+    setChoosenAddress: Dispatch<SetStateAction<AddressContext['choosenAddress']>>
+) {
+    if (localStorage.getItem('palugada-cust-choosen-address')) {
+        setChoosenAddress(JSON.parse(localStorage.getItem('palugada-cust-choosen-address')!))
+    } else if (primaryAddress) {
+        localStorage.setItem('palugada-cust-choosen-address', JSON.stringify({ id: primaryAddress.id }))
+        setChoosenAddress(primaryAddress)
+    } else {
+        setChoosenAddress(null)
+    }
+}
+
+export async function updateChoosenAddressAction(
+    address: AddressContext['userAddress'][0] | null,
+    setChoosenAddress: Dispatch<SetStateAction<AddressContext['choosenAddress']>>
+) {
+    localStorage.setItem('palugada-cust-choosen-address', JSON.stringify({ id: address?.id }))
+    setChoosenAddress(address)
+}
+
+
 export async function fetchCities(
     setCities: Dispatch<SetStateAction<AddressContext['data']['cities']>>,
     setError: Dispatch<SetStateAction<AddressContext['error']>>,

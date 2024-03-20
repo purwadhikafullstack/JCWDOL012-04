@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useFormik } from 'formik';
 import Spinner from "@/components/ui/spinner"
 import { useAuth } from "@/lib/store/auth/auth.provider"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { useAddress } from "@/lib/store/address/address.provider"

@@ -3,7 +3,7 @@
 import { UserCitiesModel } from "@/model/UserCitiesModel";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "../auth/auth.provider";
-import { addAddressAction, deleteAddressAction, fetchAddressAction, fetchCities, fetchProvinces, setAsPrimaryAddressAction, updateAddressAction } from "./adress.action";
+import { addAddressAction, deleteAddressAction, fetchAddressAction, fetchCities, fetchProvinces, getChoosenAddress, setAsPrimaryAddressAction, updateAddressAction, updateChoosenAddressAction } from "./adress.action";
 import { ProvincesModel } from "@/model/ProvincesModel";
 import { CitiesModel } from "@/model/CitiesModel";
 
@@ -18,6 +18,8 @@ export type AddressContext = {
         provinces: ProvincesModel[],
         cities: CitiesModel[]
     };
+    choosenAddress: UserCitiesModel | null;
+    updateChosenAddress: (address: UserCitiesModel | null) => void;
     getProvinces: () => void;
     getCities: (provinceId?: number | string) => void;
     addAddress: (values: UserCitiesModel) => void;
@@ -37,6 +39,8 @@ const initialAddressContext = {
         provinces: [],
         cities: []
     },
+    choosenAddress: null,
+    updateChosenAddress: (address: UserCitiesModel | null) => { },
     getProvinces: () => { },
     getCities: (provinceId?: number | string) => { },
     addAddress: (values: UserCitiesModel) => { },
@@ -48,16 +52,25 @@ const initialAddressContext = {
 const AddressContext = createContext<AddressContext>(initialAddressContext);
 
 export default function AddressProvider({ children }: { children: React.ReactNode }) {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<AddressContext['isLoading']>(true);
     const [error, setError] = useState<AddressContext['error']>(initialAddressContext.error);
-    const [userAddress, setAddress] = useState<UserCitiesModel[]>(initialAddressContext.userAddress);
-    const [provinces, setProvinces] = useState<ProvincesModel[]>(initialAddressContext.data.provinces);
-    const [cities, setCities] = useState<CitiesModel[]>(initialAddressContext.data.cities);
-
+    const [userAddress, setAddress] = useState<AddressContext['userAddress']>(initialAddressContext.userAddress);
+    const [provinces, setProvinces] = useState<AddressContext['data']['provinces']>(initialAddressContext.data.provinces);
+    const [cities, setCities] = useState<AddressContext['data']['cities']>(initialAddressContext.data.cities);
+    const primaryAddress = userAddress.filter((address) => address.isPrimaryAddress && !address.archieved)[0]
+    const [choosenAddress, setChoosenAddress] = useState<AddressContext['choosenAddress']>(initialAddressContext.choosenAddress);
     const auth = useAuth()
     const user = auth?.user
 
-    useEffect(() => { auth?.user.isAuthenticated && fetchAddress(); }, [user?.isAuthenticated])
+    useEffect(() => {
+        if (auth?.user.isAuthenticated) {
+            fetchAddress()
+        };
+    }, [user?.isAuthenticated])
+
+    useEffect(() => {
+        getChoosenAddress(primaryAddress, setChoosenAddress)
+    }, [primaryAddress])
 
     const fetchAddress = async () => {
         setIsLoading(true);
@@ -86,6 +99,10 @@ export default function AddressProvider({ children }: { children: React.ReactNod
         setAsPrimaryAddressAction(id, setAddress, setError);
     }
 
+    const updateChosenAddress: AddressContext['updateChosenAddress'] = (address) => {
+        updateChoosenAddressAction(address, setChoosenAddress);
+    }
+
     const getProvinces: AddressContext['getProvinces'] = async () => {
         setIsLoading(true);
         await fetchProvinces(setProvinces, setError);
@@ -99,7 +116,7 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     }
 
     return (
-        <AddressContext.Provider value={{ isLoading, userAddress, error, data: { provinces, cities }, addAddress, updateAddress, setAsPrimary, deleteAddress, getProvinces, getCities }}>
+        <AddressContext.Provider value={{ isLoading, userAddress, error, data: { provinces, cities }, choosenAddress, updateChosenAddress, addAddress, updateAddress, setAsPrimary, deleteAddress, getProvinces, getCities }}>
             {children}
         </AddressContext.Provider>
     )

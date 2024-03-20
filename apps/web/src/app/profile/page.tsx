@@ -17,7 +17,7 @@ export default function ProfilePage() {
     const defaultTab = origin === 'address' ? 'address' : 'account'
     const user = useAuth()
 
-    if (user?.user.data?.role !== "CUSTOMER") return (
+    if (user?.user.data?.role !== "CUSTOMER" && !user?.isLoading) return (
         <UnauthorizedPage />
     )
 

@@ -9,7 +9,8 @@ export async function getUserAddresses(req: Request, res: Response) {
     try {
         const addresses = await prisma.userCities.findMany({
             where: {
-                userId: user.id
+                userId: user.id,
+                archieved: false
             },
             orderBy: [
                 { isPrimaryAddress: 'desc' },
