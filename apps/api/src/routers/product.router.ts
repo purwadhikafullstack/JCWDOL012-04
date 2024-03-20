@@ -30,12 +30,16 @@ export class ProductRouter {
     this.router.post(
       '/admin/product-warehouses/:id',
       requireJwtAuth,
-      this.ProductStockController.updateStock,
+      this.ProductStockController.createHistory,
     );
     this.router.post(
       '/admin/product-categories',
       requireJwtAuth,
       this.ProductCategoryController.createProductCategory,
+    );
+    this.router.post(
+      '/admin/mutation',
+      this.ProductStockController.createMutationRequest,
     );
     this.router.get('/products', this.ProductController.getProductsUser);
     this.router.get(
@@ -53,10 +57,18 @@ export class ProductRouter {
       '/products/product-names',
       this.ProductController.searchProducts,
     );
+    this.router.get(
+      '/admin/warehouse/:id',
+      this.ProductStockController.automatedMutation,
+    );
     this.router.patch(
       '/admin/products/:id',
       requireJwtAuth,
       this.AdminProductController.updateProduct,
+    );
+    this.router.patch(
+      '/admin/mutation',
+      this.ProductStockController.processMutationRequest,
     );
     this.router.put(
       '/admin/products/:id',

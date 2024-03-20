@@ -77,6 +77,7 @@ model Warehouses {
   productsWarehouses ProductsWarehouses[]
   transactions       Transactions[]
   mutations          Mutations[]
+  destinationWarehouseMutations Mutations[] @relation("DestinationWarehouse")
 }
 
 model Users {
@@ -223,6 +224,7 @@ enum mutationType {
   TRANSACTION
   MANUAL_ADMIN
   AUTOMATED
+  REQUEST
 }
 
 model Mutations {
@@ -233,7 +235,10 @@ model Mutations {
   warehouse     Warehouses?   @relation(fields: [warehouseId], references: [id])
   transactionId Int?
   transaction   Transactions? @relation(fields: [transactionId], references: [id])
+  destinationWarehouseId Int?
+  destinationWarehouse Warehouses? @relation("DestinationWarehouse",fields: [destinationWarehouseId], references: [id])
   isAdd         Boolean       @default(true)
+  isAccepted    Boolean?     
   quantity      Int
   mutationType  mutationType
 

@@ -92,18 +92,59 @@ async function main() {
   console.log(`Created superadmin`);
 
   //5 warehouse
-  for (let i = 1; i <= 5; i++) {
-    await prisma.warehouses.create({
-      data: {
-        name: 'warehouse' + i,
-        address: 'address' + i,
-        cityId: i,
-        latitude: 'latitude' + i,
-        longitude: 'longitude' + i,
-      },
-    });
-  }
-  console.log(`Created warehouse`);
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_bandung_1',
+      address: 'Jl Jend A Yani 808, Jawa Barat',
+      cityId: 23,
+      latitude: '-6.902376173747783',
+      longitude: '107.65503155389912',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_bandung_2',
+      address:
+        'JL Soekarno Hatta, No. 727 Km. 6, 1336, Sukapura, Kec. Kiaracondong, Kota Bandung, Jawa Barat 40286',
+      cityId: 23,
+      latitude: '-6.938390436524459',
+      longitude: '107.66755424696743',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_jakarta_1',
+      address:
+        'Jl. Raya Bekasi, RT.5/RW.6, Jatinegara, Kec. Jatinegara, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13310',
+      cityId: 154,
+      latitude: '-6.211962405395948',
+      longitude: '106.8897346743206',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_jakarta_2',
+      address:
+        'Jl. Pesanggrahan No.168H, Kembangan Sel., Kec. Kembangan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11610',
+      cityId: 151,
+      latitude: '-6.1867055286665655',
+      longitude: '106.75489086290104',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_semarang_1',
+      address:
+        'Jl. MH Thamrin No.45, Miroto, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50134',
+      cityId: 399,
+      latitude: '-6.983539717325672',
+      longitude: '110.41737938581653',
+    },
+  });
 
   //5 warehouse admin
   for (let i = 1; i <= 5; i++) {
