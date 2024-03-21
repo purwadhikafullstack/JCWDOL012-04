@@ -2,7 +2,7 @@
 
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAddress } from "@/lib/store/address/address.provider"
 import { Badge } from "@/components/ui/badge"
 import clsx from "clsx"
@@ -31,7 +31,10 @@ export default function ChooseShippingAddressDialog({ ctaLabel }: { ctaLabel: st
                                         <CardTitle className="text-sm">{address.label}</CardTitle>
                                         {address.isPrimaryAddress ? <Badge variant={'secondary'} className="text-[0.5rem]">Primary Address</Badge> : null}
                                     </div>
-                                    <CardDescription>{address.address}</CardDescription>
+                                    <CardDescription>
+                                        <p>{address.city?.type === "KABUPATEN" ? "Kab." : "Kota"} {address.city?.name}</p>
+                                        <p>{address.address}</p>
+                                    </CardDescription>
                                 </CardHeader>
                                 <CardFooter className={
                                     clsx(`flex flex-row flex-wrap`,

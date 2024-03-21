@@ -164,11 +164,7 @@ function handleError(
     const errorStatus = error.response?.status
     const errorMessage = error.response?.data.message ? error.response?.data.message : error.response?.data.msg
 
-    console.log('Error', error)
-
-    if (errorStatus === 401) {
+    if (errorStatus === 401 || errorStatus === 422 || errorStatus === 500) {
         setError({ status: errorStatus, message: errorMessage })
-    } else if (errorStatus === 422 || errorStatus === 500) {
-        setError({ status: errorStatus, message: errorMessage })
-    } else { throw new Error('An unhandled error occured') }
+    } else { setError({ status: null, message: "Unknown error occured" }) }
 }

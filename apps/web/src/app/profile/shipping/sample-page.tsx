@@ -9,10 +9,10 @@ export default function ShippingPage() {
 
     return (
         <>
-            <AddressProvider>
-                <ShippingProvider>
+            <AddressProvider> {/* Make sure to call this context above the ShippingAddress and ShippingMethod component */}
+                <ShippingProvider>  {/* Make sure to call this context above the ShippingAddress and ShippingMethod component */}
                     <ShippingAddress />
-                    <ShippingMethod />
+                    <ShippingMethod totalWeight={1200} /> {/* Pass the total weight here in Grams */}
                 </ShippingProvider>
             </AddressProvider>
         </>

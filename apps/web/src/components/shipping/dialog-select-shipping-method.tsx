@@ -6,7 +6,6 @@ import { Card, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import { formatToRupiah } from "@/utils/helper"
 import { useAddress } from "@/lib/store/address/address.provider"
 
-
 export default function SelectShippingMethodDialog({ ctaLabel, totalWeight }: { ctaLabel: string, totalWeight?: number | string }) {
     const shipping = useShipping()
     const address = useAddress()
@@ -17,10 +16,12 @@ export default function SelectShippingMethodDialog({ ctaLabel, totalWeight }: { 
         if (dialogOpen) shipping.getShippingMethod(Number(totalWeight))
     }, [dialogOpen])
 
+    console.log(shippingMethod)
+
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
             <DialogTrigger asChild>
-                <Button variant={'outline'} disabled={address.isLoading || shipping.isLoading} className="text-[0.6rem] h-fit">{ctaLabel}</Button>
+                <Button variant={'outline'} disabled={address.isLoading || shipping.isLoading || !address.choosenAddress?.id} className="text-[0.6rem] h-fit">{ctaLabel}</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -33,14 +34,13 @@ export default function SelectShippingMethodDialog({ ctaLabel, totalWeight }: { 
                             <CardHeader>
                                 <CardTitle className="text-sm capitalize">{method.name}</CardTitle>
                                 <p className="text-sm">{cost.description + ' - ' + cost.service}</p>
-                                <p className="text-xs">{formatToRupiah(Number(cost.cost[0].value))} {` | ${cost.cost[0].etd} days (Estimation)`}</p>
+                                <p className="text-xs">{formatToRupiah(Number(cost.cost[0].value))} {` | ${cost.cost[0].etd.replace('HARI', '')} days (Estimation)`}</p>
                             </CardHeader>
                             <CardFooter className="flex justify-end">
                                 <Button
                                     variant={'default'}
                                     className="text-xs h-fit w-fit"
                                     onClick={() => {
-                                        console.log(cost)
                                         shipping.set.chosenShippingMethod({ ...cost, courier: method.name })
                                         shipping.set.shippingCost(Number(cost.cost[0].value))
                                         setDialogOpen(false)
@@ -52,8 +52,7 @@ export default function SelectShippingMethodDialog({ ctaLabel, totalWeight }: { 
                         </Card>
                     ))
                 ))}
-
-
+                {!shipping.isLoading && shippingMethod && shippingMethod[0]?.costs?.length === 0 && <p className="text-center my-4">No shipping method available for this route.</p>}
             </DialogContent>
         </Dialog >
     )

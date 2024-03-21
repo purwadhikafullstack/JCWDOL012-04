@@ -52,12 +52,16 @@ export default function ShippingProvider(
     const [shippingMethod, setShippingMethod] = useState<ShippingContext['shippingMethod']>(initialShippingContext.shippingMethod);
     const [chosenShippingMethod, setChosenShippingMethod] = useState<ShippingContext['chosenShippingMethod']>(initialShippingContext.chosenShippingMethod);
     const [closestWarehouse, setClosestWarehouse] = useState<ShippingContext['closestWarehouse']>(initialShippingContext.closestWarehouse);
-    const [isAvailable, setIsAvailable] = useState<ShippingContext['isAvailable']>(false);
     const address = useAddress();
     const chosenShippingAddress = address.userAddress.find((userAddress) => userAddress.id === address.choosenAddress?.id);
+    const [isAvailable, setIsAvailable] = useState<ShippingContext['isAvailable']>(false);
 
     useEffect(() => {
-        console.log(address.choosenAddress)
+        if (!isAvailable) setIsAvailable(true)
+        setIsLoading(false);
+    }, []);
+
+    useEffect(() => {
         if (address.choosenAddress?.id && chosenShippingAddress) {
             setIsLoading(true);
             getClosestWarehouseAction(chosenShippingAddress!, setClosestWarehouse, setError);
@@ -72,7 +76,6 @@ export default function ShippingProvider(
         setChosenShippingMethod(null);
     }, [address.choosenAddress]);
 
-    useEffect(() => { setIsAvailable(true) }, []);
 
     const getShippingMethod: ShippingContext['getShippingMethod'] = async (weight?) => {
         setIsLoading(true);

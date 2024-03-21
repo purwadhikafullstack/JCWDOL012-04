@@ -51,12 +51,13 @@ export async function getShippingMethodAction(
 }
 
 function handleError(
-    error: AxiosError<{ message?: string }>,
-    setError: Dispatch<SetStateAction<AddressContext['error']>>
+    error: AxiosError<{ message?: string, msg?: string }>,
+    setError: Dispatch<SetStateAction<ShippingContext['error']>>
 ) {
-    if (error.response?.status === 401) {
-        setError({ status: error.response?.status, message: error.response?.data?.message })
-    } else if (error.response?.status === 422 || error.response?.status === 500) {
-        setError({ status: error.response?.status, message: error.response?.data?.message })
-    } else { throw new Error('An unhandled error occured') }
+    const errorStatus = error.response?.status
+    const errorMessage = error.response?.data.message ? error.response?.data.message : error.response?.data.msg
+
+    if (errorStatus === 401 || errorStatus === 422 || errorStatus === 500) {
+        setError({ status: errorStatus, message: errorMessage })
+    } else { setError({ status: null, message: "Unknown error occured" }) }
 }

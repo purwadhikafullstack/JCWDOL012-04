@@ -75,7 +75,10 @@ export default function AddressProvider({ children }: { children: React.ReactNod
         getChoosenAddress(primaryAddress, setChoosenAddress)
     }, [primaryAddress])
 
-    useEffect(() => { setIsAvailable(true) }, [])
+    useEffect(() => {
+        if (!isAvailable) setIsAvailable(true)
+        setIsLoading(false);
+    }, [])
 
     const fetchAddress = async () => {
         setIsLoading(true);
