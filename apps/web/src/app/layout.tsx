@@ -5,7 +5,6 @@ import Navbar from '@/components/ui/navbar/navbar';
 import { Footer } from '@/components/Footer';
 import { CartProvider } from '@/lib/cart.provider';
 import AuthProvider from '@/lib/store/auth/auth.provider';
-import AddressProvider from '@/lib/store/address/address.provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,12 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <CartProvider>
-            {/* <AddressProvider> */}
-
             <Navbar />
             {children}
             <Footer />
-            {/* </AddressProvider> */}
           </CartProvider>
         </AuthProvider>
       </body>

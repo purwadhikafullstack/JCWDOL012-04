@@ -24,3 +24,15 @@ type RajaOngkirRequestCost = {
     weight: number,
     courier: string
 }
+
+interface AdminModel {
+    id: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    gender: "male" | "female" | undefined
+    isVerified?: boolean
+    createdAt?: Date
+    updatedAt?: Date
+    archived?: boolean
+}
