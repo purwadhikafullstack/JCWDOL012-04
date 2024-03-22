@@ -26,7 +26,7 @@ export default async function DemoPage() {
 
     return (
         <main className="p-5 pb-[130px] sm:pb-2">
-            <div className="flex flex-row justify-between items-center mt-4 sm:mt-0 gap-4 flex-wrap">
+            <div className="flex flex-row justify-between items-center mt-4 sm:mt-0 gap-4">
                 <h1 className="text-md font-semibold sm:text-xl ">Warehouse Administrator Management</h1>
                 <DialogAddNewAdmin />
             </div>

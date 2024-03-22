@@ -278,3 +278,17 @@ export async function updateWarehouseAdmin(req: Request, res: Response) {
         resInternalServerError(res, 'Error updating warehouse admin', null)
     }
 }
+
+export default function getCustomers(req: Request, res: Response) {
+    prisma.users.findMany({
+        where: {
+            role: 'CUSTOMER',
+            archived: false
+        }
+    })
+        .then((customers) => resSuccess(res, 'Customer data retrieved successfully', customers, 1))
+        .catch((error) => {
+            console.error('Error getting customer data', error)
+            resInternalServerError(res, 'Error getting customer data', null)
+        })
+}

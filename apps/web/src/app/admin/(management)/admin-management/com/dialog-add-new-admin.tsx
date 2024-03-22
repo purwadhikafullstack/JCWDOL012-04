@@ -33,7 +33,7 @@ export default function DialogAddNewAdmin() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="text-xs sm:text-sm">Add New Admin</Button>
+                <Button className="text-xs sm:text-sm">+ New Admin</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
