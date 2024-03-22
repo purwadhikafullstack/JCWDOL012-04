@@ -61,6 +61,7 @@ export default class ProductService {
       where: {
         name: {
           contains: search,
+          mode: 'insensitive',
         },
         productCategory: {
           name: {

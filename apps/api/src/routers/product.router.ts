@@ -58,8 +58,20 @@ export class ProductRouter {
       this.ProductController.searchProducts,
     );
     this.router.get(
+      '/admin/mutation/:id',
+      this.ProductStockController.getMutationRequest,
+    );
+    this.router.get(
+      '/admin/incoming-mutation/:id',
+      this.ProductStockController.getIncomingMutationRequest,
+    );
+    this.router.get(
       '/admin/warehouse/:id',
       this.ProductStockController.automatedMutation,
+    );
+    this.router.get(
+      '/admin/mutation-form/:id',
+      this.ProductStockController.getProductsWarehouses,
     );
     this.router.patch(
       '/admin/products/:id',

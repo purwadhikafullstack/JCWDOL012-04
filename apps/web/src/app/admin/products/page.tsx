@@ -69,6 +69,8 @@ export default function Products({
       </div>
     );
 
+  console.log(totalProducts);
+
   return (
     <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
       <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1120px]">

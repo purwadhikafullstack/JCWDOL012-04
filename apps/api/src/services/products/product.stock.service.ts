@@ -24,6 +24,60 @@ export default class ProductStockService {
       },
     });
   }
+  async getMutationRequest(id: number) {
+    return prisma.mutations.findMany({
+      where: {
+        archived: false,
+        mutationType: 'REQUEST',
+        warehouseId: id,
+      },
+      include: {
+        product: {
+          select: {
+            name: true,
+          },
+        },
+        destinationWarehouse: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getIncomingMutationRequest(id: number) {
+    return prisma.mutations.findMany({
+      where: {
+        archived: false,
+        mutationType: 'REQUEST',
+        destinationWarehouseId: id,
+      },
+      include: {
+        product: {
+          select: {
+            name: true,
+          },
+        },
+        warehouse: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+  }
+  async getProducts() {
+    return this.prisma.products.findMany({
+      where: {
+        archived: false,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
 
   async createHistory(
     productId: number,
@@ -47,18 +101,16 @@ export default class ProductStockService {
     productId: number,
     warehouseId: number,
     destinationWarehouseId: number,
-    isAdd: boolean,
     quantity: number,
-    mutationType: mutationType,
   ) {
     return prisma.mutations.create({
       data: {
         productId,
         warehouseId,
         destinationWarehouseId,
-        isAdd,
+        isAdd: true,
         quantity,
-        mutationType,
+        mutationType: 'REQUEST',
       },
     });
   }

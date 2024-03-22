@@ -32,21 +32,13 @@ export class ProductStockController {
   }
   async createMutationRequest(req: Request, res: Response) {
     try {
-      const {
-        warehouseId,
-        productId,
-        destionationWarehouseId,
-        quantity,
-        isAdd,
-        mutationType,
-      } = req.body;
+      const { warehouseId, productId, destinationWarehouseId, quantity } =
+        req.body;
       const mutationRequest = await productStockService.createMutationRequest(
-        productId,
-        warehouseId,
-        destionationWarehouseId,
-        isAdd,
-        quantity,
-        mutationType,
+        parseInt(productId),
+        parseInt(warehouseId),
+        parseInt(destinationWarehouseId),
+        parseInt(quantity),
       );
       res.status(201).json(mutationRequest);
     } catch (error) {
@@ -114,7 +106,7 @@ export class ProductStockController {
           await productStockService.getWarehousesExclude(excludedId);
         const selectedWarehouse =
           await productStockService.getProductWarehouse(warehouseId);
-        let shortestDist = 100000000;
+        let shortestDist = Infinity;
         let shortestWarehouseId = 0;
         warehouses.forEach((warehouse) => {
           const dist = distance(
@@ -127,7 +119,6 @@ export class ProductStockController {
             ? (shortestDist = dist) && (shortestWarehouseId = warehouse.id)
             : '';
         });
-        console.log(`${shortestWarehouseId}\n${shortestDist}`);
         const sourceWarehouse = await productStockService.findProductWarehouse(
           productId,
           warehouseId,
@@ -172,6 +163,43 @@ export class ProductStockController {
           excludedId.push(shortestWarehouseId);
         }
       } while (quantity);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getMutationRequest(req: Request, res: Response) {
+    try {
+      const warehouseId = parseInt(req.params.id);
+      const mutations =
+        await productStockService.getMutationRequest(warehouseId);
+      return res.status(200).json(mutations);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getIncomingMutationRequest(req: Request, res: Response) {
+    try {
+      const destinationWarehouseId = parseInt(req.params.id);
+      const mutations = await productStockService.getIncomingMutationRequest(
+        destinationWarehouseId,
+      );
+      return res.status(200).json(mutations);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getProductsWarehouses(req: Request, res: Response) {
+    try {
+      const warehouseId = parseInt(req.params.id);
+      const excludedId = [warehouseId];
+      const products = await productStockService.getProducts();
+      const warehouses =
+        await productStockService.getWarehousesExclude(excludedId);
+      const response = {
+        products,
+        warehouses,
+      };
+      return res.status(200).json(response);
     } catch (error) {
       console.log(error);
     }

@@ -8,6 +8,7 @@ import { Loading } from '@/components/Loading';
 import Image from 'next/image';
 import { Pagination } from '@/components/admin/warehouse/pagination';
 import { WarehouseBar } from '@/components/admin/warehouse/WarehouseBar';
+import Link from 'next/link';
 
 export default function WarehouseDetail({
   params,
@@ -80,7 +81,17 @@ export default function WarehouseDetail({
 
   return (
     <div className="flex flex-col w-full min-h-[700px] py-10 px-5 md:px-24 lg:px-32 max-w-[1440px] mx-auto">
-      <div className="text-2xl font-semibold mb-[30px]">Warehouse Stock</div>
+      <div className="flex flex-col md:flex-row justify-between space-y-2 md:space-y-0 md:items-center mb-[30px]">
+        <div className="text-2xl font-semibold">
+          Warehouse {params.warehouseId} Stock
+        </div>
+        <Link
+          href={`/admin/warehouses/${params.warehouseId}/mutation`}
+          className="bg-[var(--primaryColor)] px-4 py-2 text-white rounded-md hover:opacity-70 duration-200"
+        >
+          Mutation Request <span className="font-semibold">-&gt;</span>
+        </Link>
+      </div>
       <WarehouseBar />
       <div className="flex flex-col space-y-5">
         {products.map((product, index) => {
