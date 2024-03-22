@@ -68,9 +68,9 @@ export default class TransactionController {
         const orders: ShoppingCart[] = req.body.orders;
         let total = await this.getTotal(orders);
         const paymentType: paymentType = req.body.paymentType;
-        const closestWarehouse: Warehouses = await this.getClosestWarehouse(req);
+        const closestWarehouseId: number = req.body.closestWarehouseId;
         const shippingCost = req.body.shippingCost;
-        if (closestWarehouse != null && shippingCost != null && paymentType != null && total != null && userId != null && orders != null && orders.length > 0 && total > 0) {
+        if (closestWarehouseId != null && shippingCost != null && paymentType != null && total != null && userId != null && orders != null && orders.length > 0 && total > 0) {
             let orderStatus: orderStatus = "PENDING_PROOF";
             const transactionLatestId = await this.TransactionService.getLatestId();
             const transactionUid = `ORDER-${transactionLatestId + 1}-${Date.now()}`
@@ -80,11 +80,16 @@ export default class TransactionController {
                 total: total,
                 paymentType: paymentType,
                 orderStatus: orderStatus,
-                warehouseId: closestWarehouse.id,
+                warehouseId: closestWarehouseId,
                 shippingCost: shippingCost
             };
             if (paymentType === "PAYMENT_GATEWAY") { await this.handlePaymentGateway(req, res, transactionData); }
-            if (paymentType === "TRANSFER") { await this.handlePayment(req, res, transactionData); }
+            if (paymentType === "TRANSFER") { 
+                const result = await this.handlePayment(req, res, transactionData); 
+                if(result != null){
+                    res.status(201).json(result);
+                }
+            }
         } else {
             res.status(400).json({ message: "Invalid request" });
         }
@@ -163,6 +168,8 @@ export default class TransactionController {
             const midtransResponse = await this.TransactionService.createMidtransTransaction(midtransRequest);
             if (midtransResponse != null) {
                 res.status(201).json(midtransResponse);
+            }else{
+                res.status(500).json({message: "Internal server error"});
             }
         } else {
             res.status(500).json({ message: "Internal server error" });
@@ -204,7 +211,7 @@ export default class TransactionController {
 
 
     async getClosestWarehouse(req: Request): Promise<Warehouses> {
-        const userCityId: number = parseInt(req.query.userCityId?.toString() ?? "-1");
+        const userCityId: number = parseInt(req.body.userCityId?.toString() ?? "-1");
         const userCity: UserCities = await this.UserCitiesTransactionService.getById(userCityId) as UserCities;
         if (userCity.closestWarehouseId != null) {
             const warehouse = await this.TransactionWarehouseService.getById(userCity.closestWarehouseId) as Warehouses;

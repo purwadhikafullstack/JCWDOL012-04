@@ -19,7 +19,7 @@ export default class TransactionService {
     }
 
     async create(transaction: TransactionsCreateModel, transactionProductTempData: transactionProductCreateModel[]): Promise<Transactions> {
-        const temp =  await prisma.$transaction(async (prisma) => {
+        const temp = await prisma.$transaction(async (prisma) => {
             const transactionData = await prisma.transactions.create({
                 data: transaction
             });
@@ -33,9 +33,9 @@ export default class TransactionService {
             }
             return transactionData;
         })
-        if(temp){
+        if (temp) {
             return temp;
-        }else{
+        } else {
             return {} as Transactions;
         }
     }
@@ -52,7 +52,7 @@ export default class TransactionService {
         });
     }
 
-    async paymentGatewayFailed(transactionUid:string): Promise<Transactions | null> {
+    async paymentGatewayFailed(transactionUid: string): Promise<Transactions | null> {
         return await prisma.transactions.update({
             where: {
                 transactionUid: transactionUid
@@ -64,7 +64,7 @@ export default class TransactionService {
         });
     }
 
-    async paymentGatewaySuccess(transactionUid:string): Promise<Transactions | null> {
+    async paymentGatewaySuccess(transactionUid: string): Promise<Transactions | null> {
         return await prisma.transactions.update({
             where: {
                 transactionUid: transactionUid
@@ -76,12 +76,19 @@ export default class TransactionService {
         });
     }
 
-    async createMidtransTransaction(midtransReq:midtransRequest){
-        const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
-        headers.append('Authorization', 'Basic ' + Buffer.from(`${process.env.MIDTRANS_SERVER_KEY}:`).toString('base64'));
-        const result = await fetch(`${process.env.MIDTRANS_SANDBOX_URL}/v1/transactions`, {
+    async createMidtransTransaction(midtransReq: midtransRequest) {
+        // const headers = new Headers();
+        // headers.append('Content-Type', 'application/json');
+        // headers.append('Accept', 'application/json');
+        // headers.append('Authorization', 'Basic ' + Buffer.from(`${process.env.MIDTRANS_SERVER_KEY}:`).toString('base64'));
+        
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(`${process.env.MIDTRANS_SERVER_KEY}:`).toString('base64')
+        };
+
+        const result = await fetch(`${process.env.MIDTRANS_SANDBOX_URL}/snap/v1/transactions`, {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(midtransReq)
