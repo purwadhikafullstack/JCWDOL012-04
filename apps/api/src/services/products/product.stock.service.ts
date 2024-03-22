@@ -65,6 +65,9 @@ export default class ProductStockService {
           },
         },
       },
+      orderBy: {
+        id: 'desc',
+      },
     });
   }
   async getProducts() {

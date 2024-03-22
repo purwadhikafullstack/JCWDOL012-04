@@ -66,8 +66,8 @@ export class ProductRouter {
       this.ProductStockController.getIncomingMutationRequest,
     );
     this.router.get(
-      '/admin/warehouse/:id',
-      this.ProductStockController.automatedMutation,
+      '/admin/test-mutation',
+      this.AdminProductController.testAutoMutation,
     );
     this.router.get(
       '/admin/mutation-form/:id',

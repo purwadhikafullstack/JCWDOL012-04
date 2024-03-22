@@ -95,74 +95,79 @@ export class ProductStockController {
       console.log(error);
     }
   }
-  async automatedMutation(req: Request, res: Response) {
+  async automatedMutation(
+    warehouseId: number,
+    productId: number,
+    quantity: number,
+  ) {
     try {
-      const warehouseId = parseInt(req.params.id);
-      const excludedId = [warehouseId];
-      const productId = 3;
-      let quantity = 105;
-      do {
-        const warehouses =
-          await productStockService.getWarehousesExclude(excludedId);
-        const selectedWarehouse =
-          await productStockService.getProductWarehouse(warehouseId);
-        let shortestDist = Infinity;
-        let shortestWarehouseId = 0;
-        warehouses.forEach((warehouse) => {
-          const dist = distance(
-            selectedWarehouse?.latitude!,
-            selectedWarehouse?.longitude!,
-            warehouse.latitude,
-            warehouse.longitude,
-          );
-          dist < shortestDist
-            ? (shortestDist = dist) && (shortestWarehouseId = warehouse.id)
-            : '';
-        });
-        const sourceWarehouse = await productStockService.findProductWarehouse(
-          productId,
-          warehouseId,
-        );
-        const destinationWarehouse =
-          await productStockService.findProductWarehouse(
-            productId,
-            shortestWarehouseId,
-          );
-        const automatedMutation = destinationWarehouse?.stock
-          ? await productStockService.automatedMutationRequest(
+      return await prisma.$transaction(async (tx) => {
+        const excludedId = [warehouseId];
+        console.log('runned');
+        do {
+          const warehouses =
+            await productStockService.getWarehousesExclude(excludedId);
+          const selectedWarehouse =
+            await productStockService.getProductWarehouse(warehouseId);
+          let shortestDist = Infinity;
+          let shortestWarehouseId = 0;
+          warehouses.forEach((warehouse) => {
+            const dist = distance(
+              selectedWarehouse?.latitude!,
+              selectedWarehouse?.longitude!,
+              warehouse.latitude,
+              warehouse.longitude,
+            );
+            dist < shortestDist
+              ? (shortestDist = dist) && (shortestWarehouseId = warehouse.id)
+              : '';
+          });
+          const sourceWarehouse =
+            await productStockService.findProductWarehouse(
               productId,
               warehouseId,
+            );
+          const destinationWarehouse =
+            await productStockService.findProductWarehouse(
+              productId,
               shortestWarehouseId,
-              destinationWarehouse?.stock! >= quantity
-                ? quantity
-                : destinationWarehouse?.stock!,
-            )
-          : '';
-        if (destinationWarehouse?.stock! >= quantity) {
-          const destinationStock = destinationWarehouse?.stock! - quantity;
-          const sourceStock = sourceWarehouse?.stock! + quantity;
-          quantity = 0;
-          await productStockService.updateStock(
-            sourceWarehouse?.id!,
-            sourceStock,
-          );
-          await productStockService.updateStock(
-            destinationWarehouse?.id!,
-            destinationStock,
-          );
-          return res.status(200).json(automatedMutation);
-        } else {
-          const sourceStock =
-            sourceWarehouse?.stock! + destinationWarehouse?.stock!;
-          quantity = quantity - destinationWarehouse?.stock!;
-          await productStockService.updateStock(
-            sourceWarehouse?.id!,
-            sourceStock,
-          );
-          await productStockService.updateStock(destinationWarehouse?.id!, 0);
-          excludedId.push(shortestWarehouseId);
-        }
-      } while (quantity);
+            );
+          const automatedMutation = destinationWarehouse?.stock
+            ? await productStockService.automatedMutationRequest(
+                productId,
+                warehouseId,
+                shortestWarehouseId,
+                destinationWarehouse?.stock! >= quantity
+                  ? quantity
+                  : destinationWarehouse?.stock!,
+              )
+            : '';
+          if (destinationWarehouse?.stock! >= quantity) {
+            const destinationStock = destinationWarehouse?.stock! - quantity;
+            const sourceStock = sourceWarehouse?.stock! + quantity;
+            quantity = 0;
+            await productStockService.updateStock(
+              sourceWarehouse?.id!,
+              sourceStock,
+            );
+            await productStockService.updateStock(
+              destinationWarehouse?.id!,
+              destinationStock,
+            );
+            return automatedMutation;
+          } else {
+            const sourceStock =
+              sourceWarehouse?.stock! + destinationWarehouse?.stock!;
+            quantity = quantity - destinationWarehouse?.stock!;
+            await productStockService.updateStock(
+              sourceWarehouse?.id!,
+              sourceStock,
+            );
+            await productStockService.updateStock(destinationWarehouse?.id!, 0);
+            excludedId.push(shortestWarehouseId);
+          }
+        } while (quantity);
+      });
     } catch (error) {
       console.log(error);
     }

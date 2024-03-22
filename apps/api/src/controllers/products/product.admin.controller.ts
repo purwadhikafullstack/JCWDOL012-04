@@ -9,9 +9,11 @@ import {
 } from '@/lib/productsHelper';
 import ProductService from '@/services/products/product.service';
 import AdminProductService from '@/services/products/product.admin.service';
+import { ProductStockController } from './product.stock.controller';
 
 const productService = new ProductService();
 const adminProductService = new AdminProductService();
+const productStockController = new ProductStockController();
 
 interface getAdminProducts extends Products {
   productsWarehouses: {
@@ -118,6 +120,21 @@ export class AdminProductController {
       const id = parseInt(rawId);
       const deletedProduct = await adminProductService.deleteProduct(id);
       return res.status(200).json(deletedProduct);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async testAutoMutation(req: Request, res: Response) {
+    try {
+      const warehouseId = 1;
+      const productId = 10;
+      const quantity = 123;
+      const automatedMutation = await productStockController.automatedMutation(
+        warehouseId,
+        productId,
+        quantity,
+      );
+      return res.status(201).json(automatedMutation);
     } catch (error) {
       console.log(error);
     }
