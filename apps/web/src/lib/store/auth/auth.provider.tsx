@@ -6,6 +6,7 @@ import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWith
 import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import UnauthorizedPage from "@/components/auth/unauthorized";
 
 export type AuthContextType = {
     isLoading: boolean;
@@ -75,6 +76,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             return router.push('/auth/login?origin=401')
         }
         if (path.includes('/auth/reset-password') && !isLoading && user.isAuthenticated) {
+            return router.push('/')
+        }
+        if (path.includes('/admin') && !isLoading && !(user.data?.role == 'SUPER_ADMIN' || user.data?.role == 'WAREHOUSE_ADMIN')) {
+            <UnauthorizedPage />
             return router.push('/')
         }
     }, [path, user])
