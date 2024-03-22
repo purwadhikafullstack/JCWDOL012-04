@@ -28,11 +28,9 @@ export async function getCities(req: Request, res: Response) {
 }
 
 export async function getClosestWarehouse(req: Request, res: Response) {
-    console.log(req.query);
     const latitude = req.query.lat ? String(req.query.lat) : null;
     const longitude = req.query.lng ? String(req.query.lng) : null;
-    console.log(latitude, longitude);
-    console.log('parseFloat', parseFloat("latitude"))
+
     if (!latitude || !longitude) return resUnprocessable(res, 'Please provide shipping address', null);
 
     const warehouses = await prisma.warehouses.findMany({

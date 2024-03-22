@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react"
+import { Edit, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import DeleteWarehouseAdminDialog from "./dialog-delete";
+import EditAdminDialog from "./dialog-edit";
 
 export const columns: ColumnDef<AdminModel>[] = [
     {
@@ -38,7 +39,6 @@ export const columns: ColumnDef<AdminModel>[] = [
         id: "actions",
         cell: ({ row }) => {
             const admin = row.original
-            console.log('admin', admin)
 
             return (
                 <DropdownMenu>
@@ -48,10 +48,10 @@ export const columns: ColumnDef<AdminModel>[] = [
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent className="flex flex-col items-start">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <EditAdminDialog id={admin?.id!} />
                         <DeleteWarehouseAdminDialog id={admin?.id!} />
                     </DropdownMenuContent>
                 </DropdownMenu>

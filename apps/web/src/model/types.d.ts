@@ -30,7 +30,7 @@ interface AdminModel {
     firstName: string,
     lastName: string,
     email: string,
-    gender: "male" | "female" | undefined
+    gender: "male" | "female" | undefined | string
     isVerified?: boolean
     createdAt?: Date
     updatedAt?: Date

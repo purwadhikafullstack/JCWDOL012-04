@@ -10,7 +10,6 @@ import { Input } from "../ui/input"
 
 export default function ResetPasswordForm() {
     const auth = useAuth()
-    console.log(auth?.error)
 
     const formik = useFormik({
         initialValues: {

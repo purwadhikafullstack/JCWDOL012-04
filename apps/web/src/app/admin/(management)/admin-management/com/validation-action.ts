@@ -26,6 +26,26 @@ export const addNewAdminValidationSchema = Yup.object({
         .required('Required')
 })
 
+export const editAdminValidationSchema = Yup.object({
+    email: Yup.string()
+        .email('Invalid email address')
+        .required('Required'),
+    password: Yup.string()
+        .min(6, "Must be at least 6 characters"),
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password')], 'Passwords must match')
+        .min(6, "Must be at least 6 characters"),
+    firstName: Yup.string()
+        .min(2, "Must be at least 2 characters")
+        .required('Required'),
+    lastName: Yup.string()
+        .min(2, "Must be at least 2 characters")
+        .required('Required'),
+    gender: Yup.string()
+        .oneOf(["male", "female"], "Select one of the options")
+        .required('Required')
+})
+
 const USER_BASE_URL = process.env.NEXT_PUBLIC_USER_BASE_URL ? process.env.NEXT_PUBLIC_USER_BASE_URL : process.env.USER_BASE_URL
 if (!USER_BASE_URL) throw new Error("No user base URL found")
 
@@ -48,6 +68,20 @@ export async function submitAddNewAdmin(
         .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleError(error, setError))
 }
 
+export async function submitEditAdmin(
+    id: number | string,
+    values: AdminModel,
+    setError: Dispatch<SetStateAction<AddAdminError>>
+) {
+    user.patch(`/admin/wh/${id}/update`, values)
+        .then((response: AxiosResponse) => {
+            clientSideRedirect('/admin/admin-management')
+            return response
+        })
+        .then(() => setError(null))
+        .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleError(error, setError))
+}
+
 export async function archieveAdmin(
     id: number | string,
     setError: Dispatch<SetStateAction<AddAdminError>>
@@ -58,6 +92,20 @@ export async function archieveAdmin(
             return response
         })
         .then(() => setError(null))
+        .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleError(error, setError))
+}
+
+export async function fetchAdminData(
+    id: number | string,
+    setAdminData: Dispatch<SetStateAction<AdminModel | null>>,
+    setIsLoading: Dispatch<SetStateAction<boolean>>,
+    setError: Dispatch<SetStateAction<AddAdminError>>
+) {
+    await user.get(`/admin/wh/${id}`)
+        .then((response: AxiosResponse) => {
+            setAdminData(response.data.data)
+            setIsLoading(false)
+        })
         .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleError(error, setError))
 }
 

@@ -20,7 +20,7 @@ export default function DeleteWarehouseAdminDialog({ id }: { id: string | number
                     <DialogTitle>Delete Warehouse Administrator Account</DialogTitle>
                 </DialogHeader>
                 <DialogDescription>
-                    Are you sure you want to delete this warehouse administrator account? {id}
+                    Are you sure you want to delete this warehouse administrator account?
                 </DialogDescription>
                 <DialogFooter>
                     {error?.status && <p className="text-red-500 text-xs">{error?.message}</p>}

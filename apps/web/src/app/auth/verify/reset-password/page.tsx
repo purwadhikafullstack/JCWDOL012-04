@@ -39,9 +39,6 @@ export default function VerifyChangeEmailPage() {
         }
     })
 
-    console.log(auth?.error)
-    console.log('User:', auth?.user)
-
     if (!auth?.user.data?.id && !auth?.isLoading) return (
         < UnauthorizedPage message={auth?.error?.message!} ctaLabel="Go To Home Page" redirectTo="/" />
     )
