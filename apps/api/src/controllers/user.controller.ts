@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClient, Users } from '@prisma/client';
-import { resInternalServerError, resSuccess } from '@/services/responses';
+import { resInternalServerError, resSuccess, resUnprocessable } from '@/services/responses';
+import { genSalt, hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -183,5 +184,30 @@ export async function getAdmins(req: Request, res: Response) {
     } catch (error) {
         console.error('Error getting admin data', error)
         resInternalServerError(res, 'Error getting admin data', null)
+    }
+}
+
+export async function createWarehouseAdmin(req: Request, res: Response) {
+    try {
+        const { email, password, firstName, lastName, gender } = req.body;
+        if (!email || !password || !firstName || !lastName || !gender) return resUnprocessable(res, 'Missing mandatory fields', null)
+        const salt = await genSalt(10)
+        const hashedPassword = await hash(password, salt)
+        const admin = await prisma.users.create({
+            data: {
+                email,
+                password: hashedPassword,
+                firstName,
+                lastName,
+                gender,
+                isVerified: true,
+                role: 'WAREHOUSE_ADMIN'
+            }
+        })
+
+        resSuccess(res, 'Warehouse Admin created successfully', admin, 1)
+    } catch (error) {
+        console.error('Error creating warehouse admin', error)
+        resInternalServerError(res, 'Error creating warehouse admin', null)
     }
 }

@@ -26,7 +26,7 @@ type RajaOngkirRequestCost = {
 }
 
 interface AdminModel {
-    id: number,
+    id?: number,
     firstName: string,
     lastName: string,
     email: string,

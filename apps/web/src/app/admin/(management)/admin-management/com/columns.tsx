@@ -12,13 +12,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export type Payment = {
-    id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
-}
-
 export const columns: ColumnDef<AdminModel>[] = [
     {
         accessorKey: "firstName",
@@ -30,7 +23,11 @@ export const columns: ColumnDef<AdminModel>[] = [
     },
     {
         accessorKey: "gender",
-        header: "Gender"
+        header: "Gender",
+        cell: ({ row }) => {
+            const gender = row.getValue("gender")! as string
+            return (<div className="capitalize">{gender}</div>)
+        }
     },
     {
         accessorKey: "email",

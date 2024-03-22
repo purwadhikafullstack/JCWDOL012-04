@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { addAddress, archieveAddress, getAdmins, getUserAddresses, setAsPrimaryAddress, updateAddress } from "@/controllers/user.controller";
+import { addAddress, archieveAddress, createWarehouseAdmin, getAdmins, getUserAddresses, setAsPrimaryAddress, updateAddress } from "@/controllers/user.controller";
 
 const userRouter = Router();
 
@@ -32,6 +32,12 @@ userRouter.patch('/address/:id/update',
 userRouter.get('/admin',
     requireJwtAuth,
     getAdmins
+)
+
+userRouter.post('/admin/wh/create',
+    requireJwtAuth,
+    // SUPER_ADMIN GUARD
+    createWarehouseAdmin
 )
 
 export { userRouter };
