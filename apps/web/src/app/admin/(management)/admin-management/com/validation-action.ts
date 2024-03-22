@@ -48,6 +48,19 @@ export async function submitAddNewAdmin(
         .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleError(error, setError))
 }
 
+export async function archieveAdmin(
+    id: number | string,
+    setError: Dispatch<SetStateAction<AddAdminError>>
+) {
+    user.patch(`/admin/wh/${id}/archieve`)
+        .then((response: AxiosResponse) => {
+            clientSideRedirect('/admin/admin-management')
+            return response
+        })
+        .then(() => setError(null))
+        .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleError(error, setError))
+}
+
 function handleError(
     error: AxiosError<{ message?: string, msg?: string }>,
     setError: Dispatch<SetStateAction<AddAdminError>>

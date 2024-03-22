@@ -211,3 +211,22 @@ export async function createWarehouseAdmin(req: Request, res: Response) {
         resInternalServerError(res, 'Error creating warehouse admin', null)
     }
 }
+
+export async function archieveWarehouseAdmin(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        if (!id) return resUnprocessable(res, 'Missing mandatory fields: id', null)
+        const admin = await prisma.users.update({
+            where: {
+                id: parseInt(id)
+            },
+            data: {
+                archived: true
+            }
+        })
+        resSuccess(res, 'Warehouse Admin archieved successfully', admin, 1)
+    } catch (error) {
+        console.error('Error archieving warehouse admin', error)
+        resInternalServerError(res, 'Error archieving warehouse admin', null)
+    }
+}

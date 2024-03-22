@@ -11,6 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import DeleteWarehouseAdminDialog from "./dialog-delete";
 
 export const columns: ColumnDef<AdminModel>[] = [
     {
@@ -37,6 +38,7 @@ export const columns: ColumnDef<AdminModel>[] = [
         id: "actions",
         cell: ({ row }) => {
             const admin = row.original
+            console.log('admin', admin)
 
             return (
                 <DropdownMenu>
@@ -50,7 +52,7 @@ export const columns: ColumnDef<AdminModel>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DeleteWarehouseAdminDialog id={admin?.id!} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

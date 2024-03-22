@@ -142,7 +142,8 @@ export default function DialogAddNewAdmin() {
                                 : null}
                         </div>
                         <DialogFooter>
-                            <Button type="submit" >Submit</Button>
+                            {error?.status && <p className="text-red-500 text-xs">{error?.message}</p>}
+                            <Button type="submit" disabled={formik.isSubmitting}>Submit</Button>
                         </DialogFooter>
                     </div>
                 </form>
