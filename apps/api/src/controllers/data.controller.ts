@@ -12,7 +12,6 @@ export async function getProvinces(req: Request, res: Response) {
 }
 
 export async function getCities(req: Request, res: Response) {
-    console.log(req.params)
     if (req.params.provinceId) {
         await prisma.cities.findMany({
             where: {

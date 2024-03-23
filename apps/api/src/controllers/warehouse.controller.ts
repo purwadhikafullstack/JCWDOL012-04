@@ -75,7 +75,6 @@ export async function getWarehouse(req: Request, res: Response) {
 }
 
 export async function createWarehouse(req: Request, res: Response) {
-    console.log(req.body)
     const { name, address, cityId, latitude, longitude, adminId } = req.body
     try {
         const trx = await prisma.$transaction(async (tx) => {

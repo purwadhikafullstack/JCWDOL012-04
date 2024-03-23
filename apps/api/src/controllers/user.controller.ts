@@ -24,7 +24,7 @@ export async function getUserAddresses(req: Request, res: Response) {
         });
         resSuccess(res, 'User addresses retrieved successfully', addresses, 1)
     } catch (error) {
-        console.log('Error getting user addresses', error)
+        console.error('Error getting user addresses', error)
         resInternalServerError(res, 'Error getting user addresses', null)
     }
 }
@@ -72,7 +72,7 @@ export async function addAddress(req: Request, res: Response) {
             resSuccess(res, 'Address added successfully', newAddress, 1);
         };
     } catch (error) {
-        console.log('Error adding user address', error);
+        console.error('Error adding user address', error);
         resInternalServerError(res, 'Error adding user address', null);
     }
 }
@@ -91,7 +91,7 @@ export async function archieveAddress(req: Request, res: Response) {
         });
         resSuccess(res, 'Address archieved successfully', archievedAddress, 1);
     } catch (error) {
-        console.log('Error archieving user address', error);
+        console.error('Error archieving user address', error);
         resInternalServerError(res, 'Error archieving user address', null);
     }
 }
@@ -120,7 +120,7 @@ export async function setAsPrimaryAddress(req: Request, res: Response) {
         ]);
         resSuccess(res, 'Address set as primary successfully', updatedAddress, 1);
     } catch (error) {
-        console.log('Error setting user address as primary', error);
+        console.error('Error setting user address as primary', error);
         resInternalServerError(res, 'Error setting user address as primary', null);
     }
 }
@@ -167,7 +167,7 @@ export async function updateAddress(req: Request, res: Response) {
             resSuccess(res, 'Address updated successfully', updatedAddress, 1);
         }
     } catch (error) {
-        console.log('Error updating user address', error);
+        console.error('Error updating user address', error);
         resInternalServerError(res, 'Error updating user address', null);
     }
 

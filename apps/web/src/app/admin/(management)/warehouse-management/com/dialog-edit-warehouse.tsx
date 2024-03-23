@@ -34,9 +34,6 @@ export default function EditWarehouseDialog({ id }: { id: string | number }) {
         },
     });
 
-    // console.log("Warehouse: ", warehouse)
-    console.log("Formik", formik.values)
-
     useEffect(() => {
         if (dialogOpen) {
             setIsLoading(true)

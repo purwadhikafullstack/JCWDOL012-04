@@ -87,7 +87,6 @@ export async function getCitiesOfProvince(
     setCities: Dispatch<SetStateAction<CitiesModel[] | null>>,
     setError: Dispatch<SetStateAction<TWarehouseError | null>>
 ) {
-    console.log("provinceId", provinceId)
     return await data.get(`/${provinceId}/cities`)
         .then((response) => {
             setCities(response.data.data)

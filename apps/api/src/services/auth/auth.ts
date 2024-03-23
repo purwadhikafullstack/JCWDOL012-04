@@ -49,7 +49,7 @@ export async function registerNewUser(req: Request, res: Response, next: NextFun
         return resCreated(res, 'User registered successfully', newUser!)
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return next(error)
     }
 }
