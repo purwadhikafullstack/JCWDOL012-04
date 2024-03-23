@@ -36,7 +36,7 @@ export default function Sidebar() {
                                     'bg-purple-100 text-purple-600': pathname === link.href,
                                 })}
                         >
-                            <LinkIcon />
+                            <LinkIcon className="min-w-5" />
                             <p className="capitalize block">{link.name}</p>
                         </Link>
                     )
