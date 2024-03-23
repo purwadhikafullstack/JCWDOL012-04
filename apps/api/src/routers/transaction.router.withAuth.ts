@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import TransactionController from '../controllers/transaction.controller';
+import TransactionController from '../controllers/transaction.controller.withAuth';
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
 
 const transactionRouter = Router();

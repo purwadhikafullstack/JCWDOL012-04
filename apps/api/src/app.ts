@@ -8,13 +8,13 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import cartRouter from './routers/cart.router.WithoutAuth';
 import {prisma} from './services/prisma.service';
 import { join } from 'path';
 import { ProductRouter } from './routers/product.router';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
-import transactionRouter from './routers/transaction.router';
+import cartRouter from './routers/cart.router.withAuth';
+import transactionRouter from './routers/transaction.router.withAuth';
 import { googleAuthRouter } from './routers/auth/authGoogle.router';
 import { localAuthRouter } from './routers/auth/localAuth.router';
 import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
@@ -35,7 +35,6 @@ export default class App {
 
   private configure(): void {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-    this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
     this.app.use(express.static('public'))

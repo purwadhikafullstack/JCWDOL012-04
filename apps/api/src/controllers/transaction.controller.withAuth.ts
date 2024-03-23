@@ -10,7 +10,6 @@ import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
 import distance from "@/lib/distance";
 import { Transactions, TransactionsProducts, mutationType, Users, UserCities, paymentType, ShoppingCart, Warehouses, orderStatus } from "@prisma/client";
 import { Request, Response } from "express";
-import accCheck from "@/lib/account.check";
 import { midtransRequest } from "@/model/transaction.midtrans.create.model";
 import { prisma } from "@/services/prisma.service";
 
@@ -54,7 +53,6 @@ export default class TransactionController {
     async preTransaction(req: Request, res: Response): Promise<void> {
         const user:any = req.user;
         const userId = user.id;
-        if (!await accCheck(user, res)) return;
         const orders: ShoppingCart[] = req.body.orders;
         let total = await this.getTotal(orders);
         const paymentType: paymentType = req.body.paymentType;

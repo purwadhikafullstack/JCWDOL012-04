@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import ShoppingCartController from '../controllers/cart.controller';
+import ShoppingCartController from '../controllers/cart.controller.withAuth';
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
 
 const cartRouter = Router();

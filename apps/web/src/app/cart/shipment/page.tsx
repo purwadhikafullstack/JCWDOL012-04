@@ -4,8 +4,22 @@ import ShippingProducts from "@/components/cart/shipping/shipping.products"
 import { CartContext } from '@/lib/cart.provider';
 import { useContext } from "react";
 import { ShoppingCartModel } from '@/model/ShoppingCartModel';
+import { useAuth } from "@/lib/store/auth/auth.provider";
 
 export default function Shipment(){
+    const auth = useAuth();
+    const isAuthenticated = auth?.user?.isAuthenticated;
+    const role = auth?.user?.data?.role;
+    // const isAuthorLoading = auth?.isLoading;
+
+    if (!isAuthenticated || role !== 'CUSTOMER') {
+        return (
+            <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+                Unauthorized | 401
+            </div>
+        )
+    }
+    
     const { cart } = useContext(CartContext);
     const cartData: ShoppingCartModel[] = Array.isArray(cart) ? cart : [];
 

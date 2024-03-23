@@ -7,7 +7,7 @@ import { useUpdateCart } from "@/lib/cart.provider.update";
 import { ToastContainer } from 'react-toastify';
 import ImagePlaceholder from "../../image.placeholder";
 
-import CartApi from "@/api/cart.api";
+import CartApi from "@/api/cart.api.withAuth";
 import idr from "@/lib/idrCurrency";
 
 export default function ShippingProducts({cart=[], total=0}:{cart: ShoppingCartModel[], total:number}) {

@@ -6,9 +6,7 @@ import { api, apiAuth } from "@/lib/axios.config";
 //api token bisa di setting di axios instance 'axios.config.ts'
 
 export default class CartApi{
-    baseUrl;
     constructor() {
-        this.baseUrl = process.env.NEXT_PUBLIC_BASE_API_URL_3;
     }
     async getCart(): Promise<{status: number, data:ShoppingCartModel[]}>{
         "use server"

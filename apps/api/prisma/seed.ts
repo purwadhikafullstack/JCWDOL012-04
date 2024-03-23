@@ -197,7 +197,8 @@ async function main() {
         address: addressTemp[j].address,
         latitude: addressTemp[j].latitude,
         longitude: addressTemp[j].longitude,
-        isPrimaryAddress: isPrimaryAddressTemp
+        isPrimaryAddress: isPrimaryAddressTemp,
+        label: 'Address label' + j
       }
     });
     console.log(`Created address${j} for customer${1}`);

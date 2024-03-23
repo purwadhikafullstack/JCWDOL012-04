@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import ShoppingCartController from '../controllers/cart.controller';
+import ShoppingCartController from '../controllers/cart.controller.withAuth';
 
 const cartRouter = Router();
 const shoppingCartController = new ShoppingCartController();

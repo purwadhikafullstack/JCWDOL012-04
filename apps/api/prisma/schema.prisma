@@ -144,7 +144,7 @@ model Products {
   name                 String
   description          String
   price                Float
-  weight               Int
+  weight               Int                    @default(1000)
   productCategoryId    Int
   productCategory      ProductCategories      @relation(fields: [productCategoryId], references: [id])
   createdAt            DateTime               @default(now())

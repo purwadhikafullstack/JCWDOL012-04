@@ -1,6 +1,6 @@
 'use client'
 import idr from "@/lib/idrCurrency";
-import TransactionApi from "@/api/transaction.user.api";
+import TransactionApi from "@/api/transaction.user.api.withAuth";
 import { useEffect, useState } from "react";
 import { PaymentTypeModel } from "@/model/PaymentTypeModel";
 import { ShoppingCartModel } from '@/model/ShoppingCartModel';
