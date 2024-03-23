@@ -8,6 +8,7 @@ import { ProvincesModel } from "@/model/ProvincesModel";
 import { CitiesModel } from "@/model/CitiesModel";
 
 export type AddressContext = {
+    isAvailable: boolean;
     isLoading: boolean;
     userAddress: UserCitiesModel[];
     error: {
@@ -29,6 +30,7 @@ export type AddressContext = {
 }
 
 const initialAddressContext = {
+    isAvailable: false,
     isLoading: false,
     userAddress: [],
     error: {
@@ -59,6 +61,7 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     const [cities, setCities] = useState<AddressContext['data']['cities']>(initialAddressContext.data.cities);
     const primaryAddress = userAddress.filter((address) => address.isPrimaryAddress && !address.archieved)[0]
     const [choosenAddress, setChoosenAddress] = useState<AddressContext['choosenAddress']>(initialAddressContext.choosenAddress);
+    const [isAvailable, setIsAvailable] = useState<AddressContext['isAvailable']>(false);
     const auth = useAuth()
     const user = auth?.user
 
@@ -71,6 +74,11 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     useEffect(() => {
         getChoosenAddress(primaryAddress, setChoosenAddress)
     }, [primaryAddress])
+
+    useEffect(() => {
+        if (!isAvailable) setIsAvailable(true)
+        setIsLoading(false);
+    }, [])
 
     const fetchAddress = async () => {
         setIsLoading(true);
@@ -116,7 +124,7 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     }
 
     return (
-        <AddressContext.Provider value={{ isLoading, userAddress, error, data: { provinces, cities }, choosenAddress, updateChosenAddress, addAddress, updateAddress, setAsPrimary, deleteAddress, getProvinces, getCities }}>
+        <AddressContext.Provider value={{ isAvailable, isLoading, userAddress, error, data: { provinces, cities }, choosenAddress, updateChosenAddress, addAddress, updateAddress, setAsPrimary, deleteAddress, getProvinces, getCities }}>
             {children}
         </AddressContext.Provider>
     )

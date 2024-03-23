@@ -9,15 +9,10 @@ import { clientSideRedirect } from "@/lib/store/auth/auth.action"
 import ChooseShippingAddressDialog from "./dialog-choose-shipping-address"
 
 export default function ShippingAddress() {
-    return (
-        <AddressProvider>
-            <ShippingAddressContent />
-        </AddressProvider>
-    )
-}
-
-function ShippingAddressContent() {
     const address = useAddress()
+    console.log("Address provider", address)
+    if (!address.isAvailable && !address.isLoading) throw new Error("Address context is not loaded")
+
     const { choosenAddress } = address
     const choosenAddressExist = choosenAddress && Object.keys(choosenAddress!).length !== 0 ? true : false
 

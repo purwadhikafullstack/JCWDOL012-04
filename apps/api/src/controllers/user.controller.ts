@@ -170,3 +170,18 @@ export async function updateAddress(req: Request, res: Response) {
     }
 
 }
+
+export async function getAdmins(req: Request, res: Response) {
+    try {
+        const admins = await prisma.users.findMany({
+            where: {
+                role: 'WAREHOUSE_ADMIN',
+                archived: false
+            }
+        })
+        resSuccess(res, 'Administrator data retrieved successfully', admins, 1)
+    } catch (error) {
+        console.error('Error getting admin data', error)
+        resInternalServerError(res, 'Error getting admin data', null)
+    }
+}

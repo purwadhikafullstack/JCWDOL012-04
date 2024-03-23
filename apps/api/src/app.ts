@@ -19,6 +19,7 @@ import { ProductRouter } from './routers/product.router';
 import { profileRouter } from './routers/profile.router';
 import { userRouter } from './routers/user.router';
 import { dataRouter } from './routers/data.router';
+import { shippingRouter } from './routers/shipping.router';
 
 export default class App {
   private app: Express;
@@ -77,8 +78,9 @@ export default class App {
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
     this.app.use('/profile', profileRouter);
-    this.app.use('/user', userRouter)
-    this.app.use('/data', dataRouter)
+    this.app.use('/user', userRouter);
+    this.app.use('/data', dataRouter);
+    this.app.use('/shipping', shippingRouter);
   }
 
   public start(): void {

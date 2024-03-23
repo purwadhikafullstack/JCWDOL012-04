@@ -69,12 +69,12 @@ export async function verifyToken(
             setLoadingState ? setLoadingState(false) : null
         })
         .catch((error) => {
-            if (error.response.status === 401) {
+            if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
                 setError({ status: error.response.status, message: error.response.data })
                 if (path?.includes('/profile')) clientSideRedirect('/auth/login?origin=401')
-            } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
+            } else if (error?.response?.status === 422 || error.response?.status === 500) {
+                setError({ status: error.response?.status, message: error.response?.data?.msg })
             } else {
                 setLoadingState ? setLoadingState(false) : null
                 throw new Error('An unhandled error occured')
@@ -164,11 +164,7 @@ function handleError(
     const errorStatus = error.response?.status
     const errorMessage = error.response?.data.message ? error.response?.data.message : error.response?.data.msg
 
-    console.log('Error', error)
-
-    if (errorStatus === 401) {
+    if (errorStatus === 401 || errorStatus === 422 || errorStatus === 500) {
         setError({ status: errorStatus, message: errorMessage })
-    } else if (errorStatus === 422 || errorStatus === 500) {
-        setError({ status: errorStatus, message: errorMessage })
-    } else { throw new Error('An unhandled error occured') }
+    } else { setError({ status: null, message: "Unknown error occured" }) }
 }

@@ -1,7 +1,10 @@
+"use client"
+
 import Link from "next/link";
 import Image from "next/image";
 import { PiInstagramLogoLight, PiTiktokLogoLight, PiPhoneLight, PiEnvelopeLight, PiWhatsappLogoLight } from "react-icons/pi";
 import clsx from "clsx";
+import { usePathname } from "next/navigation";
 
 export const Footer = (
   {
@@ -14,6 +17,11 @@ export const Footer = (
     hideContactUs?: boolean;
 
   }) => {
+
+  const path = usePathname();
+
+  if (path.includes("/admin")) return null;
+
   return (
     <main className="flex pt-4 w-full items-center justify-center border-t-[1px] text-xs">
       <div className="flex flex-col gap-5 justify-between w-full px-6 py-6 md:flex-row md:max-w-screen-xl	">
