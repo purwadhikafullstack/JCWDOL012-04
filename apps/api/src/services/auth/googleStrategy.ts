@@ -28,14 +28,11 @@ const googleLogin = new GoogleStrategy(
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: `${serverURL}${process.env.GOOGLE_CALLBACK_URL}`,
-        // passReqToCallback: true
         proxy: true
     },
     async (accessToken: any, refreshToken: any, profile: GoogleAuthResponse, done: any) => {
-        // console.log("Here")
         try {
             const oldUser = await prisma.users.findUnique({ where: { email: profile.email } });
-            // console.log(oldUser)
             if (oldUser && !oldUser.googleId) {
                 const updatedUser = await prisma.users.update({
                     where: {
@@ -48,7 +45,7 @@ const googleLogin = new GoogleStrategy(
                 });
                 return done(null, updatedUser);
             }
-            return done(null, oldUser);
+            if (oldUser) return done(null, oldUser);
         } catch (error) {
             console.error(error);
             done(error, null);

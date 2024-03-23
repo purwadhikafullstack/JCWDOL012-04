@@ -65,7 +65,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
         id="drop-category"
         className={`${
           props.isOpenCat ? '' : 'hidden'
-        } absolute flex flex-col font-normal border mt-[230px] right-0 lg:right-[70px] bg-[white] shadow-md rounded-md`}
+        } absolute flex flex-col font-normal border top-14 right-0 lg:right-[70px] bg-[white] shadow-md rounded-md max-h-[300px] overflow-y-auto`}
       >
         {props.productCategories.map((procat, index) => {
           return (

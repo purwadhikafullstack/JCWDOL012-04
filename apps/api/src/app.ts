@@ -18,6 +18,10 @@ import transactionRouter from './routers/transaction.router';
 import { googleAuthRouter } from './routers/auth/authGoogle.router';
 import { localAuthRouter } from './routers/auth/localAuth.router';
 import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
+import { profileRouter } from './routers/profile.router';
+import { userRouter } from './routers/user.router';
+import { dataRouter } from './routers/data.router';
+import { shippingRouter } from './routers/shipping.router';
 
 export default class App {
   private app: Express;
@@ -34,10 +38,8 @@ export default class App {
     this.app.use(cors());
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use('/public', express.static(join(__dirname, './public')));
+    this.app.use(express.static('public'))
     this.app.use(cookieparser());
-    // this.app.use(passport.initialize());
-    this.app.use('/public', express.static(join(__dirname, './public')));
   }
 
   private handleError(): void {
@@ -63,7 +65,6 @@ export default class App {
     );
   }
 
-
   private routes(): void {
     const productRouter = new ProductRouter();
     // const sampleRouter = new SampleRouter();
@@ -82,6 +83,10 @@ export default class App {
     this.app.use('/api', productRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
+    this.app.use('/profile', profileRouter);
+    this.app.use('/user', userRouter);
+    this.app.use('/data', dataRouter);
+    this.app.use('/shipping', shippingRouter);
   }
 
   public start(): void {

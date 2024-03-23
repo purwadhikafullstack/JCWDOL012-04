@@ -1,42 +1,21 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { CartContainer } from '@/components/products/CartContainer';
 import { Loading } from '@/components/Loading';
 import { fetchData } from '@/utils/api';
 import { formatToRupiah } from '@/utils/helper';
+import { ProductsModel } from '@/model/ProductsModel';
+import Image from 'next/image';
 import CartAdd from '@/components/cart/cart.add';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  totalStock: number;
-  productCategory: {
-    name: string;
-  };
-  productImages: {
-    id: number;
-    productId: number;
-    path: string;
-    createdAt: string;
-    updatedAt: string;
-    archived: boolean;
-  }[];
-}
-
-interface ProductDetailsProps {
-  params: {
-    productId: string;
-  };
-}
-
-export default function ProductDetails({ params }: ProductDetailsProps) {
-  const [data, setData] = useState<Product | null>(null);
+export default function ProductDetails({
+  params,
+}: {
+  params: { productId: string };
+}) {
+  const [data, setData] = useState<ProductsModel | null>(null);
   const largeImageRef = useRef<HTMLImageElement | null>(null);
-  const [imgSrc, setImgSrc] = useState(data?.productImages[0].path);
+  const [imgSrc, setImgSrc] = useState(data?.productImages?.[0]?.path);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -60,7 +39,7 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
   return (
     <>
       {data ? (
-        <div className="flex flex-col lg:flex-row lg:justify-center w-full lg:px-[20px] h-auto mt-[30px]">
+        <div className="flex flex-col lg:flex-row lg:justify-center w-full lg:px-[20px] h-auto mt-[30px] mb-20">
           <div id="product-image" className="lg:w-[350px] xl:w-[400px]">
             <div className="relative w-full h-[375px] lg:border">
               {imgSrc ? (
@@ -75,14 +54,14 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
                 <Image
                   ref={largeImageRef}
                   className="object-cover object-center"
-                  src={`${data.productImages[0].path}`}
+                  src={`${data?.productImages?.[0]?.path}`}
                   fill
                   alt="product"
                 />
               )}
             </div>
             <div className="flex justify-center flex-wrap">
-              {data.productImages.map((image, index) => {
+              {data?.productImages?.map((image, index) => {
                 return (
                   <div
                     key={index}
@@ -152,7 +131,7 @@ export default function ProductDetails({ params }: ProductDetailsProps) {
             price={data.price}
             totalStock={data.totalStock}
           /> */}
-          <CartAdd productId={data.id}/>
+          <CartAdd productId={data.id} />
         </div>
       ) : (
         <Loading />

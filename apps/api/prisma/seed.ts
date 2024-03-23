@@ -17,35 +17,38 @@ async function main() {
 
   const citiesRO = await fetch(`${rajaOngkirUrl}/city`, {
     method: 'GET',
-    headers: headers
+    headers: headers,
   })
-    .then(response => response.json())
-    .then(data => data.rajaongkir.results)
-    .catch(err => console.error(err));
+    .then((response) => response.json())
+    .then((data) => data.rajaongkir.results)
+    .catch((err) => console.error(err));
 
   const provincesRO = await fetch(`${rajaOngkirUrl}/province`, {
     method: 'GET',
-    headers: headers
+    headers: headers,
   })
-    .then(response => response.json())
-    .then(data => data.rajaongkir.results)
-    .catch(err => console.error(err));
+    .then((response) => response.json())
+    .then((data) => data.rajaongkir.results)
+    .catch((err) => console.error(err));
 
-  for(const item of provincesRO)  {
+  console.log(provincesRO)
+
+  for (const item of provincesRO) {
     await prisma.provinces.create({
       data: {
         id: parseInt(item.province_id),
-        name: item.province
-      }
+        name: item.province,
+      },
     });
     console.log(`Created province ${item.province}`);
   }
 
-  for(const item of citiesRO)  {
+  for (const item of citiesRO) {
     await prisma.cities.create({
       data: {
         id: parseInt(item.city_id),
-        name: item.type+" "+item.city_name,
+        name: item.city_name,
+        type: item.type.toUpperCase(),
         provinceId: parseInt(item.province_id)
       }
     });
@@ -65,13 +68,13 @@ async function main() {
         phoneNumber: 'phoneNumber' + i,
         isVerified: true,
         role: 'CUSTOMER',
-        profilePicture: '/images/profilePict1.jpeg'
+        profilePicture: '/images/profilePict1.jpeg',
       },
     });
     console.log(`Created customer ${i}`);
   }
 
-  let passwordAdmin = await hash(`admin`, await genSalt(10));
+  let passwordAdmin = await hash(`super_admin`, await genSalt(10));
   //1 superadmin
   await prisma.users.create({
     data: {
@@ -83,24 +86,10 @@ async function main() {
       phoneNumber: '123456789',
       isVerified: true,
       role: 'SUPER_ADMIN',
-      profilePicture: '/images/profilePict1.jpeg'
-    }
+      profilePicture: '/images/profilePict1.jpeg',
+    },
   });
   console.log(`Created superadmin`);
-
-  // //5 warehouse
-  // for (let i = 1; i <= 5; i++) {
-  //   await prisma.warehouses.create({
-  //     data: {
-  //       name: 'warehouse' + i,
-  //       address: 'address' + i,
-  //       cityId: i,
-  //       latitude: 'latitude' + i,
-  //       longitude: 'longitude' + i
-  //     }
-  //   });
-  // }
-  // console.log(`Created warehouse`);
 
   //5 warehouse
   await prisma.warehouses.create({
@@ -152,11 +141,14 @@ async function main() {
       longitude: '110.41737938581653'
     }
   });
-
+  
   //5 warehouse admin
   for (let i = 1; i <= 5; i++) {
     const warehouseId = i;
-    let passwordWarehouseAdmin = await hash(`warehouse_admin`, await genSalt(10));
+    let passwordWarehouseAdmin = await hash(
+      `warehouse_admin`,
+      await genSalt(10),
+    );
     await prisma.users.create({
       data: {
         firstName: 'warehouse_admin' + i,
@@ -168,8 +160,8 @@ async function main() {
         isVerified: true,
         wareHouseAdmin_warehouseId: warehouseId,
         role: 'WAREHOUSE_ADMIN',
-        profilePicture: '/images/profilePict1.jpeg'
-      }
+        profilePicture: '/images/profilePict1.jpeg',
+      },
     });
     console.log(`Created warehouse admin ${i}`);
   }
@@ -224,7 +216,8 @@ async function main() {
           address: 'address' + j,
           latitude: 'latitude' + j,
           longitude: 'longitude' + j,
-          isPrimaryAddress: isPrimaryAddressTemp
+          isPrimaryAddress: isPrimaryAddressTemp,
+          label: 'Address label' + j
         }
       });
       console.log(`Created address${j} for customer${i}`);
@@ -236,8 +229,8 @@ async function main() {
     await prisma.productCategories.create({
       data: {
         name: 'productCategory' + i,
-        description: 'description' + i
-      }
+        description: 'description' + i,
+      },
     });
     console.log(`Created product category${i}`);
   }
@@ -254,7 +247,7 @@ async function main() {
         price: priceTemp,
         weight: weightTemp,
         productCategoryId: categoryTemp,
-      }
+      },
     });
     console.log(`Created product${i}`);
   }
@@ -266,8 +259,8 @@ async function main() {
       await prisma.productImages.create({
         data: {
           productId: i,
-          path: '/images/products/product' + i + 'image' + j + '.jpeg'
-        }
+          path: '/images/products/product' + i + 'image' + j + '.jpeg',
+        },
       });
       console.log(`Created product${i} image${j}`);
     }
@@ -276,15 +269,18 @@ async function main() {
   //5 warehouses products
   for (let i = 1; i <= 5; i++) {
     for (let j = 1; j <= 30; j++) {
-      let stockTemp = Math.random() > 0.3 ? Math.floor(Math.random() * 100) + 1 : 0;
+      let stockTemp =
+        Math.random() > 0.3 ? Math.floor(Math.random() * 100) + 1 : 0;
       await prisma.productsWarehouses.create({
         data: {
           warehouseId: i,
           productId: j,
-          stock: stockTemp
-        }
+          stock: stockTemp,
+        },
       });
-      console.log(`Created product${j} to warehouse${i} with stock ${stockTemp}`);
+      console.log(
+        `Created product${j} to warehouse${i} with stock ${stockTemp}`,
+      );
     }
   }
 
@@ -298,10 +294,12 @@ async function main() {
         data: {
           userId: i,
           productId: productTemp,
-          quantity: quantityTemp
-        }
+          quantity: quantityTemp,
+        },
       });
-      console.log(`Created product${productTemp} to shopping cart of customer${i} with quantity ${quantityTemp}`);
+      console.log(
+        `Created product${productTemp} to shopping cart of customer${i} with quantity ${quantityTemp}`,
+      );
     }
   }
 
@@ -315,12 +313,14 @@ async function main() {
     'SHIPPING',
     'SENT',
     'CONFIRMED',
-  ]
+  ];
 
   // 100 transaction
   for (let i = 1; i <= 100; i++) {
     let userIdTemp = Math.floor(Math.random() * 20) + 1;
-    let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[Math.floor(Math.random() * 9)] as Transactions['orderStatus'];
+    let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[
+      Math.floor(Math.random() * 9)
+    ] as Transactions['orderStatus'];
     let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
     let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
     let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
@@ -334,8 +334,8 @@ async function main() {
         orderStatus: orderStatusTemp,
         warehouseId: warehouseIdTemp,
         shippingCost: shippingCostTemp,
-        total: totalTemp
-      }
+        total: totalTemp,
+      },
     });
     console.log(`Created transaction ${i}`);
   }
@@ -353,13 +353,12 @@ async function main() {
           transactionId: transactionIdTemp,
           productId: productIdTemp,
           quantity: quantityTemp,
-          price: priceTemp
-        }
+          price: priceTemp,
+        },
       });
       console.log(`Created transaction${i} product${j}`);
     }
   }
-
 
   let mutationType = [
     'TRANSACTION',
@@ -381,13 +380,12 @@ async function main() {
         transactionId: transactionIdTemp,
         isAdd: isAddTemp,
         quantity: quantityTemp,
-        mutationType: mutationTypeTemp as Mutations['mutationType']
-      }
+        mutationType: mutationTypeTemp as Mutations['mutationType'],
+      },
     });
     console.log(`Created mutation ${i}`);
   }
 }
-
 
 main()
   .catch((e) => {

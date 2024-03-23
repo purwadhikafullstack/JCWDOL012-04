@@ -1,12 +1,16 @@
+import { CitiesModel } from "./CitiesModel";
+
 export interface UserCitiesModel {
-    id: number;
-    userId: number;
-    cityId: number;
+    id?: number;
+    userId?: number;
+    cityId: number | string;
     address: string;
-    latitude: string;
-    longitude: string;
+    latitude?: string;
+    longitude?: string;
     isPrimaryAddress: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    archived: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+    archieved?: boolean;
+    label: string;
+    city?: CitiesModel
 }

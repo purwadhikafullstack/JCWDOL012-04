@@ -14,24 +14,23 @@ export function unverifiedUserGuard(req: Request, res: Response, next: NextFunct
     next();
 }
 
-export async function setPassword(req: Request, res: Response, next: NextFunction) {
-    try {
-
-        const salt = await genSalt(10)
-        const hashedPassword = await hash(req.body.password, salt)
-        const { id } = req.user as Users
-        const user = await prisma.users.update({
-            where: {
-                id: id
-            },
-            data: {
-                isVerified: true,
-                password: hashedPassword
-            }
-        })
-        resSuccess(res, 'Password set successfully', user, 1)
-    } catch (error) {
-        console.log(error)
-        return resInternalServerError(res, 'An error occurred', null)
-    }
-}
+// export async function setPassword(req: Request, res: Response, next: NextFunction) {
+//     try {
+//         const salt = await genSalt(10)
+//         const hashedPassword = await hash(req.body.password, salt)
+//         const { id } = req.user as Users
+//         const user = await prisma.users.update({
+//             where: {
+//                 id: id
+//             },
+//             data: {
+//                 isVerified: true,
+//                 password: hashedPassword
+//             }
+//         })
+//         resSuccess(res, 'Password set successfully', user, 1)
+//     } catch (error) {
+//         console.log(error)
+//         return resInternalServerError(res, 'Error setting password', null)
+//     }
+// }
