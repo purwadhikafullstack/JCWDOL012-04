@@ -90,7 +90,7 @@ export const SearchBar = ({
           onBlur={() => {
             setTimeout(() => {
               setIsFocus(false);
-            }, 200);
+            }, 100);
           }}
         />
         <Link

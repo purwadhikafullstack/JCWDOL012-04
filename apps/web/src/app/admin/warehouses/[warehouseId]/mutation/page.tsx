@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/lib/store/auth/auth.provider';
 import { fetchData, updateData } from '@/utils/api';
 import { MutationsModel } from '@/model/MutationsModel';
 import { Loading } from '@/components/Loading';
@@ -16,6 +17,10 @@ export default function Mutation({
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [formModal, setFormModal] = useState<boolean>(false);
+  const auth = useAuth();
+  const isAuthenticated = auth?.user?.isAuthenticated;
+  const role = auth?.user?.data?.role;
+  const isAuthorLoading = auth?.isLoading;
   async function fetchIncomingMutations() {
     try {
       const response = await fetchData(
@@ -68,6 +73,13 @@ export default function Mutation({
       console.log(error);
     }
   };
+  if (isAuthorLoading) return <Loading />;
+  if (!isAuthenticated || role === 'CUSTOMER')
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+        Unauthorized | 401
+      </div>
+    );
   return (
     <div className="flex flex-col lg:flex-row w-full max-w-[1440px] mx-auto min-h-[700px] pt-5 px-4 md:px-0">
       <div
@@ -148,7 +160,7 @@ export default function Mutation({
                 <div className="bg-gray-300 font-semibold w-[230px] rounded-tl-[2000px] rounded-tr-full pl-5 h-7 flex items-center truncate">
                   {incomingMutation.warehouse?.name}
                 </div>
-                <div className="flex items-center justify-between h-28 md:h-16 rounded-e-md shadow border bg-gray-50 px-5">
+                <div className="flex items-center justify-between h-28 md:h-16 rounded-r-full shadow border bg-gray-50 px-5">
                   <div>{incomingMutation.product?.name}</div>
                   <div>Qty : {incomingMutation.quantity}</div>
                   <div>
@@ -157,7 +169,7 @@ export default function Mutation({
                   {incomingMutation.isAccepted === null ? (
                     <div className="flex flex-col space-y-1 md:space-y-0 md:flex-row items-center md:space-x-3">
                       <div
-                        className="bg-red-600 text-white px-4 py-2 rounded cursor-pointer hover:opacity-70 duration-100"
+                        className="bg-red-600 text-white px-4 py-2 rounded-full cursor-pointer hover:opacity-70 duration-100"
                         onClick={() => {
                           handleMutationRequest(
                             incomingMutation.id,
@@ -172,7 +184,7 @@ export default function Mutation({
                         Decline
                       </div>
                       <div
-                        className="bg-green-600 text-white px-4 py-2 rounded cursor-pointer hover:opacity-70 duration-100"
+                        className="bg-green-600 text-white px-4 py-2 rounded-full cursor-pointer hover:opacity-70 duration-100"
                         onClick={() => {
                           handleMutationRequest(
                             incomingMutation.id,

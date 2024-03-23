@@ -44,7 +44,9 @@ export default function CreateProductForm() {
       productCategoryId: Yup.number().required('Required'),
       productsWarehouses: Yup.array().of(
         Yup.object({
-          stock: Yup.number().required('Required'),
+          stock: Yup.number()
+            .min(0, 'Stock can not be negative')
+            .required('Required'),
         }),
       ),
       productImages: Yup.array().min(1, 'At least one image is required'),
@@ -240,6 +242,7 @@ export default function CreateProductForm() {
               </label>
               <input
                 type="number"
+                min={0}
                 name={`productsWarehouses[${index}].stock`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}

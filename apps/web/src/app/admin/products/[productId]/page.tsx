@@ -320,7 +320,7 @@ export default function ProductDetails({
                 <span className="text-slate-600 font-normal">(read only)</span>
               </div>
               {role === 'WAREHOUSE_ADMIN' ? (
-                <div className="flex w-[220px] space-x-3 items-end my-3">
+                <div className="flex min-w-[280px] space-x-3 items-end my-3">
                   <div className="relative w-6 h-6">
                     <Image src={'/images/icon/home.png'} fill alt="house" />
                   </div>
@@ -338,7 +338,7 @@ export default function ProductDetails({
                     return (
                       <div
                         key={index}
-                        className="flex w-[220px] space-x-3 items-end mr-3 my-2 "
+                        className="flex min-w-[280px] space-x-3 items-end mr-3 my-2"
                       >
                         <div className="relative w-6 h-6">
                           <Image
