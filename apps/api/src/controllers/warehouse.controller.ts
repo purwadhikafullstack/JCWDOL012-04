@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { resInternalServerError, resSuccess } from "@/services/responses";
+import { resInternalServerError, resSuccess, resUnprocessable } from "@/services/responses";
 
 const prisma = new PrismaClient();
 
@@ -75,8 +75,8 @@ export async function updateWarehouse(req: Request, res: Response) {
     const { id, name, address, cityId, latitude, longitude, adminId } = req.body
 
     try {
-        const trx = await prisma.$transaction(async (updateWH) => {
-            const initialWarehouseData = await prisma.warehouses.findUnique({
+        const trx = await prisma.$transaction(async (tx) => {
+            const initialWarehouseData = await tx.warehouses.findUnique({
                 where: { id },
                 select: {
                     warehouseAdmin: {
@@ -88,7 +88,7 @@ export async function updateWarehouse(req: Request, res: Response) {
                 }
             })
 
-            const updatedWarehouse = await prisma.warehouses.update({
+            const updatedWarehouse = await tx.warehouses.update({
                 where: { id },
                 data: {
                     name,
@@ -100,7 +100,7 @@ export async function updateWarehouse(req: Request, res: Response) {
             })
 
             const updatedAdmin = adminId !== initialWarehouseData?.warehouseAdmin[0].id
-                ? await prisma.users.update({
+                ? await tx.users.update({
                     where: {
                         id: adminId ? adminId : initialWarehouseData?.warehouseAdmin[0].id
                     },
@@ -116,5 +116,52 @@ export async function updateWarehouse(req: Request, res: Response) {
     } catch (error) {
         console.error(error)
         resInternalServerError(res, 'Error updating warehouse', null)
+    }
+}
+
+export async function archiveWarehouse(req: Request, res: Response) {
+
+    try {
+        const { id } = req.params
+        if (!id) return resUnprocessable(res, 'Missing mandatory field: warehouseId', null)
+
+        const trx = await prisma.$transaction(async (tx) => {
+            const initialWarehouseData = await tx.warehouses.findUnique({
+                where: { id: parseInt(id) },
+                select: {
+                    warehouseAdmin: {
+                        select: {
+                            id: true,
+                            wareHouseAdmin_warehouseId: true
+                        }
+                    }
+                }
+            })
+
+            const archivedWH = await tx.warehouses.update({
+                where: { id: parseInt(id) },
+                data: {
+                    archived: true
+                }
+            })
+            console.log(initialWarehouseData)
+            // const {warehouseAdmin} = initialWarehouseData
+            const updatedAdmin = initialWarehouseData?.warehouseAdmin.length
+                ? await tx.users.update({
+                    where: {
+                        id: initialWarehouseData?.warehouseAdmin[0].id
+                    },
+                    data: {
+                        wareHouseAdmin_warehouseId: null
+                    }
+                })
+                : Promise.resolve();
+
+            return { archivedWH, updatedAdmin }
+        })
+        return resSuccess(res, 'Warehouse archived', trx.archivedWH)
+    } catch (error) {
+        console.error(error)
+        resInternalServerError(res, 'Error archiving warehouse', null)
     }
 }

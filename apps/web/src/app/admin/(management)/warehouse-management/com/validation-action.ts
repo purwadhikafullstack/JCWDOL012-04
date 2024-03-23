@@ -110,10 +110,17 @@ export async function createWarehouse(
     setError: Dispatch<SetStateAction<TWarehouseError>>
 ) {
     return await warehouse.post('/create', values)
-        .then((response) => {
-            console.log(response.data)
-            clientSideRedirect('/admin/management/warehouse-management')
-        })
+        .then(() => clientSideRedirect('/admin/warehouse-management'))
+        .catch((error) => handleError(error, setError));
+}
+
+export async function archiveWarehouse(
+    id: string | number,
+    setError: Dispatch<SetStateAction<TWarehouseError>>
+) {
+    console.log(id)
+    return await warehouse.patch(`/${id}/archive`)
+        .then(() => clientSideRedirect('/admin/warehouse-management'))
         .catch((error) => handleError(error, setError));
 }
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import getWarehouses, { createWarehouse } from "@/controllers/warehouse.controller";
+import getWarehouses, { archiveWarehouse, createWarehouse } from "@/controllers/warehouse.controller";
 import { superAdminGuard } from "@/middlewares/auth/userDataVerification";
 
 const warehouseRouter = Router();
@@ -12,9 +12,15 @@ warehouseRouter.get('/',
 )
 
 warehouseRouter.post('/create',
-    // requireJwtAuth,
-    // superAdminGuard,
+    requireJwtAuth,
+    superAdminGuard,
     createWarehouse
+)
+
+warehouseRouter.patch('/:id/archive',
+    requireJwtAuth,
+    superAdminGuard,
+    archiveWarehouse
 )
 
 export default warehouseRouter;

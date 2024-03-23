@@ -183,7 +183,7 @@ export default function AddNewWarehouseDialog() {
                             {error?.status && <p className="text-red-500 text-xs">{error?.message}</p>}
                             <Button
                                 type="submit"
-                            // disabled={formik.isSubmitting}
+                                disabled={formik.isSubmitting}
                             >Submit</Button>
                         </DialogFooter>
                     </div>
