@@ -22,7 +22,10 @@ export function AddAddress() {
     const formik = useFormik({
         initialValues: AddressInitialValues,
         validationSchema: AddressValidationSchema,
-        onSubmit: async (values) => await address.addAddress(values)
+        onSubmit: async (values) => {
+            await address.addAddress(values)
+            formik.setSubmitting(false)
+        }
     })
 
     useEffect(() => {
@@ -166,7 +169,7 @@ export function AddAddress() {
 
                             <DialogFooter>
                                 {auth?.isLoading || address.isLoading && (<div className="mx-auto"><Spinner /></div>)}
-                                <Button type="submit" className="min-w-[160px]" disabled={auth?.isLoading || address.isLoading} >Save</Button>
+                                <Button type="submit" className="min-w-[160px]" disabled={auth?.isLoading || address.isLoading || formik.isSubmitting} >Save</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

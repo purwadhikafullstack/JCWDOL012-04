@@ -25,8 +25,9 @@ export default function DialogAddNewAdmin() {
             confirmPassword: ''
         },
         validationSchema: addNewAdminValidationSchema,
-        onSubmit: values => {
-            submitAddNewAdmin(values, setError);
+        onSubmit: async (values) => {
+            await submitAddNewAdmin(values, setError);
+            formik.setSubmitting(false);
         },
     });
 

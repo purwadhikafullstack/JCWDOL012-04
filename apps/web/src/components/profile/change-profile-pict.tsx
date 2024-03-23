@@ -34,7 +34,8 @@ export default function ChangeProfilePictDialog() {
                 .test('fileSize', 'File size too large. Must be under 2 MB.', (value) => value && (value as File).size <= MAX_FILE_SIZE)
         }),
         onSubmit: async (values: { file: File }) => {
-            auth?.updateProfilePicture(values)
+            await auth?.updateProfilePicture(values)
+            formik.setSubmitting(false)
         }
     })
 
@@ -73,7 +74,7 @@ export default function ChangeProfilePictDialog() {
                                 ? (<div className=" text-red-500 text-xs">{formik.errors.file as string} </div>)
                                 : null}
                             <DialogFooter className="mt-4">
-                                <Button type="submit" disabled={Boolean(formik.errors.file) || auth?.isLoading}>Save Changes</Button>
+                                <Button type="submit" disabled={Boolean(formik.errors.file) || auth?.isLoading || formik.isSubmitting}>Save Changes</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

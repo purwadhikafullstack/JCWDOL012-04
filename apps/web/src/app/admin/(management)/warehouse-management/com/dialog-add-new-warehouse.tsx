@@ -24,8 +24,9 @@ export default function AddNewWarehouseDialog() {
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: addNewWarehouseValidationSchema,
-        onSubmit: values => {
-            createWarehouse(values, setError)
+        onSubmit: async (values) => {
+            await createWarehouse(values, setError)
+            formik.setSubmitting(false)
         },
     });
 

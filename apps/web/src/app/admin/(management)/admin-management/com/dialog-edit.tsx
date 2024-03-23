@@ -49,8 +49,9 @@ export default function EditAdminDialog({ id }: { id: string | number }) {
             confirmPassword: ''
         },
         validationSchema: editAdminValidationSchema,
-        onSubmit: values => {
-            submitEditAdmin(id, values, setError);
+        onSubmit: async (values) => {
+            await submitEditAdmin(id, values, setError);
+            formik.setSubmitting(false);
         },
     });
 

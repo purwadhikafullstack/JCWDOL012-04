@@ -41,6 +41,7 @@ export function ChangeNameDialog() {
         }),
         onSubmit: async (values) => {
             await auth?.changeName(values)
+            formik.setSubmitting(false)
         }
     })
 
@@ -131,7 +132,7 @@ export function ChangeNameDialog() {
                                     : null}
                             </div>
                             <DialogFooter>
-                                <Button type="submit" >Save changes</Button>
+                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading}>Save changes</Button>
                             </DialogFooter>
                         </div>
                     </form>)

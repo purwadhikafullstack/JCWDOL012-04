@@ -36,6 +36,7 @@ export default function VerifyChangeEmailPage() {
         }),
         onSubmit: async (values) => {
             await auth?.resetPassword.setNewPassword({ newPassword: values.newPassword }, tokenQuery)
+            formik.setSubmitting(false)
         }
     })
 
@@ -103,7 +104,7 @@ export default function VerifyChangeEmailPage() {
                         </div>
 
                         <DialogFooter className="mt-4 gap-3 flex flex-col">
-                            <Button type="submit" disabled={auth?.isLoading} > Save Changes</Button>
+                            <Button type="submit" disabled={auth?.isLoading || formik.isSubmitting} > Save Changes</Button>
                         </DialogFooter>
                     </form>
                 </CardContent>
