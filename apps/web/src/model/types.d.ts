@@ -36,3 +36,30 @@ interface AdminModel {
     updatedAt?: Date
     archived?: boolean
 }
+
+type TWarehouse = {
+    id: number,
+    name: string,
+    address: string,
+    city: {
+        name: string,
+        type: string
+    },
+    warehouseAdmin: {
+        firstName: string,
+    }[]
+}
+
+type TCreateWH = {
+    name: string,
+    address: string,
+    cityId: string,
+    latitude: string,
+    longitude: string,
+    adminId: string
+}
+
+type TWarehouseError = {
+    status: number | undefined | null,
+    message: string | undefined | null,
+} | null

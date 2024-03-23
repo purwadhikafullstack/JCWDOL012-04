@@ -12,7 +12,7 @@ export const user = axios.create({
     }
 })
 
-async function getAdmins(): Promise<any> {
+async function getCustomers(): Promise<any> {
     return await user.get('/customers')
         .then((response) => response.data.data as AdminModel[])
         .catch((error) => {
@@ -21,7 +21,7 @@ async function getAdmins(): Promise<any> {
 }
 
 export default async function DemoPage() {
-    const data: AdminModel[] = await getAdmins()
+    const data: AdminModel[] = await getCustomers()
 
     return (
         <main className="p-5 pb-[130px] sm:pb-2">

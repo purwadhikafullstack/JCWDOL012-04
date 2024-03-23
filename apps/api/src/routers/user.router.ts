@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import getCustomers, { addAddress, archieveAddress, archieveWarehouseAdmin, createWarehouseAdmin, getWarehouseAdminData, getAdmins, getUserAddresses, setAsPrimaryAddress, updateAddress, updateWarehouseAdmin } from "@/controllers/user.controller";
+import getCustomers, { addAddress, archieveAddress, archieveWarehouseAdmin, createWarehouseAdmin, getWarehouseAdminData, getAdmins, getUserAddresses, setAsPrimaryAddress, updateAddress, updateWarehouseAdmin, getIdleAdmins } from "@/controllers/user.controller";
 import { superAdminGuard } from "@/middlewares/auth/userDataVerification";
 
 const userRouter = Router();
@@ -33,6 +33,11 @@ userRouter.patch('/address/:id/update',
 userRouter.get('/admin',
     requireJwtAuth,
     getAdmins
+)
+
+userRouter.get('/admin/idle',
+    requireJwtAuth,
+    getIdleAdmins
 )
 
 userRouter.post('/admin/wh/create',

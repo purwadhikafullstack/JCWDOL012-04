@@ -188,6 +188,22 @@ export async function getAdmins(req: Request, res: Response) {
     }
 }
 
+export async function getIdleAdmins(req: Request, res: Response) {
+    try {
+        const admins = await prisma.users.findMany({
+            where: {
+                role: 'WAREHOUSE_ADMIN',
+                archived: false,
+                wareHouseAdmin_warehouseId: null
+            }
+        })
+        resSuccess(res, 'Administrator data retrieved successfully', admins, 1)
+    } catch (error) {
+        console.error('Error getting admin data', error)
+        resInternalServerError(res, 'Error getting admin data', null)
+    }
+}
+
 export async function createWarehouseAdmin(req: Request, res: Response) {
     try {
         const { email, password, firstName, lastName, gender } = req.body;
