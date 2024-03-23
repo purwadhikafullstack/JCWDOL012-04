@@ -4,7 +4,7 @@ import { resInternalServerError, resSuccess, resUnprocessable } from "@/services
 
 const prisma = new PrismaClient();
 
-export default async function getWarehouses(req: Request, res: Response) {
+export async function getWarehouses(req: Request, res: Response) {
 
     await prisma.warehouses.findMany({
         where: {
@@ -14,14 +14,19 @@ export default async function getWarehouses(req: Request, res: Response) {
             id: true,
             name: true,
             address: true,
+            latitude: true,
+            longitude: true,
             city: {
                 select: {
+                    id: true,
                     name: true,
-                    type: true
+                    type: true,
+                    provinceId: true
                 }
             },
             warehouseAdmin: {
                 select: {
+                    id: true,
                     firstName: true,
                 }
             }
@@ -32,6 +37,41 @@ export default async function getWarehouses(req: Request, res: Response) {
             console.error(error);
             resInternalServerError(res, "Error getting warehouses", null)
         });
+}
+
+export async function getWarehouse(req: Request, res: Response) {
+    const { id } = req.params
+    if (!id) return resUnprocessable(res, 'Missing mandatory field: warehouseId', null)
+
+    await prisma.warehouses.findUnique({
+        where: { id: parseInt(id) },
+        select: {
+            id: true,
+            name: true,
+            address: true,
+            latitude: true,
+            longitude: true,
+            city: {
+                select: {
+                    id: true,
+                    name: true,
+                    type: true,
+                    provinceId: true
+                }
+            },
+            warehouseAdmin: {
+                select: {
+                    id: true,
+                    firstName: true,
+                }
+            }
+        }
+    })
+        .then((warehouse) => resSuccess(res, 'Get warehouse success', warehouse))
+        .catch((error) => {
+            console.error(error)
+            resInternalServerError(res, 'Error getting warehouse', null)
+        })
 }
 
 export async function createWarehouse(req: Request, res: Response) {
@@ -72,12 +112,14 @@ export async function createWarehouse(req: Request, res: Response) {
 }
 
 export async function updateWarehouse(req: Request, res: Response) {
-    const { id, name, address, cityId, latitude, longitude, adminId } = req.body
+    const { name, address, cityId, latitude, longitude, adminId } = req.body
+    const { id } = req.params
+    if (!id) return resUnprocessable(res, 'Missing mandatory field: warehouseId', null)
 
     try {
         const trx = await prisma.$transaction(async (tx) => {
             const initialWarehouseData = await tx.warehouses.findUnique({
-                where: { id },
+                where: { id: parseInt(id) },
                 select: {
                     warehouseAdmin: {
                         select: {
@@ -89,30 +131,54 @@ export async function updateWarehouse(req: Request, res: Response) {
             })
 
             const updatedWarehouse = await tx.warehouses.update({
-                where: { id },
+                where: { id: parseInt(id) },
                 data: {
                     name,
                     address,
-                    cityId,
+                    cityId: parseInt(cityId),
                     latitude,
                     longitude,
                 }
             })
 
-            const updatedAdmin = adminId !== initialWarehouseData?.warehouseAdmin[0].id
-                ? await tx.users.update({
+            if (adminId === '') {
+                await tx.users.update({
                     where: {
-                        id: adminId ? adminId : initialWarehouseData?.warehouseAdmin[0].id
+                        id: initialWarehouseData?.warehouseAdmin[0].id
                     },
                     data: {
-                        wareHouseAdmin_warehouseId: adminId ? id : null
+                        wareHouseAdmin_warehouseId: null
                     }
                 })
-                : Promise.resolve();
+            }
 
-            return { updatedWarehouse, updatedAdmin }
+            if (adminId !== '' && adminId != initialWarehouseData?.warehouseAdmin[0]?.id) {
+                // Update the new admin
+                await tx.users.update({
+                    where: {
+                        id: adminId ? parseInt(adminId) : initialWarehouseData?.warehouseAdmin[0].id
+                    },
+                    data: {
+                        wareHouseAdmin_warehouseId: adminId ? parseInt(id) : null
+                    }
+                })
+
+                //update the old admin
+                if (initialWarehouseData?.warehouseAdmin[0]?.id) {
+                    await tx.users.update({
+                        where: {
+                            id: initialWarehouseData?.warehouseAdmin[0]?.id
+                        },
+                        data: {
+                            wareHouseAdmin_warehouseId: null
+                        }
+                    })
+                }
+            }
+
+            return updatedWarehouse
         })
-        return resSuccess(res, 'Warehouse updated', trx.updatedWarehouse)
+        return resSuccess(res, 'Warehouse updated', trx)
     } catch (error) {
         console.error(error)
         resInternalServerError(res, 'Error updating warehouse', null)
@@ -120,7 +186,6 @@ export async function updateWarehouse(req: Request, res: Response) {
 }
 
 export async function archiveWarehouse(req: Request, res: Response) {
-
     try {
         const { id } = req.params
         if (!id) return resUnprocessable(res, 'Missing mandatory field: warehouseId', null)
@@ -144,8 +209,7 @@ export async function archiveWarehouse(req: Request, res: Response) {
                     archived: true
                 }
             })
-            console.log(initialWarehouseData)
-            // const {warehouseAdmin} = initialWarehouseData
+
             const updatedAdmin = initialWarehouseData?.warehouseAdmin.length
                 ? await tx.users.update({
                     where: {

@@ -41,11 +41,16 @@ type TWarehouse = {
     id: number,
     name: string,
     address: string,
+    latitude: string,
+    longitude: string,
     city: {
+        id: number,
         name: string,
-        type: string
+        type: string,
+        provinceId: string
     },
     warehouseAdmin: {
+        id: number,
         firstName: string,
     }[]
 }
@@ -53,6 +58,7 @@ type TWarehouse = {
 type TCreateWH = {
     name: string,
     address: string,
+    provinceId?: string,
     cityId: string,
     latitude: string,
     longitude: string,

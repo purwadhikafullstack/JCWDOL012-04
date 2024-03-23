@@ -19,7 +19,7 @@ export default function DeleteWarehouseDialog({ id }: { id: string | number }) {
                     <DialogTitle>Delete Warehouse</DialogTitle>
                 </DialogHeader>
                 <DialogDescription>
-                    {id} Are you sure you want to delete this warehouse?
+                    Are you sure you want to delete this warehouse?
                 </DialogDescription>
                 <DialogFooter>
                     {error?.status && <p className="text-red-500 text-xs">{error?.message}</p>}

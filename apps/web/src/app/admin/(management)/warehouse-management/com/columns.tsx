@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSepar
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import DeleteWarehouseDialog from "./dialog-delete";
+import EditWarehouseDialog from "./dialog-edit-warehouse";
 
 export const columns: ColumnDef<TWarehouse>[] = [
     {
@@ -60,7 +61,7 @@ export const columns: ColumnDef<TWarehouse>[] = [
                     <DropdownMenuContent className="flex flex-col items-start">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <Button>Edit</Button>
+                        <EditWarehouseDialog id={wh.id} />
                         <DeleteWarehouseDialog id={wh.id} />
                     </DropdownMenuContent>
                 </DropdownMenu>

@@ -87,6 +87,7 @@ export async function getCitiesOfProvince(
     setCities: Dispatch<SetStateAction<CitiesModel[] | null>>,
     setError: Dispatch<SetStateAction<TWarehouseError | null>>
 ) {
+    console.log("provinceId", provinceId)
     return await data.get(`/${provinceId}/cities`)
         .then((response) => {
             setCities(response.data.data)
@@ -118,8 +119,27 @@ export async function archiveWarehouse(
     id: string | number,
     setError: Dispatch<SetStateAction<TWarehouseError>>
 ) {
-    console.log(id)
     return await warehouse.patch(`/${id}/archive`)
+        .then(() => clientSideRedirect('/admin/warehouse-management'))
+        .catch((error) => handleError(error, setError));
+}
+
+export async function getWhById(
+    id: string | number,
+    setWarehouse: Dispatch<SetStateAction<TWarehouse | null>>,
+    setError: Dispatch<SetStateAction<TWarehouseError>>
+) {
+    return await warehouse.get(`/${id}`)
+        .then((response) => setWarehouse(response.data.data))
+        .catch((error) => handleError(error, setError));
+}
+
+export async function updateWarehouse(
+    id: string | number,
+    values: TCreateWH,
+    setError: Dispatch<SetStateAction<TWarehouseError>>
+) {
+    return await warehouse.patch(`/${id}`, values)
         .then(() => clientSideRedirect('/admin/warehouse-management'))
         .catch((error) => handleError(error, setError));
 }
@@ -134,4 +154,20 @@ function handleError(
     if (errorStatus === 401 || errorStatus === 422 || errorStatus === 500) {
         setError({ status: errorStatus, message: errorMessage })
     } else { setError({ status: null, message: "Unknown error occured" }) }
+}
+
+export function validateChangesOnEdit(
+    warehouse: TWarehouse | null,
+    formikValues: TCreateWH,
+) {
+    const noChangesOnEdit =
+        warehouse?.name === formikValues?.name &&
+        warehouse?.city?.provinceId?.toString() === formikValues?.provinceId!.toString() &&
+        warehouse?.city?.id.toString() === formikValues?.cityId?.toString() &&
+        warehouse?.address === formikValues?.address &&
+        warehouse?.latitude === formikValues?.latitude &&
+        warehouse?.longitude === formikValues?.longitude &&
+        warehouse?.warehouseAdmin[0]?.id.toString() === formikValues?.adminId?.toString()
+
+    return noChangesOnEdit
 }

@@ -12,6 +12,7 @@ export async function getProvinces(req: Request, res: Response) {
 }
 
 export async function getCities(req: Request, res: Response) {
+    console.log(req.params)
     if (req.params.provinceId) {
         await prisma.cities.findMany({
             where: {
@@ -19,11 +20,17 @@ export async function getCities(req: Request, res: Response) {
             }
         })
             .then((cities) => res.json({ data: cities }))
-            .catch((error) => res.status(500).json({ message: error.message }))
+            .catch((error) => {
+                console.error(error);
+                resInternalServerError(res, "Error getting cities", null)
+            })
     } else {
         await prisma.cities.findMany()
             .then((cities) => res.json({ data: cities }))
-            .catch((error) => res.status(500).json({ message: error.message }))
+            .catch((error) => {
+                console.error(error);
+                resInternalServerError(res, "Error getting cities", null)
+            })
     }
 }
 
