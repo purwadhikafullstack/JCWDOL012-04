@@ -7,7 +7,7 @@ import { MutationsModel } from "@/model/MutationsModel";
 import { MutationTypeModel } from "@/model/MutationTypeModel";
 import { ProductsModel } from "@/model/ProductsModel";
 import { MidtransPreTransactionResponseModel } from "@/model/api/responses/midtrans.pretransaction.response.model";
-import { api, apiAuth } from "@/lib/axios.config";
+import { api } from "@/lib/axios.config";
 import { PaymentTypeModel } from "@/model/PaymentTypeModel";
 
 export default class TransactionApi{
@@ -18,7 +18,7 @@ export default class TransactionApi{
 
     async getUserCities(): Promise<{status: number, data:UsersModel}>{ 
         "use server"
-        return await apiAuth.get<UsersModel>('/transaction/address', {
+        return await api.get<UsersModel>('/transaction/address', {
             params: {
                 _: new Date().getTime(),
             }
@@ -42,7 +42,7 @@ export default class TransactionApi{
             shippingCost: shippingCost,
             closestWarehouseId: closestWarehouseId
         }
-        return await apiAuth.post<MidtransPreTransactionResponseModel>('/transaction/pretransaction', data, {
+        return await api.post<MidtransPreTransactionResponseModel>('/transaction/pretransaction', data, {
             params: {
                 _: new Date().getTime(),
             }
@@ -65,7 +65,7 @@ export default class TransactionApi{
             shippingCost: shippingCost,
             closestWarehouseId: closestWarehouseId
         }
-        return await apiAuth.post<MidtransPreTransactionResponseModel>('/transaction/pretransaction', data, {
+        return await api.post<MidtransPreTransactionResponseModel>('/transaction/pretransaction', data, {
             params: {
                 _: new Date().getTime(),
             }

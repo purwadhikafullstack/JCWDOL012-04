@@ -1,15 +1,16 @@
 import { Request, Response, Router } from "express";
 import TransactionController from '../controllers/transaction.controller';
+import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
 
 const transactionRouter = Router();
 
 const transactionController = new TransactionController();
 
-transactionRouter.get('/address', (req: Request, res: Response): void => {
+transactionRouter.get('/address', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.getUsersByUserId(req, res);
 });
 
-transactionRouter.post('/pretransaction', (req: Request, res: Response): void => {
+transactionRouter.post('/pretransaction', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.preTransaction(req, res);
 });
 

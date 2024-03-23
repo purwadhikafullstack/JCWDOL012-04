@@ -24,8 +24,8 @@ export default class CartController {
     }
 
     async get(req:Request, res:Response): Promise<void>{
-        // const user = this.user;
-        const user:any = req.user;
+        const user = this.user;
+        // const user:any = req.user;
         if(user==undefined) {res.status(401).json({ message: 'Unauthorized' });return;}
         const check = await accCheck(user, res);
         if(check === false) return;
@@ -35,8 +35,8 @@ export default class CartController {
     }
 
     async preAdd(req:Request, res:Response): Promise<void>{
-        // const user = this.user;
-        const user:any = req.user;
+        const user = this.user;
+        // const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const productId = parseInt(req.params.productId);
         if(!(await productCheck(productId, res))) return;
@@ -46,8 +46,8 @@ export default class CartController {
     }
 
     async add(req:Request, res:Response): Promise<void>{
-        // const user = this.user;
-        const user:any = req.user;
+        const user = this.user;
+        // const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const { productId, quantity } = req.body;
         if(!(await productCheck(productId, res))) return;
@@ -62,8 +62,8 @@ export default class CartController {
     }
 
     async update(req:Request, res:Response): Promise<void>{
-        // const user = this.user;
-        const user:any = req.user;
+        const user = this.user;
+        // const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const CartId = parseInt(req.params.id);
         if(!(await cartCheck(CartId, user, req, res))) return;
@@ -76,8 +76,8 @@ export default class CartController {
     }
 
     async remove(req:Request, res:Response): Promise<void>{
-        // const user = this.user;
-        const user:any = req.user;
+        const user = this.user;
+        // const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const CartId = parseInt(req.params.id);
         if(!(await cartCheck(CartId, user, req, res))) return;

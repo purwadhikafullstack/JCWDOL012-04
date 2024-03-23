@@ -29,6 +29,7 @@ export default class TransactionController {
     UserCitiesTransactionService: UserCitiesTransactionService;
     TransactionWarehouseService: TransactionWarehouseService;
     ProductTransactionService: ProductTransactionService;
+    user;
     constructor() {
         this.TransactionService = new TransactionService();
         this.TransactionProductService = new TransactionProductService();
@@ -36,6 +37,15 @@ export default class TransactionController {
         this.UserCitiesTransactionService = new UserCitiesTransactionService();
         this.TransactionWarehouseService = new TransactionWarehouseService();
         this.ProductTransactionService = new ProductTransactionService();
+
+        this.user = {
+            id: 1,
+            firstName: 'customer1',
+            lastName: 'lastName1',
+            email: 'email1@bata.com',
+            role: 'CUSTOMER',
+            isVerified: true
+        };
     }
 
     async getTotal(orders: ShoppingCart[]): Promise<number> {
@@ -52,7 +62,7 @@ export default class TransactionController {
     // paymentType,
     // shipping cost
     async preTransaction(req: Request, res: Response): Promise<void> {
-        const user:any = req.user;
+        const user = this.user;
         const userId = user.id;
         if (!await accCheck(user, res)) return;
         const orders: ShoppingCart[] = req.body.orders;
@@ -182,6 +192,22 @@ export default class TransactionController {
         return result;
     }
 
+    async create(req: Request, res: Response): Promise<void> {
+        // const user = req.user as Users;
+        // const user = this.user;
+        // const userId = user.id;
+        // if(!await accCheck(user, res)) return;
+        // const orders:ShoppingCart[] = req.body.orders;
+        // const paymentType:paymentType = req.body.paymentType;
+        // const userCitiesId:number = req.body.userCitiesId;
+        // const userCities:UserCities = await this.UserCitiesTransactionService.getById(userCitiesId) as UserCities;
+        // const closestWarehouseId = (userCities.closestWarehouseId == null) ? await this.getClosestWarehouseId(userCities) : userCities.closestWarehouseId;
+        // if(closestWarehouseId == -1){
+        //     res.status(400).json({message: "No warehouse found"});
+        //     return;
+        // }
+        // res.status(201).json(newTransaction);
+    }
 
 
     async getClosestWarehouse(req: Request): Promise<Warehouses> {
@@ -217,14 +243,16 @@ export default class TransactionController {
     }
 
     async getUsersByUserId(req: Request, res: Response): Promise<void> {
-        const user:any = req.user;
+        // const user = req.user as Users;
+        const user = this.user;
         const userId = user.id;
         const transactions = await this.UserCitiesTransactionService.getUsersByUserId(userId);
         res.status(200).json(transactions);
     }
 
     async getUserCitiesByUserId(req: Request, res: Response): Promise<void> {
-        const user:any = req.user;
+        // const user = req.user as Users;
+        const user = this.user;
         const userId = user.id;
         const userCities = await this.UserCitiesTransactionService.getByUserId(userId);
         res.status(200).json(userCities);

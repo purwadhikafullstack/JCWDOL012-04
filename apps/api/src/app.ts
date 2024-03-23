@@ -8,7 +8,7 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import cartRouter from './routers/cart.router';
+import cartRouter from './routers/cart.router.WithoutAuth';
 import {prisma} from './services/prisma.service';
 import { join } from 'path';
 import { ProductRouter } from './routers/product.router';

@@ -11,21 +11,10 @@ export default class CartController {
     user: any;
     constructor(){
         this.CartService = new CartService();
-
-        //simulating user login
-        this.user = {
-            id:1,
-            firstName: 'customer1',
-            lastName: 'lastName1',
-            email: 'email1@bata.com',
-            role: 'CUSTOMER',
-            isVerified: true
-        };
     }
 
     async get(req:Request, res:Response): Promise<void>{
-        const user = this.user;
-        // const user:any = req.user;
+        const user:any = req.user;
         if(user==undefined) {res.status(401).json({ message: 'Unauthorized' });return;}
         const check = await accCheck(user, res);
         if(check === false) return;
@@ -35,8 +24,7 @@ export default class CartController {
     }
 
     async preAdd(req:Request, res:Response): Promise<void>{
-        const user = this.user;
-        // const user:any = req.user;
+        const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const productId = parseInt(req.params.productId);
         if(!(await productCheck(productId, res))) return;
@@ -46,8 +34,7 @@ export default class CartController {
     }
 
     async add(req:Request, res:Response): Promise<void>{
-        const user = this.user;
-        // const user:any = req.user;
+        const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const { productId, quantity } = req.body;
         if(!(await productCheck(productId, res))) return;
@@ -62,8 +49,7 @@ export default class CartController {
     }
 
     async update(req:Request, res:Response): Promise<void>{
-        const user = this.user;
-        // const user:any = req.user;
+        const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const CartId = parseInt(req.params.id);
         if(!(await cartCheck(CartId, user, req, res))) return;
@@ -76,25 +62,11 @@ export default class CartController {
     }
 
     async remove(req:Request, res:Response): Promise<void>{
-        const user = this.user;
-        // const user:any = req.user;
+        const user:any = req.user;
         if(!(await accCheck(user, res))) return;
         const CartId = parseInt(req.params.id);
         if(!(await cartCheck(CartId, user, req, res))) return;
         await this.CartService.remove(CartId);
         res.status(200).json({ message: 'Item removed' });
     }
-
-    // //not finished
-    // async checkout(req:Request, res:Response): Promise<void>{
-    //     const user = this.user;
-    //     if(!(await accCheck(user, res))) return;
-    //     const Cart = await this.CartService.getByUserId(user.id);
-    //     if(Cart.length === 0){
-    //         res.status(400).json({ message: 'Cart is empty' });
-    //         return;
-    //     }
-    //     await this.CartService.checkout(user.id);
-    //     res.status(200).json({ message: 'Checkout successful' });
-    // }
 }
