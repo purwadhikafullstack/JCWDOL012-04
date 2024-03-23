@@ -36,6 +36,8 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    if (!columns || !data) throw new Error('401 | Unauthorized')
+
     return (
         <div>
             <div className="rounded-md border">

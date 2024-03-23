@@ -32,6 +32,7 @@ userRouter.patch('/address/:id/update',
 
 userRouter.get('/admin',
     requireJwtAuth,
+    superAdminGuard,
     getAdmins
 )
 

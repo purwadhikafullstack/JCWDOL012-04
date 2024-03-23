@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
+import { redirect } from "next/navigation"
 
 
 interface DataTableProps<TData, TValue> {
@@ -36,7 +37,9 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
-    return (
+    if (!columns || !data) throw new Error('401 | Unauthorized')
+
+    if (data && columns) return (
         <div>
             <div className="rounded-md border">
                 <Table>

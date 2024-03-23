@@ -82,6 +82,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             <UnauthorizedPage />
             return router.push('/')
         }
+        if ((path.includes('/warehouse-management') || path.includes('/admin-management') || path.includes('/customer-management')) && user.data?.role !== 'SUPER_ADMIN') {
+            <UnauthorizedPage />
+            return router.push('/admin')
+        }
     }, [path, user])
 
     const logOut = () => {

@@ -36,6 +36,8 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    if (!columns || !data) throw new Error('401 | Unauthorized')
+
     return (
         <div>
             <div className="rounded-md border">
@@ -59,7 +61,7 @@ export function DataTable<TData, TValue>({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {table?.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
