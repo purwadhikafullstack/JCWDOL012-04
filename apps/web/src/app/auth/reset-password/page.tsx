@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
     }
 
     return (
-        <div className="flex flex-col items-center h-[70vh] pt-9 px-2 md:h-[85vh] md:justify-center md:pt-0 ">
+        <div className="max-w-md mx-auto flex flex-col items-center min-h-[70vh] pt-9 px-2 md:min-h-[85vh] md:justify-center md:pt-0 ">
             {auth?.isLoading && <Spinner />}
             {!auth?.isLoading && <ResetPasswordForm />}
         </div>

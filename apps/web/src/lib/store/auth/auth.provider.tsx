@@ -38,6 +38,7 @@ export type UserAuthType = {
 export type UserAuthErrorType = {
     status: number | null | undefined;
     message: string | null | undefined;
+    code?: number | null | undefined;
 }
 
 const initialUserAuth = {

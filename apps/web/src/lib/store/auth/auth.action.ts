@@ -111,10 +111,18 @@ export async function initChangeRequestAction(
     setLoadingState: Dispatch<SetStateAction<boolean>>,
 ) {
     await auth.post('reset-password', value)
-        .then(() => clientSideRedirect('/auth/reset-password?reset=success'))
-        .catch((error) => {
-            setError({ status: error.response.status, message: error.response.data.message ? error.response.data.message : error.response.data.msg })
+        .then(() => {
             setLoadingState(false)
+            clientSideRedirect('/auth/reset-password?reset=success')
+        })
+        .catch((error) => {
+            setLoadingState(false)
+            setError(
+                {
+                    status: error.response.status,
+                    message: error.response.data.message ? error.response.data.message : error.response.data.msg,
+                    code: error.response.data.code
+                })
         })
 }
 
