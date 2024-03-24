@@ -26,13 +26,46 @@ type RajaOngkirRequestCost = {
 }
 
 interface AdminModel {
-    id: number,
+    id?: number,
     firstName: string,
     lastName: string,
     email: string,
-    gender: "male" | "female" | undefined
+    gender: "male" | "female" | undefined | string
     isVerified?: boolean
     createdAt?: Date
     updatedAt?: Date
     archived?: boolean
 }
+
+type TWarehouse = {
+    id: number,
+    name: string,
+    address: string,
+    latitude: string,
+    longitude: string,
+    city: {
+        id: number,
+        name: string,
+        type: string,
+        provinceId: string
+    },
+    warehouseAdmin: {
+        id: number,
+        firstName: string,
+    }[]
+}
+
+type TCreateWH = {
+    name: string,
+    address: string,
+    provinceId?: string,
+    cityId: string,
+    latitude: string,
+    longitude: string,
+    adminId: string
+}
+
+type TWarehouseError = {
+    status: number | undefined | null,
+    message: string | undefined | null,
+} | null

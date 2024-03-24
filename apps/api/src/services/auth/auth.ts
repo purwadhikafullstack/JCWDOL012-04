@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import { resBadRequest, resCreated, resInternalServerError, resUnauthorized, resUnprocessable } from "../responses";
 import { PrismaClient } from "@prisma/client";
 import { sendVerificationEmail } from "../email/templates";
+import { genSalt, hash } from "bcrypt";
 
 const isProduction = process.env.NODE_ENV === "production";
 const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
@@ -24,6 +25,17 @@ export function generateJWT(user: Users, info?: string | { [key: string]: any })
     return token;
 }
 
+export async function generateHashedPassword(password: string): Promise<string> {
+    try {
+        const salt = await genSalt(10);
+        const hashedPassword = await hash(password, salt);
+        return hashedPassword;
+    } catch (error) {
+        console.error('Error hashing password', error);
+        throw error;
+    }
+}
+
 export async function registerNewUser(req: Request, res: Response, next: NextFunction) {
     if (!req.body.email) return resBadRequest(res, 'Email is required', null)
     if (!req.body.firstName || !req.body.lastName) return resBadRequest(res, 'First name and last name are required', null)
@@ -37,7 +49,7 @@ export async function registerNewUser(req: Request, res: Response, next: NextFun
         return resCreated(res, 'User registered successfully', newUser!)
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return next(error)
     }
 }

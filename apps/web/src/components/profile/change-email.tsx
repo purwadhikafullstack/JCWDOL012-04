@@ -34,7 +34,8 @@ export default function ChangeEmailDialog() {
                 .required('Type your new email address')
         }),
         onSubmit: async (values) => {
-            auth?.changeEmail(values)
+            await auth?.changeEmail(values)
+            formik.setSubmitting(false)
         }
     })
 
@@ -98,7 +99,7 @@ export default function ChangeEmailDialog() {
                             </div>
 
                             <DialogFooter className="mt-4">
-                                <Button type="submit" >Submit</Button>
+                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading}>Submit</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

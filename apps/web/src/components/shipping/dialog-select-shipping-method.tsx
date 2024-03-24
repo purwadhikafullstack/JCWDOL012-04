@@ -16,8 +16,6 @@ export default function SelectShippingMethodDialog({ ctaLabel, totalWeight }: { 
         if (dialogOpen) shipping.getShippingMethod(Number(totalWeight))
     }, [dialogOpen])
 
-    console.log(shippingMethod)
-
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
             <DialogTrigger asChild>
