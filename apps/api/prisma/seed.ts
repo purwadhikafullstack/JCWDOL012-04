@@ -219,7 +219,7 @@ async function main() {
 
   //product images
   for (let i = 1; i <= 30; i++) {
-    let randImageCount = Math.floor(Math.random() * 7) + 2;
+    let randImageCount = Math.floor(Math.random() * 3) + 2;
     for (let j = 1; j <= randImageCount; j++) {
       await prisma.productImages.create({
         data: {
@@ -303,10 +303,13 @@ async function main() {
     console.log(`Created transaction ${i}`);
   }
 
+  const moment = require('moment');
+
   //transaction products
   for (let i = 1; i <= 100; i++) {
     let transactionIdTemp = i;
     let productCountTemp = Math.floor(Math.random() * 5) + 1;
+    let currentDate = moment().subtract(1, 'year'); // Start from one year ago
     for (let j = 1; j <= productCountTemp; j++) {
       let productIdTemp = Math.floor(Math.random() * 30) + 1;
       let quantityTemp = Math.floor(Math.random() * 5) + 1;
@@ -317,9 +320,11 @@ async function main() {
           productId: productIdTemp,
           quantity: quantityTemp,
           price: priceTemp,
+          createdAt: currentDate.toDate(),
         },
       });
       console.log(`Created transaction${i} product${j}`);
+      currentDate.add(1, 'month');
     }
   }
 

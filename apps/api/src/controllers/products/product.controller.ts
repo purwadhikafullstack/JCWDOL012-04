@@ -86,4 +86,13 @@ export class ProductController {
       console.log(error);
     }
   }
+
+  async getProductNames(req: Request, res: Response) {
+    try {
+      const products = await productService.getProductNames();
+      return res.status(200).json(products);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

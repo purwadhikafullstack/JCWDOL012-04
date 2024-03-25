@@ -45,7 +45,7 @@ export function parseProWare(productWarehouses: any) {
 export function mapProImages(productImages: any) {
   return Array.isArray(productImages)
     ? productImages.map((file: Express.Multer.File) => ({
-        path: `http://localhost:8000/public/images/products/${file.filename}`,
+        path: `http://localhost:8000/images/products/${file.filename}`,
       }))
     : [];
 }

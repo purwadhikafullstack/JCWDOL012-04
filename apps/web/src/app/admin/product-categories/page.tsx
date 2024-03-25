@@ -1,13 +1,11 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/store/auth/auth.provider';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { archiveData, fetchData } from '@/utils/api';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCatBar } from '@/components/admin/ProductCatBar';
 import { Loading } from '@/components/Loading';
 import { ConfirmModal } from '@/components/admin/ConfirmModal';
@@ -72,7 +70,7 @@ export default function ProductCategories({
 
   return (
     <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
-      <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1120px]">
+      <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products Categories</div>
         <Link
           href={'/admin/product-categories/product-categories-form'}
@@ -101,7 +99,7 @@ export default function ProductCategories({
               >
                 <div
                   id="product-categories-container"
-                  className="bg-gradient-to-r from-white to-purple-300 border h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[650px] lg:w-[750px] xl:w-[1120px] rounded-md px-[30px] hover:scale-105 duration-200"
+                  className="bg-gradient-to-r from-white to-purple-300 border h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[500px] lg:w-[750px] xl:w-[1000px] 2xl:w-[1120px] rounded-md px-[30px] hover:scale-105 duration-200"
                 >
                   <div className="flex items-center">
                     <div className="font-semibold w-[140px] lg:w-[200px] truncate">

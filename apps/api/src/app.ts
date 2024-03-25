@@ -15,12 +15,12 @@ import { localAuthRouter } from './routers/auth/localAuth.router';
 import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
 import cartRouter from './routers/cart.router';
 import { prisma } from './services/prisma.service';
-import { join } from 'path';
-import path from 'path';
 import { ProductRouter } from './routers/product.router';
 import { profileRouter } from './routers/profile.router';
 import { userRouter } from './routers/user.router';
 import { dataRouter } from './routers/data.router';
+import { shippingRouter } from './routers/shipping.router';
+import { SalesRouter } from './routers/sales.router';
 
 export default class App {
   private app: Express;
@@ -36,10 +36,7 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(
-      '/public',
-      express.static(path.join(__dirname, '..', 'public')),
-    );
+    this.app.use(express.static('public'));
     this.app.use(cookieparser());
   }
 
@@ -68,6 +65,7 @@ export default class App {
 
   private routes(): void {
     const productRouter = new ProductRouter();
+    const salesRouter = new SalesRouter();
     // const sampleRouter = new SampleRouter();
     require('./services/auth/googleStrategy');
     require('./services/auth/localStrategy');
@@ -85,6 +83,8 @@ export default class App {
     this.app.use('/profile', profileRouter);
     this.app.use('/user', userRouter);
     this.app.use('/data', dataRouter);
+    this.app.use('/shipping', shippingRouter);
+    this.app.use('/api/sales', salesRouter.getRouter());
   }
 
   public start(): void {

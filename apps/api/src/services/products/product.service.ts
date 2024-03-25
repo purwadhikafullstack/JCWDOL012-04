@@ -120,4 +120,14 @@ export default class ProductService {
       take: 7,
     });
   }
+  async getProductNames() {
+    return this.prisma.products.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        archived: false,
+      },
+    });
+  }
 }

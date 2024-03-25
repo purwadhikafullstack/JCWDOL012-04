@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { setPassword } from "@/middlewares/auth/verification";
+import { setPassword } from "@/controllers/auth.controller";
 import { changeEmail, changeName, sendChangeEmail, updateProfilePicture, validateEmailChangeRequest, validatePassword } from "@/controllers/profile.controller";
 import { uploader } from "@/middlewares/uploader";
 

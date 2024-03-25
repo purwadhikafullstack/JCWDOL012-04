@@ -101,7 +101,7 @@ export default class AdminProductService {
     productCategoryId: number,
     productImages: { path: string }[],
   ) {
-    const updatedProduct = await prisma.products.update({
+    const updatedProduct = await this.prisma.products.update({
       where: {
         id: id,
       },

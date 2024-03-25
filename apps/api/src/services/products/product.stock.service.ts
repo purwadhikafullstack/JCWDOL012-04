@@ -8,7 +8,7 @@ export default class ProductStockService {
   }
 
   async getWarehousesExclude(warehouseId: number[]) {
-    return prisma.warehouses.findMany({
+    return this.prisma.warehouses.findMany({
       where: {
         archived: false,
         NOT: {
@@ -18,14 +18,14 @@ export default class ProductStockService {
     });
   }
   async getProductWarehouse(id: number) {
-    return prisma.warehouses.findUnique({
+    return this.prisma.warehouses.findUnique({
       where: {
         id,
       },
     });
   }
   async getMutationRequest(id: number) {
-    return prisma.mutations.findMany({
+    return this.prisma.mutations.findMany({
       where: {
         archived: false,
         mutationType: 'REQUEST',
@@ -47,7 +47,7 @@ export default class ProductStockService {
   }
 
   async getIncomingMutationRequest(id: number) {
-    return prisma.mutations.findMany({
+    return this.prisma.mutations.findMany({
       where: {
         archived: false,
         mutationType: 'REQUEST',
@@ -89,7 +89,7 @@ export default class ProductStockService {
     quantity: number,
     mutationType: mutationType,
   ) {
-    return prisma.mutations.create({
+    return this.prisma.mutations.create({
       data: {
         productId,
         warehouseId,
@@ -106,7 +106,7 @@ export default class ProductStockService {
     destinationWarehouseId: number,
     quantity: number,
   ) {
-    return prisma.mutations.create({
+    return this.prisma.mutations.create({
       data: {
         productId,
         warehouseId,
@@ -124,7 +124,7 @@ export default class ProductStockService {
     destinationWarehouseId: number,
     quantity: number,
   ) {
-    return prisma.mutations.create({
+    return this.prisma.mutations.create({
       data: {
         productId,
         warehouseId,
@@ -138,7 +138,7 @@ export default class ProductStockService {
   }
 
   async processMutationRequest(id: number, isAccepted: boolean) {
-    return prisma.mutations.update({
+    return this.prisma.mutations.update({
       where: {
         id: id,
       },
@@ -149,7 +149,7 @@ export default class ProductStockService {
   }
 
   async findProductWarehouse(productId: number, warehouseId: number) {
-    return prisma.productsWarehouses.findFirst({
+    return this.prisma.productsWarehouses.findFirst({
       where: {
         productId: productId,
         warehouseId: warehouseId,
@@ -158,7 +158,7 @@ export default class ProductStockService {
   }
 
   async updateStock(id: number, updatedStock: number) {
-    return prisma.productsWarehouses.update({
+    return this.prisma.productsWarehouses.update({
       where: {
         id: id,
       },

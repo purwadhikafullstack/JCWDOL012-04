@@ -105,11 +105,19 @@ export default function LoginForm() {
             </form>
             <LineWithText text="or" />
             <GoogleLoginButton />
-            <div className="mt-4">
-                Don't have an account?{' '}
-                <Link className="bold text-purple-800" href="/auth/register">
-                    Create one
-                </Link>
+            <div className="mt-4 text-sm">
+                <div>
+                    <span>{`Don't have an account? `}</span>
+                    <Link className="bold text-purple-800" href="/auth/register">
+                        Create one
+                    </Link>
+                </div>
+                <div>
+                    <span>{`Forgot password? `}</span>
+                    <Link className="bold text-purple-800" href="/auth/reset-password">
+                        Reset password
+                    </Link>
+                </div>
             </div>
         </div>
     );
@@ -136,7 +144,7 @@ function LoginBanner({ origin }: { origin: string | null }) {
     if (origin === '401') return (
         <Alert variant={'destructive'} >
             <PiSealWarning className="h-5 w-5 mr-2 " />
-            <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+            <AlertDescription>Your session is invalid or has expired. Please log in.</AlertDescription>
         </Alert>
     )
 

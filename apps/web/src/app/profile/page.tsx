@@ -9,10 +9,17 @@ import TabAccount from "@/components/profile/tab-account"
 import TabAddress from "@/components/profile/tab-address"
 import AddressProvider from "@/lib/store/address/address.provider"
 import { useSearchParams } from "next/navigation"
+import { useAuth } from "@/lib/store/auth/auth.provider"
+import UnauthorizedPage from "@/components/auth/unauthorized"
 
 export default function ProfilePage() {
     const origin = useSearchParams().get('tab')
     const defaultTab = origin === 'address' ? 'address' : 'account'
+    const user = useAuth()
+
+    if (user?.user.data?.role !== "CUSTOMER" && !user?.isLoading) return (
+        <UnauthorizedPage />
+    )
 
     return (
         <AddressProvider>

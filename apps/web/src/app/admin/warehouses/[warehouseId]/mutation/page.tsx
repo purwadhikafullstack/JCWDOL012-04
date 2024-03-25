@@ -81,10 +81,10 @@ export default function Mutation({
       </div>
     );
   return (
-    <div className="flex flex-col lg:flex-row w-full max-w-[1440px] mx-auto min-h-[700px] pt-5 px-4 md:px-0">
+    <div className="flex flex-col xl:flex-row w-full max-w-[1440px] mx-auto min-h-[700px] pt-5 px-4 md:px-0">
       <div
         id="mutation-request-sent"
-        className="flex flex-col lg:w-1/2 md:px-10"
+        className="flex flex-col xl:w-1/2 md:px-2 2xl:px-10"
       >
         <div className="flex justify-between items-center">
           <div className="text-xl font-semibold">Sent Mutation Request</div>
@@ -149,7 +149,7 @@ export default function Mutation({
       </div>
       <div
         id="mutation-request"
-        className="flex flex-col mt-10 lg:mt-0 lg:w-1/2 md:px-10"
+        className="flex flex-col mt-10 xl:mt-0 xl:w-1/2 md:px-2 2xl:px-10"
       >
         <div className="text-xl font-semibold">Incoming Mutation Request</div>
         <hr className="mt-2 border-[var(--primaryColor)]" />
@@ -169,7 +169,7 @@ export default function Mutation({
                   {incomingMutation.isAccepted === null ? (
                     <div className="flex flex-col space-y-1 md:space-y-0 md:flex-row items-center md:space-x-3">
                       <div
-                        className="bg-red-600 text-white px-4 py-2 rounded-full cursor-pointer hover:opacity-70 duration-100"
+                        className="bg-red-600 text-white px-3 pr-5 md:pr-4 md:px-4 py-2 rounded-tr-full md:rounded-full cursor-pointer hover:opacity-70 duration-100"
                         onClick={() => {
                           handleMutationRequest(
                             incomingMutation.id,
@@ -184,7 +184,7 @@ export default function Mutation({
                         Decline
                       </div>
                       <div
-                        className="bg-green-600 text-white px-4 py-2 rounded-full cursor-pointer hover:opacity-70 duration-100"
+                        className="bg-green-600 text-white px-3 pr-5 md:pr-4 md:px-4 py-2 rounded-br-full md:rounded-full cursor-pointer hover:opacity-70 duration-100"
                         onClick={() => {
                           handleMutationRequest(
                             incomingMutation.id,

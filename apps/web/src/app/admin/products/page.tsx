@@ -73,7 +73,7 @@ export default function Products({
 
   return (
     <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
-      <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1120px]">
+      <div className="flex flex-col space-y-5 ml-[20px] md:space-y-0 md:flex-row md:items-end md:mx-auto md:justify-between md:w-[500px] lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products</div>
         <Link
           href={'/admin/products/product-form'}
@@ -98,14 +98,14 @@ export default function Products({
       ) : (
         <div
           id="product-list-container"
-          className="flex flex-wrap justify-center mx-auto px-[10px] mb-[100px] mt-[10px]  xl:px-[100px] max-w-[1440px]"
+          className="flex flex-wrap justify-center mx-auto px-[10px] mb-[100px] mt-[10px]  2xl:px-[100px] max-w-[1440px]"
         >
           {products.map((product, index) => {
             return (
               <Link key={index} href={`/admin/products/${product.id}`}>
                 <div
                   id="product-container"
-                  className="flex flex-col w-[290px] lg:w-[360px] h-[210px] bg-white m-[10px] p-[15px] rounded-md shadow-md hover:bg-slate-100"
+                  className="flex flex-col w-[290px] lg:w-[320px] 2xl:w-[360px] h-[210px] bg-white m-[10px] p-[15px] rounded-md shadow-md hover:bg-slate-100"
                 >
                   <div
                     id="product-top"
@@ -125,7 +125,7 @@ export default function Products({
                       </div>
                       <div
                         id="product-profile"
-                        className="flex flex-col w-[110px] lg:w-[180px]"
+                        className="flex flex-col w-[110px] xl:w-[150px] 2xl:w-[180px]"
                       >
                         <div className="font-semibold text-lg truncate">
                           {product.name}

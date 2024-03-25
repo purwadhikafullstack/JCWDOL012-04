@@ -58,6 +58,10 @@ export class ProductRouter {
       this.ProductController.searchProducts,
     );
     this.router.get(
+      '/products/product-all-names',
+      this.ProductController.getProductNames,
+    );
+    this.router.get(
       '/admin/mutation/:id',
       this.ProductStockController.getMutationRequest,
     );

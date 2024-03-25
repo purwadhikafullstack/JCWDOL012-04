@@ -8,6 +8,8 @@ import { fetchData } from '@/utils/api';
 import { Loading } from '@/components/Loading';
 import { SearchBar } from '@/components/searchBar/SearchBar';
 import { NotFound } from '@/components/NotFound';
+import HeroCarousel from '../image-carousel/hero-section';
+import LineWithText from '../ui/line';
 import { ProductsModel } from '@/model/ProductsModel';
 
 export default function ProductList({
@@ -64,6 +66,10 @@ export default function ProductList({
   return (
     <>
       <SearchBar category={category} sort={sort} />
+      <div className="flex flex-col justify-center items-center mx-auto pt-[20px] md:pt-[95px] max-w-[1024px]">
+        <HeroCarousel />
+        <LineWithText text=" " />
+      </div>
       <div
         id="products-container"
         className="flex flex-wrap min-h-[700px] justify-center mx-auto px-[10px] pt-[85px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"

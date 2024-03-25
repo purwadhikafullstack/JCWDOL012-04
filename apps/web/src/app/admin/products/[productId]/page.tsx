@@ -206,12 +206,12 @@ export default function ProductDetails({
   }
 
   return (
-    <div className="w-full md:px-[20px] max-w-[1440px] mx-auto">
+    <div className="w-full p-10 md:p-0 min-h-[1300px] lg:min-h-[800px] max-w-[1440px] mx-auto">
       <form
         onSubmit={formik.handleSubmit}
         className={`${
           role === 'SUPER_ADMIN' ? '' : 'pointer-events-none'
-        } flex flex-col w-full p-10`}
+        } flex flex-col w-full`}
       >
         <div className="flex flex-col lg:flex-row w-full">
           <div id="left" className="flex flex-col lg:w-3/5 md:px-5">
@@ -367,7 +367,7 @@ export default function ProductDetails({
                 {formik.values.productImages?.map((image, index) => (
                   <div
                     key={index}
-                    className="relative w-[60px] h-[60px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px] xl:w-[180px] xl:h-[180px] mx-[20px] my-[10px] shadow-md border rounded-md"
+                    className="relative w-[60px] h-[60px] md:w-[90px] md:h-[90px] xl:w-[150px] xl:h-[150px] 2xl:w-[180px] 2xl:h-[180px] mx-[20px] my-[10px] shadow-md border rounded-md"
                   >
                     <Image
                       src={

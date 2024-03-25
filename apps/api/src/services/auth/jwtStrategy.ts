@@ -9,9 +9,12 @@ const isProduction = process.env.NODE_ENV === "production";
 const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
 
 function tokenExtractor(req: Request) {
-    if (req.query.token && req.path.includes('/change/email')) return req.query.token
-    if (req.query.token) return req.query.token;
+    if (req.path.includes('/reset-password')) return req.query.token
+    if (req.path.includes('/change/email')) return req.query.token
+
     if (req.headers.cookie) return req.cookies['palugada-auth-token'];
+    if (req.query.token) return req.query.token;
+
     return null;
 }
 
