@@ -48,6 +48,7 @@ const initialUserAuth = {
 
 const AuthContext = createContext<AuthContextType>(null);
 const cookieName: string = process.env.NEXT_PUBLIC_COOKIE_NAME || "";
+if (!cookieName) throw new Error('COOKIE_NAME is not defined')
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const hasCookie = getCookie(cookieName);

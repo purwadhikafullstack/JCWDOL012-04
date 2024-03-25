@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react"
 import { UserAuthErrorType, UserAuthType } from "./auth.provider"
 
 const BASE_AUTH_URL = process.env.NEXT_PUBLIC_BASE_AUTH_URL
+if (!BASE_AUTH_URL) throw new Error('BASE_AUTH_URL is not defined')
 
 const auth = axios.create({
     baseURL: BASE_AUTH_URL,

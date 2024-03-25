@@ -4,6 +4,8 @@ import axios, { AxiosResponse } from "axios"
 import { clientSideRedirect, logOutAction } from "./auth.action"
 
 const BASE_PROFILE_URL = process.env.NEXT_PUBLIC_BASE_PROFILE_URL
+if (!BASE_PROFILE_URL) throw new Error('BASE_PROFILE_URL is not defined')
+
 const profile = axios.create({
     baseURL: BASE_PROFILE_URL,
     withCredentials: true

@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 export type LatLng = { lat: number, lng: number }
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+if (!API_KEY) throw new Error('GOOGLE_MAPS_API_KEY is not defined')
 
 export default function Maps(
     {

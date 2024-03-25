@@ -5,6 +5,8 @@ import { AddressContext } from "../address/address.provider";
 
 const BASE_DATA_URL = process.env.NEXT_PUBLIC_BASE_DATA_URL
 const BASE_SHIPPING_URL = process.env.NEXT_PUBLIC_BASE_SHIPPING_URL
+if (!BASE_DATA_URL) throw new Error('BASE_DATA_URL is not defined')
+if (!BASE_SHIPPING_URL) throw new Error('BASE_SHIPPING_URL is not defined')
 
 const data = axios.create({
     baseURL: BASE_DATA_URL,

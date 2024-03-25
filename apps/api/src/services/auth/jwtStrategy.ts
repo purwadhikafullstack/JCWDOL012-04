@@ -7,6 +7,7 @@ const JwtStrategy = require("passport-jwt").Strategy;
 
 const isProduction = process.env.NODE_ENV === "production";
 const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
+if (!secretKey) throw new Error('JWT_SECRET is not defined')
 
 function tokenExtractor(req: Request) {
     if (req.path.includes('/reset-password')) return req.query.token
