@@ -147,11 +147,7 @@ export async function updateProfilePictureAction(
     const formData = new FormData()
     formData.append('file', values.file)
     await profile.patch('/change/profile-picture', formData)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState(false)
-            clientSideRedirect('/profile')
-        })
+        .then(() => clientSideRedirect('/profile'))
         .catch((error) => {
             if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))

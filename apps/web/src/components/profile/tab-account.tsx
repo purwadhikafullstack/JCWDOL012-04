@@ -17,7 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import ChangeProfilePictDialog from "./change-profile-pict"
 import { ChangePasswordDialog } from "./change-password"
 import { ChangeErrorNoPassword } from "./change-error"
-import Image from "next/image"
 import Spinner from "../ui/spinner"
 
 export default function TabAccount() {

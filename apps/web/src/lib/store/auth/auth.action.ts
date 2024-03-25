@@ -18,9 +18,10 @@ export function logInAction(
 ) {
     auth.post('login', values)
         .then((response) => {
+            const prevPath = sessionStorage.getItem('prevPath')
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
             setLoadingState ? () => setLoadingState(false) : null
-            clientSideRedirect('/')
+            clientSideRedirect(prevPath ? prevPath : '/')
         })
         .catch((error) => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))

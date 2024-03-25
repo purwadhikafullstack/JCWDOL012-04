@@ -94,6 +94,7 @@ export async function changeEmail(req: Request, res: Response, next: NextFunctio
 }
 
 export async function updateProfilePicture(req: Request, res: Response, next: NextFunction) {
+    console.log("here")
     const user = req.user as Users;
     const file = req.file;
     if (!file) return resUnprocessable(res, 'File is not acceptable', null)

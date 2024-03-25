@@ -16,12 +16,14 @@ import { useAuth } from "@/lib/store/auth/auth.provider"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Spinner from "../ui/spinner"
+import { useEffect, useState } from "react"
 
 export default function ChangeProfilePictDialog() {
+    const [dialogOpen, setDialogOpen] = useState(false)
     const auth = useAuth()
     const user = useAuth()?.user?.data
-    const SUPPORTED_FORMATS = "image/jpeg, image/png"
-    const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+    const SUPPORTED_FORMATS = "image/jpeg, image/png, image/gif, image/jpg"
+    const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 
     const formik = useFormik({
         initialValues: {
@@ -30,8 +32,8 @@ export default function ChangeProfilePictDialog() {
         validationSchema: Yup.object({
             file: Yup.mixed()
                 .required('Please choose a file')
-                .test('fileFormat', 'Unsupported file format. Only accept JPG or PNG file.', (value) => value && SUPPORTED_FORMATS.includes((value as File).type))
-                .test('fileSize', 'File size too large. Must be under 2 MB.', (value) => value && (value as File).size <= MAX_FILE_SIZE)
+                .test('fileFormat', 'Unsupported file format. Only accept JPG, JPEG, PNG, and GIF file.', (value) => value && SUPPORTED_FORMATS.includes((value as File).type))
+                .test('fileSize', 'File size too large. Must be under 1 MB.', (value) => value && (value as File).size <= MAX_FILE_SIZE)
         }),
         onSubmit: async (values: { file: File }) => {
             await auth?.updateProfilePicture(values)
@@ -39,8 +41,10 @@ export default function ChangeProfilePictDialog() {
         }
     })
 
+    useEffect(() => { if (dialogOpen) formik.resetForm() }, [dialogOpen])
+
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
             <DialogTrigger asChild>
                 <Button variant="outline" disabled={auth?.isLoading} className="text-xs sm:text-sm">Change Picture</Button>
             </DialogTrigger>
@@ -62,7 +66,7 @@ export default function ChangeProfilePictDialog() {
                                 <Input
                                     name="file"
                                     type="file"
-                                    accept="image/jpeg, image/png"
+                                    accept="image/jpeg, image/png, image/gif, image/jpg"
                                     onChange={(event) => {
                                         formik.setFieldValue("file", event.currentTarget.files![0])
                                     }}
