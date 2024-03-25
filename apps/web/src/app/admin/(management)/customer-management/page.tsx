@@ -3,16 +3,17 @@ import { DataTable } from "./com/data-table"
 import axios from "axios"
 import { cookies } from 'next/headers'
 
-export const cookie = cookies().get('palugada-auth-token')?.value
-export const USER_BASE_URL = process.env.USER_BASE_URL
-export const user = axios.create({
-    baseURL: USER_BASE_URL,
-    headers: {
-        'Cookie': `palugada-auth-token=${cookie}`
-    }
-})
-
 async function getCustomers(): Promise<any> {
+    const cookie = cookies().get('palugada-auth-token')?.value
+    const USER_BASE_URL = process.env.USER_BASE_URL || ''
+    if (!USER_BASE_URL) throw new Error('USER_BASE_URL is not defined')
+    const user = axios.create({
+        baseURL: USER_BASE_URL,
+        headers: {
+            'Cookie': `palugada-auth-token=${cookie}`
+        }
+    })
+
     return await user.get('/customers')
         .then((response) => response.data.data as AdminModel[])
         .catch((error) => {

@@ -52,7 +52,7 @@ export default function ChangeProfilePictDialog() {
                 <DialogHeader>
                     <DialogTitle>Change Profile Picture</DialogTitle>
                     <DialogDescription>
-                        Choose your new profile picture file, and then click Save Changes when you're done.
+                        {"Choose your new profile picture file, and then click Save Changes when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}

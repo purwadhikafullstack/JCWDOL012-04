@@ -19,7 +19,7 @@ export function ChangeErrorNoPassword({ isLoading, label }: { isLoading: boolean
                 </DialogHeader>
                 <Alert variant={'destructive'} className="my-4">
                     <AlertDescription>
-                        You haven't set up a password because you initially created this account with a Google Login Service. Please register an account with the same email as your Google Account first.
+                        {"You haven't set up a password because you initially created this account with a Google Login Service. Please register an account with the same email as your Google Account first."}
                     </AlertDescription>
                 </Alert>
                 <DialogFooter>
