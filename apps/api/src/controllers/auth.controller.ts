@@ -51,7 +51,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
             }
         })
 
-        await sendResetPasswordInstructions(email, generateJWT(user))
+        await sendResetPasswordInstructions(email, generateJWT(user, null, '1h'))
 
         resSuccess(res, 'Reset password instructions sent to the email', null, 1)
     } catch (error) {

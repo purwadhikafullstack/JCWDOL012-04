@@ -11,7 +11,6 @@ export const uploader = (
     folderName?: string,
     type?: "profile-picture"
 ) => {
-    console.log("Uploader")
     const defaultDir = join(__dirname, "../../public")
 
     const storage = multer.diskStorage({
