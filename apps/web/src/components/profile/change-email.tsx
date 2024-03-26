@@ -48,7 +48,7 @@ export default function ChangeEmailDialog() {
                 <DialogHeader>
                     <DialogTitle>Change Email</DialogTitle>
                     <DialogDescription>
-                        We will send an instruction to your new email to complete your changes. Type your password and new email, and then click submit when you're done.
+                        {"We will send an instruction to your new email to complete your changes. Type your password and new email, and then click submit when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}

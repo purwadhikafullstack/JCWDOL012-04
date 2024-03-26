@@ -2,6 +2,7 @@ import { transporter } from "./config"
 
 const isProduction = process.env.NODE_ENV === 'production'
 const CLIENT_URL = isProduction ? process.env.WEB_CLIENT_BASE_URL_PROD : process.env.WEB_CLIENT_BASE_URL_DEV
+if (!CLIENT_URL) throw new Error('CLIENT_URL is not defined')
 
 export const sendVerificationEmail = async (email: string, token: string) => transporter.sendMail(
     {

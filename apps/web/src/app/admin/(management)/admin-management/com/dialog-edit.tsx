@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useFormik } from 'formik';
-import { editAdminValidationSchema, fetchAdminData, submitAddNewAdmin, submitEditAdmin } from "./validation-action"
+import { editAdminValidationSchema, fetchAdminData, submitEditAdmin } from "./validation-action"
 import { useState, useEffect } from "react"
 
 export type AddAdminError = {
@@ -24,20 +24,7 @@ export default function EditAdminDialog({ id }: { id: string | number }) {
             fetchAdminData(id, setAdminData, setIsLoading, setError)
             setIsLoading(false)
         }
-    }, [dialogOpen])
-
-    useEffect(() => {
-        if (adminData) {
-            formik.setValues({
-                firstName: adminData?.firstName!,
-                lastName: adminData?.lastName!,
-                gender: adminData?.gender!,
-                email: adminData?.email!,
-                password: '',
-                confirmPassword: ''
-            })
-        }
-    }, [adminData])
+    }, [dialogOpen, id])
 
     const formik = useFormik({
         initialValues: {
@@ -54,6 +41,19 @@ export default function EditAdminDialog({ id }: { id: string | number }) {
             formik.setSubmitting(false);
         },
     });
+
+    useEffect(() => {
+        if (adminData) {
+            formik.setValues({
+                firstName: adminData?.firstName!,
+                lastName: adminData?.lastName!,
+                gender: adminData?.gender!,
+                email: adminData?.email!,
+                password: '',
+                confirmPassword: ''
+            })
+        }
+    }, [adminData])
 
     const noChanges =
         formik.values.firstName === adminData?.firstName &&

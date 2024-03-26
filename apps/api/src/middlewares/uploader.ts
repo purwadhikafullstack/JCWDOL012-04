@@ -11,6 +11,7 @@ export const uploader = (
     folderName?: string,
     type?: "profile-picture"
 ) => {
+    console.log("Uploader")
     const defaultDir = join(__dirname, "../../public")
 
     const storage = multer.diskStorage({
@@ -43,13 +44,21 @@ export const uploader = (
         cb: FileFilterCallback
     ) => {
         if (type === 'profile-picture') {
-            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/gif' || file.mimetype === 'image/jpg') {
                 cb(null, true)
             } else {
-                cb(null, false)
+                cb(new Error('Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.'))
             }
+        } else {
+            cb(null, true)
         }
     }
 
-    return multer({ storage: storage, fileFilter: fileFilter })
+    return multer({
+        storage: storage,
+        fileFilter: fileFilter,
+        limits: type === "profile-picture"
+            ? { fileSize: 1 * 1024 * 1024 } //1 MB
+            : undefined
+    })
 }

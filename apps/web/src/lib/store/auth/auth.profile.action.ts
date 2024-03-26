@@ -4,6 +4,8 @@ import axios, { AxiosResponse } from "axios"
 import { clientSideRedirect, logOutAction } from "./auth.action"
 
 const BASE_PROFILE_URL = process.env.NEXT_PUBLIC_BASE_PROFILE_URL
+if (!BASE_PROFILE_URL) throw new Error('BASE_PROFILE_URL is not defined')
+
 const profile = axios.create({
     baseURL: BASE_PROFILE_URL,
     withCredentials: true
@@ -147,11 +149,7 @@ export async function updateProfilePictureAction(
     const formData = new FormData()
     formData.append('file', values.file)
     await profile.patch('/change/profile-picture', formData)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState(false)
-            clientSideRedirect('/profile')
-        })
+        .then(() => clientSideRedirect('/profile'))
         .catch((error) => {
             if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))

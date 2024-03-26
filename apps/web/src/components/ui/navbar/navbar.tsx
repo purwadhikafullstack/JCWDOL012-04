@@ -12,24 +12,18 @@ export default function Navbar() {
   let [links, setLinks] = useState<NavLinks | null | undefined>(undefined)
 
   useEffect(() => {
-    if (auth?.isLoading) {
-      return
-    }
-    else if (!auth?.user?.isAuthenticated) {
+    if (!auth?.isLoading && !auth?.user?.isAuthenticated) {
       setLinks(guestLinks)
-    } else if (auth?.user?.isAuthenticated && auth?.user?.data?.role === 'CUSTOMER') {
+    } else if (!auth?.isLoading && auth?.user?.isAuthenticated && auth?.user?.data?.role === 'CUSTOMER') {
       setLinks(customerLinks)
-    } else if (auth?.user?.isAuthenticated && auth?.user?.data?.role === 'WAREHOUSE_ADMIN') {
+    } else if (!auth?.isLoading && auth?.user?.isAuthenticated && auth?.user?.data?.role === 'WAREHOUSE_ADMIN') {
       setLinks(warehouseAdminLinks)
-    } else if (auth?.user?.isAuthenticated && auth?.user?.data?.role === 'SUPER_ADMIN') {
+    } else if (!auth?.isLoading && auth?.user?.isAuthenticated && auth?.user?.data?.role === 'SUPER_ADMIN') {
       setLinks(superAdminLinks)
-    }
-    else {
+    } else {
       setLinks(null)
     }
-  }, [auth])
-
-  if (links === null) throw new Error('Unhandled navigation state')
+  }, [auth?.user])
 
   return (
     <nav className="bg-white md:sticky w-full md:z-20 md:top-0 md:start-0 border-b border-purple-200">

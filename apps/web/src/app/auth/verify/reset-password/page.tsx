@@ -52,7 +52,7 @@ export default function VerifyChangeEmailPage() {
                         <CardTitle>Reset Your Password</CardTitle>
                         {auth?.isLoading ? <Spinner /> : null}
                     </div>
-                    <CardDescription>One more step to reset your password. Please provide your new password and then click Save Changes when you're done.</CardDescription>
+                    <CardDescription>{"One more step to reset your password. Please provide your new password and then click Save Changes when you're done."}</CardDescription>
                 </CardHeader>
 
                 <CardContent >

@@ -6,6 +6,8 @@ import { clientSideRedirect } from "../auth/auth.action";
 
 const BASE_USER_URL = process.env.NEXT_PUBLIC_BASE_USER_URL
 const BASE_DATA_URL = process.env.NEXT_PUBLIC_BASE_DATA_URL
+if (!BASE_USER_URL) throw new Error('BASE_USER_URL is not defined')
+if (!BASE_DATA_URL) throw new Error('BASE_DATA_URL is not defined')
 
 const user = axios.create({
     baseURL: BASE_USER_URL,

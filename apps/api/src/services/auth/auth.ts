@@ -9,6 +9,8 @@ import { genSalt, hash } from "bcrypt";
 
 const isProduction = process.env.NODE_ENV === "production";
 const secretKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
+if (!secretKey) throw new Error('JWT_SECRET is not defined')
+
 const prisma = new PrismaClient();
 
 export function generateJWT(user: Users, info?: string | { [key: string]: any }) {

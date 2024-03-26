@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react"
 import { UserAuthErrorType, UserAuthType } from "./auth.provider"
 
 const BASE_AUTH_URL = process.env.NEXT_PUBLIC_BASE_AUTH_URL
+if (!BASE_AUTH_URL) throw new Error('BASE_AUTH_URL is not defined')
 
 const auth = axios.create({
     baseURL: BASE_AUTH_URL,
@@ -18,9 +19,10 @@ export function logInAction(
 ) {
     auth.post('login', values)
         .then((response) => {
+            const prevPath = sessionStorage.getItem('prevPath')
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
             setLoadingState ? () => setLoadingState(false) : null
-            clientSideRedirect('/')
+            clientSideRedirect(prevPath ? prevPath : '/')
         })
         .catch((error) => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
@@ -111,10 +113,18 @@ export async function initChangeRequestAction(
     setLoadingState: Dispatch<SetStateAction<boolean>>,
 ) {
     await auth.post('reset-password', value)
-        .then(() => clientSideRedirect('/auth/reset-password?reset=success'))
-        .catch((error) => {
-            setError({ status: error.response.status, message: error.response.data.message ? error.response.data.message : error.response.data.msg })
+        .then(() => {
             setLoadingState(false)
+            clientSideRedirect('/auth/reset-password?reset=success')
+        })
+        .catch((error) => {
+            setLoadingState(false)
+            setError(
+                {
+                    status: error.response.status,
+                    message: error.response.data.message ? error.response.data.message : error.response.data.msg,
+                    code: error.response.data.code
+                })
         })
 }
 
