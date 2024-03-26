@@ -423,7 +423,7 @@ export default function ProductDetails({
         <SuccessModal
           isModalOpen={isModalOpen}
           item="Product Edited"
-          path="/admin/products"
+          path="/admin/product-management"
           setIsModalOpen={setIsModalOpen}
           preventDefault={false}
         />

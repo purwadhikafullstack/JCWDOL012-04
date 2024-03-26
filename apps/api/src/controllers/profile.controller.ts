@@ -26,7 +26,7 @@ export async function changeName(req: Request, res: Response) {
             })
             resSuccess(res, 'Name updated successfully', updatedUser, 1)
         } catch (error) {
-            console.log('Error', error)
+            console.error('Error', error)
             resInternalServerError(res, 'Error updating name', null)
         }
     }
@@ -59,7 +59,7 @@ export async function sendChangeEmail(req: Request, res: Response, next: NextFun
         await sendChangeEmailInstructions(req.body.newEmail, token)
         resSuccess(res, 'Change email instructions sent', null, 1)
     } catch (error) {
-        console.log('Change Email Request Error', error)
+        console.error('Change Email Request Error', error)
         return resInternalServerError(res, 'Error changing email', null)
     }
 }
@@ -88,7 +88,7 @@ export async function changeEmail(req: Request, res: Response, next: NextFunctio
         })
         resSuccess(res, 'Email updated successfully', updatedUser, 1)
     } catch (error) {
-        console.log('Error', error)
+        console.error('Error', error)
         resInternalServerError(res, 'Error updating email', null)
     }
 }
@@ -106,7 +106,7 @@ export async function updateProfilePicture(req: Request, res: Response, next: Ne
         })
         resSuccess(res, 'Profile picture updated successfully', updatedUser, 1)
     } catch (error) {
-        console.log('Error', error)
+        console.error('Error', error)
         resInternalServerError(res, 'Error updating profile picture', null)
     }
 }

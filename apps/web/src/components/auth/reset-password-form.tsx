@@ -10,7 +10,6 @@ import { Input } from "../ui/input"
 
 export default function ResetPasswordForm() {
     const auth = useAuth()
-    console.log(auth?.error)
 
     const formik = useFormik({
         initialValues: {
@@ -21,8 +20,9 @@ export default function ResetPasswordForm() {
                 .email('Invalid email address format')
                 .required('Email is required')
         }),
-        onSubmit: (values) => {
-            auth?.resetPassword.initChangeRequest(values)
+        onSubmit: async (values) => {
+            await auth?.resetPassword.initChangeRequest(values)
+            formik.setSubmitting(false)
         },
     })
 
@@ -56,7 +56,7 @@ export default function ResetPasswordForm() {
                         {auth?.error && auth.error.status && (
                             <p className="text-red-600 text-sm">{auth.error.message}</p>
                         )}
-                        <Button type="submit" aria-disabled={auth?.isLoading} className="w-full" >Reset Password</Button>
+                        <Button type="submit" aria-disabled={auth?.isLoading || formik.isSubmitting} className="w-full" >Reset Password</Button>
                     </CardFooter>
                 </form>
             </Card>

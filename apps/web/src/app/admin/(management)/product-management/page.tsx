@@ -76,7 +76,7 @@ export default function Products({
       <div className="flex flex-col space-y-5 ml-[20px] md:space-y-0 md:flex-row md:items-end md:mx-auto md:justify-between md:w-[500px] lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products</div>
         <Link
-          href={'/admin/products/product-form'}
+          href={'/admin/product-management/product-form'}
           className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'}`}
         >
           <div className="bg-[var(--primaryColor)] w-[200px] lg:w-auto text-white px-[17px] py-[10px] rounded-md font-semibold border cursor-pointer hover:bg-transparent hover:text-[var(--primaryColor)] hover:border-[var(--primaryColor)] duration-200">

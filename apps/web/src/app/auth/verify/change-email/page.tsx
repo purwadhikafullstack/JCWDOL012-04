@@ -26,7 +26,8 @@ export default function VerifyChangeEmailPage() {
                 .required('Current password is required'),
         }),
         onSubmit: async (values) => {
-            auth?.updateEmail(values, tokenQuery)
+            await auth?.updateEmail(values, tokenQuery)
+            formik.setSubmitting(false)
         }
     })
     return (
@@ -72,7 +73,7 @@ export default function VerifyChangeEmailPage() {
                             </div>
 
                             <DialogFooter className="mt-4 gap-3 flex flex-col">
-                                <Button type="submit" disabled={auth?.isLoading} > Submit</Button>
+                                <Button type="submit" disabled={auth?.isLoading || formik.isSubmitting} > Submit</Button>
                             </DialogFooter>
                         </form>
                     </CardContent>

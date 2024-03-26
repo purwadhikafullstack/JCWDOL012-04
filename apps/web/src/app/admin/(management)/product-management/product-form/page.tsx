@@ -319,7 +319,7 @@ export default function CreateProductForm() {
         <SuccessModal
           isModalOpen={isModalOpen}
           item="Product Created"
-          path="/admin/products"
+          path="/admin/product-management"
           setIsModalOpen={setIsModalOpen}
           preventDefault={false}
         />

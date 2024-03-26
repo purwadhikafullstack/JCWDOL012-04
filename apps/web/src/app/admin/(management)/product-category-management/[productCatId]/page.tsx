@@ -13,7 +13,6 @@ export default function ProductCategoriesUpdateForm({
 }: {
   params: { productCatId: string };
 }) {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [productCategory, setProductCategory] =
     useState<ProductCategoriesModel | null>(null);
@@ -147,7 +146,7 @@ export default function ProductCategoriesUpdateForm({
       <SuccessModal
         isModalOpen={isModalOpen}
         item="Product Category Edited"
-        path="/admin/product-categories"
+        path="/admin/product-category-management"
         setIsModalOpen={setIsModalOpen}
         preventDefault={false}
       />

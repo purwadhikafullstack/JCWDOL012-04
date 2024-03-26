@@ -65,7 +65,7 @@ const googleLogin = new GoogleStrategy(
             done(null, newUser);
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
             done(error, null);
         }
     }

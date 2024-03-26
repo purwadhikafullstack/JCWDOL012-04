@@ -3,7 +3,7 @@ import axios from "axios";
 import { resInternalServerError, resSuccess } from "@/services/responses";
 
 export async function getShippingMethod(req: Request, res: Response) {
-    console.log(req.body)
+
     if (!req.body.origin || !req.body.destination || !req.body.weight || !req.body.courier) return resInternalServerError(res, 'Please provide the correct request data', null);
     const rajaOngkirApiKey = process.env.RAJAONGKIR_API_KEY;
     const rajaOngkirUrl = process.env.RAJAONGKIR_URL;
@@ -18,12 +18,9 @@ export async function getShippingMethod(req: Request, res: Response) {
             key: rajaOngkirApiKey,
         }
     })
-        .then((response) => {
-            console.log(response.data.rajaongkir.results)
-            return response.data.rajaongkir.results
-        })
+        .then((response) => response.data.rajaongkir.results)
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             resInternalServerError(res, 'Error getting shipping method', null)
         })
 

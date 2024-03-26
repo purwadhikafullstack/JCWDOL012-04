@@ -1,7 +1,7 @@
 "use client"
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import NavLinks from "./nav-links";
-import { guestLinks, customerLinks } from "./links";
+import { guestLinks, customerLinks, warehouseAdminLinks, superAdminLinks } from "./links";
 import { useState, useEffect } from "react";
 import CartIcon from "@/components/cart/cart.icon";
 import { usePathname } from "next/navigation";
@@ -17,19 +17,24 @@ export default function Navbar() {
     }
     else if (!auth?.user?.isAuthenticated) {
       setLinks(guestLinks)
-    } else if (auth?.user?.isAuthenticated) {
+    } else if (auth?.user?.isAuthenticated && auth?.user?.data?.role === 'CUSTOMER') {
       setLinks(customerLinks)
-    } else {
+    } else if (auth?.user?.isAuthenticated && auth?.user?.data?.role === 'WAREHOUSE_ADMIN') {
+      setLinks(warehouseAdminLinks)
+    } else if (auth?.user?.isAuthenticated && auth?.user?.data?.role === 'SUPER_ADMIN') {
+      setLinks(superAdminLinks)
+    }
+    else {
       setLinks(null)
     }
   }, [auth])
 
-  if (links === null) throw new Error('Unhandled state')
+  if (links === null) throw new Error('Unhandled navigation state')
 
   return (
     <nav className="bg-white md:sticky w-full md:z-20 md:top-0 md:start-0 border-b border-purple-200">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+      <div className="flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="/" className="flex items-center">
           <img src="/images/palugada-icon.png" className="h-8 " alt="Palugada Logo" />
         </a>
         {!isAuthPage &&

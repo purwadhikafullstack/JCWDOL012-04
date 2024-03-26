@@ -10,7 +10,6 @@ import ChooseShippingAddressDialog from "./dialog-choose-shipping-address"
 
 export default function ShippingAddress() {
     const address = useAddress()
-    console.log("Address provider", address)
     if (!address.isAvailable && !address.isLoading) throw new Error("Address context is not loaded")
 
     const { choosenAddress } = address

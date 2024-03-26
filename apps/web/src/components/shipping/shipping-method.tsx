@@ -9,8 +9,6 @@ import { formatToRupiah } from "@/utils/helper"
 export default function ShippingMethod({ totalWeight }: { totalWeight: number | string }) {
     const shipping = useShipping()
     const address = useAddress()
-    console.log("Shipping", shipping)
-    console.log("Address", address)
 
     if (!address.isAvailable && !address.isLoading) throw new Error("Address context is not loaded")
     if (!shipping.isAvailable && !shipping.isLoading) throw new Error("Shipping context is not loaded")

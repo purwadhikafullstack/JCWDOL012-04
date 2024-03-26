@@ -73,7 +73,7 @@ export default function ProductCategories({
       <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products Categories</div>
         <Link
-          href={'/admin/product-categories/product-categories-form'}
+          href={'/admin/product-category-management/product-categories-form'}
           className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'}`}
         >
           <div className="bg-[var(--primaryColor)] w-[200px] lg:w-auto text-white px-[17px] py-[10px] rounded-md font-semibold border cursor-pointer hover:bg-transparent hover:text-[var(--primaryColor)] hover:border-[var(--primaryColor)] duration-200">

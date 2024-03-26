@@ -20,6 +20,7 @@ import { profileRouter } from './routers/profile.router';
 import { userRouter } from './routers/user.router';
 import { dataRouter } from './routers/data.router';
 import { shippingRouter } from './routers/shipping.router';
+import warehouseRouter from './routers/warehouse.router';
 import { SalesRouter } from './routers/sales.router';
 
 export default class App {
@@ -84,6 +85,7 @@ export default class App {
     this.app.use('/user', userRouter);
     this.app.use('/data', dataRouter);
     this.app.use('/shipping', shippingRouter);
+    this.app.use('/warehouses', warehouseRouter);
     this.app.use('/api/sales', salesRouter.getRouter());
   }
 

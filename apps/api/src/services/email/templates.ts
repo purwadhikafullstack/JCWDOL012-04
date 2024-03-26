@@ -13,10 +13,10 @@ export const sendVerificationEmail = async (email: string, token: string) => tra
     },
     (err, info) => {
         if (err) {
-            console.log(err)
+            console.error(err)
             return err
         } else {
-            console.log(info)
+            console.error(info)
             return info
         }
     })
@@ -31,10 +31,10 @@ export const sendChangeEmailInstructions = async (email: string, token: string) 
     },
     (err, info) => {
         if (err) {
-            console.log(err)
+            console.error(err)
             return err
         } else {
-            console.log(info)
+            console.error(info)
             return info
         }
     })
@@ -49,10 +49,10 @@ export const sendResetPasswordInstructions = async (email: string, token: string
     },
     (err, info) => {
         if (err) {
-            console.log(err)
+            console.error(err)
             return err
         } else {
-            console.log(info)
+            console.error(info)
             return info
         }
     }

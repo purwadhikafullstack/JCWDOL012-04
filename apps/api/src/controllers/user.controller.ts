@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { PrismaClient, Users } from '@prisma/client';
-import { resInternalServerError, resSuccess } from '@/services/responses';
+import { resInternalServerError, resSuccess, resUnprocessable } from '@/services/responses';
+import { genSalt, hash } from 'bcrypt';
+import { generateHashedPassword } from '@/services/auth/auth';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +24,7 @@ export async function getUserAddresses(req: Request, res: Response) {
         });
         resSuccess(res, 'User addresses retrieved successfully', addresses, 1)
     } catch (error) {
-        console.log('Error getting user addresses', error)
+        console.error('Error getting user addresses', error)
         resInternalServerError(res, 'Error getting user addresses', null)
     }
 }
@@ -70,7 +72,7 @@ export async function addAddress(req: Request, res: Response) {
             resSuccess(res, 'Address added successfully', newAddress, 1);
         };
     } catch (error) {
-        console.log('Error adding user address', error);
+        console.error('Error adding user address', error);
         resInternalServerError(res, 'Error adding user address', null);
     }
 }
@@ -89,7 +91,7 @@ export async function archieveAddress(req: Request, res: Response) {
         });
         resSuccess(res, 'Address archieved successfully', archievedAddress, 1);
     } catch (error) {
-        console.log('Error archieving user address', error);
+        console.error('Error archieving user address', error);
         resInternalServerError(res, 'Error archieving user address', null);
     }
 }
@@ -118,7 +120,7 @@ export async function setAsPrimaryAddress(req: Request, res: Response) {
         ]);
         resSuccess(res, 'Address set as primary successfully', updatedAddress, 1);
     } catch (error) {
-        console.log('Error setting user address as primary', error);
+        console.error('Error setting user address as primary', error);
         resInternalServerError(res, 'Error setting user address as primary', null);
     }
 }
@@ -165,7 +167,7 @@ export async function updateAddress(req: Request, res: Response) {
             resSuccess(res, 'Address updated successfully', updatedAddress, 1);
         }
     } catch (error) {
-        console.log('Error updating user address', error);
+        console.error('Error updating user address', error);
         resInternalServerError(res, 'Error updating user address', null);
     }
 
@@ -184,4 +186,125 @@ export async function getAdmins(req: Request, res: Response) {
         console.error('Error getting admin data', error)
         resInternalServerError(res, 'Error getting admin data', null)
     }
+}
+
+export async function getIdleAdmins(req: Request, res: Response) {
+    try {
+        const admins = await prisma.users.findMany({
+            where: {
+                role: 'WAREHOUSE_ADMIN',
+                archived: false,
+                wareHouseAdmin_warehouseId: null
+            }
+        })
+        resSuccess(res, 'Administrator data retrieved successfully', admins, 1)
+    } catch (error) {
+        console.error('Error getting admin data', error)
+        resInternalServerError(res, 'Error getting admin data', null)
+    }
+}
+
+export async function createWarehouseAdmin(req: Request, res: Response) {
+    try {
+        const { email, password, firstName, lastName, gender } = req.body;
+        if (!email || !password || !firstName || !lastName || !gender) return resUnprocessable(res, 'Missing mandatory fields', null)
+        const hashedPassword = await generateHashedPassword(password)
+        const admin = await prisma.users.create({
+            data: {
+                email,
+                password: hashedPassword,
+                firstName,
+                lastName,
+                gender,
+                isVerified: true,
+                role: 'WAREHOUSE_ADMIN'
+            }
+        })
+
+        resSuccess(res, 'Warehouse Admin created successfully', admin, 1)
+    } catch (error) {
+        console.error('Error creating warehouse admin', error)
+        resInternalServerError(res, 'Error creating warehouse admin', null)
+    }
+}
+
+export async function getWarehouseAdminData(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        if (!id) return resUnprocessable(res, 'Missing mandatory fields: id', null)
+        const admin = await prisma.users.findUnique({
+            where: {
+                id: parseInt(id),
+                archived: false
+            }
+        })
+        resSuccess(res, 'Warehouse Admin data retrieved successfully', admin, 1)
+    } catch (error) {
+        console.error('Error getting warehouse admin data', error)
+        resInternalServerError(res, 'Error getting warehouse admin data', null)
+    }
+}
+
+export async function archieveWarehouseAdmin(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        if (!id) return resUnprocessable(res, 'Missing mandatory fields: id', null)
+        const admin = await prisma.users.update({
+            where: {
+                id: parseInt(id)
+            },
+            data: {
+                archived: true
+            }
+        })
+        resSuccess(res, 'Warehouse Admin archieved successfully', admin, 1)
+    } catch (error) {
+        console.error('Error archieving warehouse admin', error)
+        resInternalServerError(res, 'Error archieving warehouse admin', null)
+    }
+}
+
+export async function updateWarehouseAdmin(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        if (!id) return resUnprocessable(res, 'Missing mandatory fields: id', null)
+
+        const { email, password, firstName, lastName, gender } = req.body;
+        if (!email && !firstName && !lastName && !gender) return resUnprocessable(res, 'Missing mandatory fields.', null)
+
+        const hashedPassword = password
+            ? await generateHashedPassword(password)
+            : null
+
+        const data = hashedPassword
+            ? { email, firstName, gender, lastName, password: hashedPassword }
+            : { email, firstName, lastName, gender }
+
+        const admin = await prisma.users.update({
+            where: {
+                id: parseInt(id)
+            },
+            data: data
+        })
+
+        resSuccess(res, 'Warehouse Admin updated successfully', admin, 1)
+    }
+    catch (error) {
+        console.error('Error updating warehouse admin', error)
+        resInternalServerError(res, 'Error updating warehouse admin', null)
+    }
+}
+
+export default function getCustomers(req: Request, res: Response) {
+    prisma.users.findMany({
+        where: {
+            role: 'CUSTOMER',
+            archived: false
+        }
+    })
+        .then((customers) => resSuccess(res, 'Customer data retrieved successfully', customers, 1))
+        .catch((error) => {
+            console.error('Error getting customer data', error)
+            resInternalServerError(res, 'Error getting customer data', null)
+        })
 }
