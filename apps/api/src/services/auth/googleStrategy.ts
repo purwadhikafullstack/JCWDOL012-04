@@ -1,4 +1,4 @@
-import passport, { Profile } from "passport";
+import passport from "passport";
 import { PrismaClient } from "@prisma/client";
 
 type GoogleAuthResponse = {
