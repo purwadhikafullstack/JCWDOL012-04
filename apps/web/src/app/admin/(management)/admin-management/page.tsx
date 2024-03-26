@@ -22,7 +22,7 @@ async function getAdmins(): Promise<AdminModel[]> {
         .then((response) => response.data.data as AdminModel[])
         .catch((error) => {
             console.error('Error getting Administrator data', error);
-            return [] as AdminModel[]; // Add this line to return an empty array
+            return [] as AdminModel[];
         });
 }
 

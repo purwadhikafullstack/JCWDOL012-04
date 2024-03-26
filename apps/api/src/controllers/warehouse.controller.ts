@@ -29,7 +29,8 @@ export async function getWarehouses(req: Request, res: Response) {
 
     await prisma.warehouses.findMany({
         where: { archived: false, },
-        select: warehouseSelectValue
+        select: warehouseSelectValue,
+        orderBy: { name: 'asc' }
     })
         .then((warehouses) => resSuccess(res, 'Get all warehouses', warehouses))
         .catch((error) => {
@@ -62,8 +63,8 @@ export async function createWarehouse(req: Request, res: Response) {
                     name,
                     address,
                     cityId: parseInt(cityId),
-                    latitude,
-                    longitude,
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString(),
                 }
             });
 
@@ -99,6 +100,7 @@ export async function updateWarehouse(req: Request, res: Response) {
             const initialWarehouseData = await tx.warehouses.findUnique({
                 where: { id: parseInt(id) },
                 select: {
+                    id: true,
                     warehouseAdmin: {
                         select: {
                             id: true,
@@ -114,14 +116,14 @@ export async function updateWarehouse(req: Request, res: Response) {
                     name,
                     address,
                     cityId: parseInt(cityId),
-                    latitude,
-                    longitude,
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString(),
                 }
             })
 
             if (adminId === '') {
                 await tx.users.update({
-                    where: { id: initialWarehouseData?.warehouseAdmin[0].id },
+                    where: { id: initialWarehouseData?.warehouseAdmin[0]?.id },
                     data: { wareHouseAdmin_warehouseId: null }
                 })
             }
@@ -129,7 +131,7 @@ export async function updateWarehouse(req: Request, res: Response) {
             if (adminId !== '' && adminId != initialWarehouseData?.warehouseAdmin[0]?.id) {
                 await tx.users.update({
                     where: {
-                        id: adminId ? parseInt(adminId) : initialWarehouseData?.warehouseAdmin[0].id
+                        id: adminId ? parseInt(adminId) : initialWarehouseData?.warehouseAdmin[0]?.id
                     },
                     data: {
                         wareHouseAdmin_warehouseId: adminId ? parseInt(id) : null
