@@ -140,9 +140,15 @@ export function EditAddress({ initialAddress }: { initialAddress: UserCitiesMode
                                 {formik.values.latitude && formik.values.longitude ? <div className="col-span-3 font-light">{`lat: ${formik.values.latitude}, lng: ${formik.values.longitude}`}</div> : <div className="col-span-3 font-light italic">No Pinpoint set</div>}
                             </div>
                             {formik.errors.latitude && formik.touched.latitude ? (<div className="text-red-500 text-xs">{formik.errors.latitude}</div>) : null}
+                            {parseFloat(initialAddress?.latitude!) ? null : <p className="text-xs text-red-500">{"Current Pinpoint is not in correct coordinates. Please update it."}</p>}
                             <div className="text-xs text-gray-500">{"Search or drag the marker to pinpoint your address. Click Set Pinpoint when you're done."}</div>
                             <div className="h-[256px] w-full">
-                                <Maps onMarkerUpdated={setRawLatLng} initialCoordinates={{ lat: Number(initialAddress.latitude), lng: Number(initialAddress.longitude) }} />
+                                <Maps
+                                    onMarkerUpdated={setRawLatLng}
+                                    initialCoordinates={{
+                                        lat: parseFloat(initialAddress?.latitude!) || -6.175211007317426,
+                                        lng: parseFloat(initialAddress?.longitude!) || 106.82715358395524
+                                    }} />
                             </div>
                             <Button variant={'outline'} onClick={(e) => {
                                 setPinpoint()
