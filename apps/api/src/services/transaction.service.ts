@@ -1,5 +1,5 @@
 import { prisma } from "./prisma.service";
-import { Transactions } from "@prisma/client";
+import { Transactions, orderStatus } from "@prisma/client";
 import { TransactionsCreateModel } from "@/model/transaction.create.model";
 import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
 import { transactionProductCreateModel } from "@/model/transaction.product.create.model";
@@ -18,6 +18,77 @@ export default class TransactionService {
         }
     }
 
+    async getAllTransactionAdmin(): Promise<Transactions[]> {
+        return await prisma.transactions.findMany({
+            include: {
+                products: {
+                    include: {
+                        product: true
+                    }
+                },
+                mutations: true
+            },
+            where: {
+                archived: false,
+            }
+        });
+    }
+
+    async getByTransactionUid(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.findFirst({
+            where: {
+                transactionUid: transactionUid,
+                archived: false
+            },
+            include: {
+                shippingAddress: true,
+                products: {
+                    include: {
+                        product: true
+                    }
+                }
+            }
+        });
+    }
+
+    async getLatestTransactionUid(userId:number): Promise<string> {
+        return await prisma.transactions.findFirst({
+            where: {
+                userId: userId
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        }).then(transaction => transaction?.transactionUid ?? '');
+    }
+
+    async getAllTransactionCustomer(userId: number): Promise<Transactions[]> {
+        return await prisma.transactions.findMany({
+            include: {
+                products: {
+                    include: {
+                        product: {
+                            include: {
+                                productCategory: true,
+                            }
+                        }
+                    }
+                }
+            },
+            where: {
+                userId: userId,
+                archived: false,
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
+    }
+
+    async getAllOrderStatus(): Promise<orderStatus[]> {
+        return Object.values(orderStatus);
+    }
+
     async create(transaction: TransactionsCreateModel, transactionProductTempData: transactionProductCreateModel[]): Promise<Transactions> {
         const temp = await prisma.$transaction(async (prisma) => {
             const transactionData = await prisma.transactions.create({
@@ -31,6 +102,11 @@ export default class TransactionService {
                     }
                 });
             }
+            await prisma.shoppingCart.deleteMany({
+                where: {
+                    userId: transaction.userId
+                }
+            });
             return transactionData;
         })
         if (temp) {
@@ -40,14 +116,73 @@ export default class TransactionService {
         }
     }
 
-    async getByTransactionUid(transactionUid: string): Promise<Transactions | null> {
+    async getByTransactionUidAdmin(transactionUid: string): Promise<Transactions | null> {
         return await prisma.transactions.findFirst({
             where: {
-                transactionUid: transactionUid
+                transactionUid: transactionUid,
+                archived: false
             },
             include: {
                 products: true,
-                mutations: true
+                mutations: true,
+            }
+        });
+    }
+
+    async cancelTransaction(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.update({
+            where: {
+                transactionUid: transactionUid,
+                archived: false
+            },
+            data: {
+                orderStatus: 'CANCELLED',
+                cancelledDate: new Date()
+            }
+        });
+    }
+
+    async postPaymentProof(transactionUid: string, paymentProof: string) {
+        const temp = await prisma.$transaction(async (prisma) => {
+            const update = await prisma.transactions.update({
+                where: {
+                    transactionUid: transactionUid,
+                    archived: false
+                },
+                data: {
+                    paymentProof: paymentProof
+                }
+            });
+            if (update) {
+                const updateOrderStatus = await prisma.transactions.update({
+                    where: {
+                        transactionUid: transactionUid,
+                        archived: false
+                    },
+                    data: {
+                        orderStatus: 'PENDING_VERIFICATION',
+                        paymentProofDate: new Date()
+                    }
+                });
+            }
+            return update;
+        })
+        if (temp) {
+            return temp;
+        } else {
+            return {} as Transactions;
+        }
+    }
+
+    async confirmTransaction(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.update({
+            where: {
+                transactionUid: transactionUid,
+                archived: false
+            },
+            data: {
+                orderStatus: 'CONFIRMED',
+                confirmationDate: new Date()
             }
         });
     }
@@ -77,11 +212,6 @@ export default class TransactionService {
     }
 
     async createMidtransTransaction(midtransReq: midtransRequest) {
-        // const headers = new Headers();
-        // headers.append('Content-Type', 'application/json');
-        // headers.append('Accept', 'application/json');
-        // headers.append('Authorization', 'Basic ' + Buffer.from(`${process.env.MIDTRANS_SERVER_KEY}:`).toString('base64'));
-        
         const headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -109,7 +239,8 @@ export default class TransactionService {
     async getByUserId(userId: number): Promise<Transactions[]> {
         return await prisma.transactions.findMany({
             where: {
-                userId: userId
+                userId: userId,
+                archived: false
             },
             include: {
                 products: true,
@@ -121,7 +252,8 @@ export default class TransactionService {
     async getById(id: number): Promise<Transactions | null> {
         return await prisma.transactions.findUnique({
             where: {
-                id: id
+                id: id,
+                archived: false
             },
             include: {
                 products: true,

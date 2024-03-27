@@ -5,6 +5,7 @@ export type TransactionsCreateModel = {
     paymentType: paymentType;
     orderStatus: orderStatus;
     warehouseId: number;
+    shippingAddressId: number;
     paymentProofDate?: Date;
     verifiedDate?: Date;
     shippingDate?: Date;

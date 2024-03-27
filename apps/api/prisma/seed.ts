@@ -325,8 +325,9 @@ async function main() {
     let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
     let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
     let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
-    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENT_GATEWAY' : 'TRANSFER';
+    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENTGATEWAY' : 'TRANSFER';
     let transactionUid = `ORDER-${i}-${Date.now()}`
+    let shippingAddressId = Math.floor(Math.random() * 3) + 1;
     await prisma.transactions.create({
       data: {
         transactionUid: transactionUid,
@@ -335,6 +336,7 @@ async function main() {
         orderStatus: orderStatusTemp,
         warehouseId: warehouseIdTemp,
         shippingCost: shippingCostTemp,
+        shippingAddressId: shippingAddressId,
         total: totalTemp,
       },
     });

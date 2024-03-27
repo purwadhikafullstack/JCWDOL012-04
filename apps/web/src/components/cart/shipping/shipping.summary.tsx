@@ -4,11 +4,13 @@ import TransactionApi from "@/api/transaction.user.api.withAuth";
 import { useEffect, useState } from "react";
 import { PaymentTypeModel } from "@/model/PaymentTypeModel";
 import { ShoppingCartModel } from '@/model/ShoppingCartModel';
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import { useRouter } from "next/navigation";
 
-export default function ShippingSummary({ subtotal = 0, shippingCost = 0, cartData=[], closestWarehouseId }: { subtotal: number, shippingCost: number, cartData: ShoppingCartModel[], closestWarehouseId: number}) {
+export default function ShippingSummary({ subtotal = 0, shippingCost = 0, cartData = [], closestWarehouseId, shippingAddressId }: { subtotal: number, shippingCost: number, cartData: ShoppingCartModel[], closestWarehouseId: number, shippingAddressId: number }) {
     const [total, setTotal] = useState(0);
     const transactionApi = new TransactionApi();
+    const router = useRouter();
 
     useEffect(() => {
         setTotal(subtotal + shippingCost);
@@ -16,11 +18,11 @@ export default function ShippingSummary({ subtotal = 0, shippingCost = 0, cartDa
 
     function handleProceedToPaymentPG() {
         // (orders: ShoppingCartModel[], paymentType: PaymentTypeModel, shippingCost:number): Promise<{status: number, data:MidtransPreTransactionResponseModel}>{
-        transactionApi.preTransactionPG(cartData, shippingCost, closestWarehouseId).then((response) => {
+        transactionApi.preTransactionPG(cartData, shippingCost, closestWarehouseId, shippingAddressId).then((response) => {
             const redirectUrl = response.data.redirect_url;
-            if(redirectUrl){
+            if (redirectUrl) {
                 window.location.href = redirectUrl;
-            }else{
+            } else {
                 toast.error('Redirect URL not found');
                 console.log("Redirect URL not found");
             }
@@ -31,8 +33,11 @@ export default function ShippingSummary({ subtotal = 0, shippingCost = 0, cartDa
     }
 
     function handleProceedToPaymentTrf() {
-        transactionApi.preTransactionTrf(cartData, shippingCost, closestWarehouseId).then((response) => {
-            console.log(response);
+        transactionApi.preTransactionTrf(cartData, shippingCost, closestWarehouseId, shippingAddressId).then((response) => {
+            setTimeout(() => {
+                console.log("Redirecting to transaction page");
+                router.push(`../../../cart/shipment/latest/`)
+            }, 1000);    
         }).catch((error) => {
             console.log(error);
         });
@@ -57,8 +62,12 @@ export default function ShippingSummary({ subtotal = 0, shippingCost = 0, cartDa
                     <p>Total</p>
                     <p>{idr(total)}</p>
                 </div>
-                    <button className="bg-[var(--primaryColor)] text-white rounded-xl py-2" onClick={handleProceedToPaymentPG}>Payment Gateway Checkout</button>
-                    <button className="bg-[var(--primaryColor)] text-white rounded-xl py-2 mt-[-10px]" onClick={handleProceedToPaymentTrf}>Transfer Checkout</button>
+                {(total > 0 && shippingCost>0 && total>0) && (
+                    <>
+                        <button className="bg-[var(--primaryColor)] text-white rounded-xl py-2" onClick={handleProceedToPaymentPG}>Payment Gateway Checkout</button>
+                        <button className="bg-[var(--primaryColor)] text-white rounded-xl py-2 mt-[-10px]" onClick={handleProceedToPaymentTrf}>Transfer Checkout</button>
+                    </>
+                )}
             </div>
         </div>
     )

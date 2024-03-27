@@ -1,11 +1,15 @@
 import { prisma } from "./prisma.service";
-import { TransactionsProducts } from "@prisma/client";
+import { ProductCategories, TransactionsProducts } from "@prisma/client";
 
 export default class TransactionProductService {
     async create(transactionProduct:any ): Promise<TransactionsProducts> {
         return await prisma.transactionsProducts.create({
             data: transactionProduct
         });
+    }
+
+    async getAllProductCategory(): Promise<ProductCategories[]> {
+        return await prisma.productCategories.findMany();
     }
 
     async getByTransactionId(transactionId: number): Promise<TransactionsProducts[]> {

@@ -18,8 +18,8 @@ export default function ShippingProducts({cart=[], total=0}:{cart: ShoppingCartM
 
     if (cart.length === 0) {
         return (
-            <div>
-                <h1>Your cart is empty</h1>
+            <div className="bg-white rounded-xl p-2">
+                <h1 className="text-2xl text-center">Your cart is empty</h1>
             </div>
         )
     }

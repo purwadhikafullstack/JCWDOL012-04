@@ -11,7 +11,8 @@ import distance from "@/lib/distance";
 import { Transactions, TransactionsProducts, mutationType, Users, UserCities, paymentType, ShoppingCart, Warehouses, orderStatus } from "@prisma/client";
 import { Request, Response } from "express";
 import { midtransRequest } from "@/model/transaction.midtrans.create.model";
-import { prisma } from "@/services/prisma.service";
+import fs from 'fs';
+import path from 'path';
 
 type transactionData = {
     userId: number,
@@ -37,6 +38,44 @@ export default class TransactionController {
         this.ProductTransactionService = new ProductTransactionService();
     }
 
+    async getAll(req: Request, res: Response): Promise<void> {
+        const user = req.user as Users;
+        const transactions = await this.TransactionService.getAllTransactionCustomer(user.id);
+        res.status(200).json(transactions);
+    }
+
+    async getAllOrderStatus(req: Request, res: Response): Promise<void> {
+        const orderStatus = await this.TransactionService.getAllOrderStatus();
+        res.status(200).json(orderStatus);
+    }
+
+    async getAllProductCategory(req: Request, res: Response): Promise<void> {
+        const productCategories = await this.TransactionProductService.getAllProductCategory();
+        res.status(200).json(productCategories);
+    }
+
+    async getTransactionByUid(req: Request, res: Response): Promise<void> {
+        const user = req.user as Users;
+        const transactionUid = req.params.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null && transaction.userId === user.id) {
+            res.status(200).json(transaction);
+        } else if (transaction != null && transaction.userId !== user.id) {
+            res.status(403).json({ message: "Forbidden" });
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    async getLatestTransactionUid(req: Request, res: Response): Promise<void> {
+        const user = req.user as Users;
+        const latestTransactionUid = await this.TransactionService.getLatestTransactionUid(user.id);
+        if (latestTransactionUid === '') {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+        res.status(200).json(latestTransactionUid);
+    }
+
     async getTotal(orders: ShoppingCart[]): Promise<number> {
         let total = 0;
         for (const order of orders) {
@@ -51,14 +90,16 @@ export default class TransactionController {
     // paymentType,
     // shipping cost
     async preTransaction(req: Request, res: Response): Promise<void> {
-        const user:any = req.user;
+        const user: Users = req.user as Users;
         const userId = user.id;
         const orders: ShoppingCart[] = req.body.orders;
         let total = await this.getTotal(orders);
         const paymentType: paymentType = req.body.paymentType;
         const closestWarehouseId: number = req.body.closestWarehouseId;
+        const shippingAddressId: number = req.body.shippingAddressId;
+        total += req.body.shippingCost;
         const shippingCost = req.body.shippingCost;
-        if (closestWarehouseId != null && shippingCost != null && paymentType != null && total != null && userId != null && orders != null && orders.length > 0 && total > 0) {
+        if (closestWarehouseId != null && shippingCost != null && paymentType != null && orders != null && orders.length > 0 && shippingAddressId) {
             let orderStatus: orderStatus = "PENDING_PROOF";
             const transactionLatestId = await this.TransactionService.getLatestId();
             const transactionUid = `ORDER-${transactionLatestId + 1}-${Date.now()}`
@@ -69,12 +110,15 @@ export default class TransactionController {
                 paymentType: paymentType,
                 orderStatus: orderStatus,
                 warehouseId: closestWarehouseId,
-                shippingCost: shippingCost
+                shippingAddressId: shippingAddressId,
+                shippingCost: shippingCost,
             };
-            if (paymentType === "PAYMENT_GATEWAY") { await this.handlePaymentGateway(req, res, transactionData); }
-            if (paymentType === "TRANSFER") { 
-                const result = await this.handlePayment(req, res, transactionData); 
-                if(result != null){
+            if (paymentType === "PAYMENTGATEWAY") {
+                await this.handlePaymentGateway(req, res, transactionData);
+            }
+            if (paymentType === "TRANSFER") {
+                const result = await this.handlePayment(req, res, transactionData);
+                if (result != null) {
                     res.status(201).json(result);
                 }
             }
@@ -83,14 +127,52 @@ export default class TransactionController {
         }
     }
 
-    async handleShipment(req:Request, res:Response): Promise<void> {
+    async handlePayment(req: Request, res: Response, transactionData: TransactionsCreateModel): Promise<Transactions> {
+        const orders: ShoppingCart[] = req.body.orders;
+        const transactionProductTempData: transactionProductCreateModel[] = [];
+        for (const order of orders) {
+            const price = await this.ProductTransactionService.getById(order.productId).then(product => product?.price) ?? 0;
+            const transactionProductData: transactionProductCreateModel = {
+                productId: order.productId,
+                price: price,
+                quantity: order.quantity
+            };
+            transactionProductTempData.push(transactionProductData);
+        }
+        const result: Transactions = await this.TransactionService.create(transactionData, transactionProductTempData);
+        return result;
+    }
+
+    async handlePaymentGateway(req: Request, res: Response, transactionData: TransactionsCreateModel) {
+        const midtransRequest: midtransRequest = {
+            "transaction_details": {
+                "order_id": transactionData.transactionUid,
+                "gross_amount": transactionData.total
+            }
+        }
+
+
+        const result = await this.handlePayment(req, res, transactionData);
+        if (result != null) {
+            const midtransResponse = await this.TransactionService.createMidtransTransaction(midtransRequest);
+            if (midtransResponse != null) {
+                res.status(201).json(midtransResponse);
+            } else {
+                res.status(500).json({ message: "Internal server error" });
+            }
+        } else {
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+    async handleShipment(req: Request, res: Response): Promise<void> {
         const transactionUid = req.body.order_id;
         const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
         const mutationTempData: MutationCreateModel[] = [];
-        if(transaction != null){
+        if (transaction != null) {
             const transactionProduct = await this.TransactionProductService.getByTransactionId(transaction.id);
-            if(transactionProduct != null){
-                for(const product of transactionProduct){
+            if (transactionProduct != null) {
+                for (const product of transactionProduct) {
                     const mutationData: MutationCreateModel = {
                         transactionId: transaction.id,
                         productId: product.productId,
@@ -102,19 +184,65 @@ export default class TransactionController {
                     mutationTempData.push(mutationData);
                 }
                 const result = await this.MutationOrderService.createShipment(mutationTempData);
-                if(result){
+                if (result) {
                     res.status(201).json(transaction);
-                }else{
-                    res.status(500).json({message: "Internal server error"});
+                } else {
+                    res.status(500).json({ message: "Internal server error" });
                 }
             }
-        }else{
-            res.status(404).json({message: "Transaction not found"});
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
         }
     }
 
-    async handleMutationReversal(req:Request, res:Response): Promise<void> {
+    async handleMutationReversal(req: Request, res: Response): Promise<void> {
         //work later
+    }
+
+    async cancelOrder(req: Request, res: Response): Promise<void> {
+        const transactionUid = req.body.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            const updatedTransaction = await this.TransactionService.cancelTransaction(transactionUid);
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    async confirmOrder(req: Request, res: Response): Promise<void> {
+        const transactionUid = req.body.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            const updatedTransaction = await this.TransactionService.confirmTransaction(transactionUid);
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    async handlePaymentGatewayNotif(req: Request, res: Response) {
+        const status = req.body.status_code;
+        const transactionUid = req.body.order_id;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            let updatedTransaction: Transactions | null = null;
+            if (status == '200') {
+                updatedTransaction = await this.TransactionService.paymentGatewaySuccess(transactionUid);
+            } else {
+                updatedTransaction = await this.TransactionService.paymentGatewayFailed(transactionUid);
+            }
+
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
     }
 
     async handlePaymentGatewaySuccess(req: Request, res: Response) {
@@ -142,45 +270,6 @@ export default class TransactionController {
             res.status(404).json({ message: "Transaction not found" });
         }
     }
-
-    async handlePaymentGateway(req: Request, res: Response, transactionData: TransactionsCreateModel) {
-        const midtransRequest: midtransRequest = {
-            "transaction_details": {
-                "order_id": transactionData.transactionUid,
-                "gross_amount": transactionData.total
-            }
-        }
-
-        const temp = await this.handlePayment(req, res, transactionData);
-        if (temp != null) {
-            const midtransResponse = await this.TransactionService.createMidtransTransaction(midtransRequest);
-            if (midtransResponse != null) {
-                res.status(201).json(midtransResponse);
-            }else{
-                res.status(500).json({message: "Internal server error"});
-            }
-        } else {
-            res.status(500).json({ message: "Internal server error" });
-        }
-    }
-
-    async handlePayment(req: Request, res: Response, transactionData: TransactionsCreateModel): Promise<Transactions> {
-        const orders: ShoppingCart[] = req.body.orders;
-        const transactionProductTempData: transactionProductCreateModel[] = [];
-        for (const order of orders) {
-            const price = await this.ProductTransactionService.getById(order.productId).then(product => product?.price) ?? 0;
-            const transactionProductData: transactionProductCreateModel = {
-                productId: order.productId,
-                price: price,
-                quantity: order.quantity
-            };
-            transactionProductTempData.push(transactionProductData);
-        }
-        const result: Transactions = await this.TransactionService.create(transactionData, transactionProductTempData);
-        return result;
-    }
-
-
 
     async getClosestWarehouse(req: Request): Promise<Warehouses> {
         const userCityId: number = parseInt(req.body.userCityId?.toString() ?? "-1");
@@ -215,17 +304,45 @@ export default class TransactionController {
     }
 
     async getUsersByUserId(req: Request, res: Response): Promise<void> {
-        const user:any = req.user;
+        const user: any = req.user;
         const userId = user.id;
         const transactions = await this.UserCitiesTransactionService.getUsersByUserId(userId);
         res.status(200).json(transactions);
     }
 
     async getUserCitiesByUserId(req: Request, res: Response): Promise<void> {
-        const user:any = req.user;
+        const user: any = req.user;
         const userId = user.id;
         const userCities = await this.UserCitiesTransactionService.getByUserId(userId);
         res.status(200).json(userCities);
+    }
+
+    async postPaymentProof(req: Request, res: Response): Promise<void> {
+        const transactionUid = req.body.transactionUid;
+        const paymentProof = req.file ? req.file.path : '';
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction && paymentProof) {
+            if (transaction.paymentProof) {
+                // fs.unlink(path.join(__dirname, '../../', transaction.paymentProof), (err) => {
+                fs.unlink(path.join(process.cwd(), transaction.paymentProof), (err) => {
+                    if (err) {
+                        console.error(`Failed to delete old payment proof: ${err.message}`);
+                        res.status(500).json({ message: "Internal server error" });
+                    }
+                });
+            }
+            const updatedTransaction = await this.TransactionService.postPaymentProof(transactionUid, paymentProof);
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            if (!paymentProof) {
+                res.status(404).json({ message: "Payment proof not found" });
+            }
+            if (!transaction) {
+                res.status(404).json({ message: "Transaction not found" });
+            }
+        }
     }
 
 }

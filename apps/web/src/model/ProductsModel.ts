@@ -21,4 +21,5 @@ export interface ProductsModel {
   mutations?: MutationsModel[];
   shoppingCart?: ShoppingCartModel[];
   totalStock: number;
+  weight: number;
 }

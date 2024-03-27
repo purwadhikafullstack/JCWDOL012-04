@@ -38,6 +38,7 @@ export default class App {
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
     this.app.use(express.static('public'))
+    this.app.use('/public', express.static('public'))
     this.app.use(cookieparser());
   }
 
