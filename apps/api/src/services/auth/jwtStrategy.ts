@@ -22,7 +22,8 @@ function tokenExtractor(req: Request) {
 const jwtLogin = new JwtStrategy(
     {
         jwtFromRequest: tokenExtractor,
-        secretOrKey: secretKey!
+        secretOrKey: secretKey!,
+        ignoreExpiration: false
     },
     async (payload: any, done: (error: any, user: any, info?: any) => void) => {
         try {

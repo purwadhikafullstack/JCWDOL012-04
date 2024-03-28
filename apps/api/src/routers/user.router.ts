@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import getCustomers, { addAddress, archieveAddress, archieveWarehouseAdmin, createWarehouseAdmin, getWarehouseAdminData, getAdmins, getUserAddresses, setAsPrimaryAddress, updateAddress, updateWarehouseAdmin, getIdleAdmins } from "@/controllers/user.controller";
+import { archieveWarehouseAdmin, createWarehouseAdmin, getWarehouseAdminData, getAdmins, updateWarehouseAdmin, getIdleAdmins } from "@/controllers/user.wh.admin.controller";
+import { getUserAddresses, addAddress, archieveAddress, setAsPrimaryAddress, updateAddress } from "@/controllers/user.address.controller";
+import { getCustomers } from "@/controllers/user.customer.controller";
 import { superAdminGuard } from "@/middlewares/auth/userDataVerification";
 
 const userRouter = Router();

@@ -82,7 +82,11 @@ export async function sendChangeEmail(
   res: Response,
   next: NextFunction,
 ) {
-  const token = generateJWT(req.user as Users, { newEmail: req.body.newEmail });
+  const token = generateJWT(
+    req.user as Users,
+    { newEmail: req.body.newEmail },
+    '1h',
+  );
   try {
     await sendChangeEmailInstructions(req.body.newEmail, token);
     resSuccess(res, 'Change email instructions sent', null, 1);
