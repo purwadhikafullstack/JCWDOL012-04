@@ -22,6 +22,8 @@ import { profileRouter } from './routers/profile.router';
 import { userRouter } from './routers/user.router';
 import { dataRouter } from './routers/data.router';
 import { shippingRouter } from './routers/shipping.router';
+import { startUpdateOrderStatusJob } from './lib/updateOrderStatusJob';
+import { startUpdateTransactionOrderStatusJob } from './lib/updateTransactionOrderStatusJob';
 
 export default class App {
   private app: Express;
@@ -40,6 +42,8 @@ export default class App {
     this.app.use(express.static('public'))
     this.app.use('/public', express.static('public'))
     this.app.use(cookieparser());
+    startUpdateOrderStatusJob();
+    startUpdateTransactionOrderStatusJob();
   }
 
   private handleError(): void {

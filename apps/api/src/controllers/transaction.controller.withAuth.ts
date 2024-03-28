@@ -113,7 +113,7 @@ export default class TransactionController {
                 shippingAddressId: shippingAddressId,
                 shippingCost: shippingCost,
             };
-            if (paymentType === "PAYMENTGATEWAY") {
+            if (paymentType === "PAYMENT_GATEWAY") {
                 await this.handlePaymentGateway(req, res, transactionData);
             }
             if (paymentType === "TRANSFER") {
@@ -226,14 +226,15 @@ export default class TransactionController {
     }
 
     async handlePaymentGatewayNotif(req: Request, res: Response) {
-        const status = req.body.status_code;
+        const status = req.body.transaction_status;
         const transactionUid = req.body.order_id;
+        console.log(JSON.stringify(req.body));
         const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
         if (transaction != null) {
             let updatedTransaction: Transactions | null = null;
-            if (status == '200') {
+            if (status == 'settlement' || status == "capture") {
                 updatedTransaction = await this.TransactionService.paymentGatewaySuccess(transactionUid);
-            } else {
+            }else if(status != "pending"){
                 updatedTransaction = await this.TransactionService.paymentGatewayFailed(transactionUid);
             }
 

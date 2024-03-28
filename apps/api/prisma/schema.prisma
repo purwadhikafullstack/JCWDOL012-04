@@ -171,7 +171,7 @@ model ProductsWarehouses {
 }
 
 enum paymentType {
-  PAYMENTGATEWAY
+  PAYMENT_GATEWAY
   TRANSFER
 }
 
@@ -183,7 +183,6 @@ enum orderStatus {
   CANCELLED
   PROCESSING
   SHIPPING
-  SENT
   CONFIRMED
 }
 

@@ -6,6 +6,5 @@ export enum OrderStatusModel {
     CANCELLED = "CANCELLED",
     PROCESSING = "PROCESSING",
     SHIPPING = "SHIPPING",
-    SENT = "SENT",
     CONFIRMED = "CONFIRMED",
 }

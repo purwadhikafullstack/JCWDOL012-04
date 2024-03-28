@@ -113,7 +113,7 @@ export default class TransactionApi {
         "use server"
         const data = {
             orders: orders,
-            paymentType: "PAYMENTGATEWAY",
+            paymentType: "PAYMENT_GATEWAY",
             shippingCost: shippingCost,
             closestWarehouseId: closestWarehouseId,
             shippingAddressId: shippingAddressId

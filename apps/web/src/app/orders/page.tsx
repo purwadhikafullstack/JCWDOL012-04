@@ -180,7 +180,7 @@ export default function TransactionHistory() {
                                             <div className="px-6 py-2">
                                                 <p className="">{product.name}</p>
                                                 <p className="mr-2 text-sm text-gray-500">{transactionProduct.quantity} {transactionProduct.quantity > 1 ? 'items' : 'item'} x {idr(product.price ?? 0)}</p>
-                                                <a href={`/orders/${transaction.transactionUid}`} className="text-sm text-gray-500 hover:underline">+ {transactionProducts.length} other items</a>
+                                                {transactionProducts.length>1 && <a href={`/orders/${transaction.transactionUid}`} className="text-sm text-gray-500 hover:underline">+ {transactionProducts.length-1} other {transactionProducts.length>2?"products":"product"}</a>}
                                             </div>
                                         </div>
                                         <div>

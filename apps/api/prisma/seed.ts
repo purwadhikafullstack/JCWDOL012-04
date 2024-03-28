@@ -312,7 +312,6 @@ async function main() {
     'CANCELLED',
     'PROCESSING',
     'SHIPPING',
-    'SENT',
     'CONFIRMED',
   ];
 
@@ -320,12 +319,12 @@ async function main() {
   for (let i = 1; i <= 100; i++) {
     let userIdTemp = Math.floor(Math.random() * 20) + 1;
     let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[
-      Math.floor(Math.random() * 9)
+      Math.floor(Math.random() * 8)
     ] as Transactions['orderStatus'];
     let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
     let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
     let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
-    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENTGATEWAY' : 'TRANSFER';
+    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENT_GATEWAY' : 'TRANSFER';
     let transactionUid = `ORDER-${i}-${Date.now()}`
     let shippingAddressId = Math.floor(Math.random() * 3) + 1;
     await prisma.transactions.create({
