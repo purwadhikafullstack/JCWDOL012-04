@@ -20,14 +20,6 @@ transactionRouter.post('/paymentGatewayNotif', (req: Request, res: Response): vo
     transactionController.handlePaymentGatewayNotif(req, res);
 });
 
-transactionRouter.post('/paymentGatewaySuccess', (req: Request, res: Response): void => {
-    transactionController.handlePaymentGatewaySuccess(req, res);
-});
-
-transactionRouter.post('/paymentGatewayFailed', (req: Request, res: Response): void => {
-    transactionController.handlePaymentGatewayFailed(req, res);
-});
-
 transactionRouter.get('/', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.getAll(req, res);
 });
@@ -66,6 +58,22 @@ transactionRouter.post('/orders/confirm', requireJwtAuth, (req: Request, res: Re
 
 transactionRouter.post('/orders/paymentProof', requireJwtAuth, uploadPaymentProof, (req: Request, res: Response): void => {
     transactionController.postPaymentProof(req, res);
+});
+
+transactionRouter.post('/admin/orders/verify', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.verifyPaymentProof(req, res);
+});
+
+transactionRouter.post('/admin/orders/deny', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.denyPaymentProof(req, res);
+});
+
+transactionRouter.post('/admin/orders/process', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.processOrder(req, res);
+});
+
+transactionRouter.post('/admin/orders/ship', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.shipOrder(req, res);
 });
 
 export default transactionRouter;

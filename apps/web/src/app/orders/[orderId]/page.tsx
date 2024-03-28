@@ -178,9 +178,9 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                                     <div className="flex gap-2">
                                         <img src={baseUrl + "" + transaction.paymentProof} alt="payment proof" className="w-1/2 max-w-[500px] max-h-[500px]" />
                                         <div className="border-l border-l-[var(--lightPurple)]">
-                                        <button className="text-sm lg:text-md max-h-10 ml-2 mb-5 bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handlePaymentProofButton}>Edit Payment Proof</button>
+                                        {(transaction.orderStatus=="PENDING_PROOF" || transaction.orderStatus=="PENDING_VERIFICATION") && <button className="text-sm lg:text-md max-h-10 ml-2 mb-5 bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handlePaymentProofButton}>Edit Payment Proof</button>}
                                         {isPaymentProofOpen && (
-                                            <div className="border border-[var(--lightPurple)] rounded-xl p-2">
+                                            <div className="border border-[var(--lightPurple)] rounded-xl p-2 ml-2">
                                                 <form
                                                     onSubmit={(event) => {
                                                         event.preventDefault();

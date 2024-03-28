@@ -273,32 +273,6 @@ export default class TransactionController {
         }
     }
 
-    async handlePaymentGatewaySuccess(req: Request, res: Response) {
-        const transactionUid = req.body.order_id;
-        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
-        if (transaction != null) {
-            const updatedTransaction = await this.TransactionService.paymentGatewaySuccess(transactionUid);
-            if (updatedTransaction != null) {
-                res.status(200).json(updatedTransaction);
-            }
-        } else {
-            res.status(404).json({ message: "Transaction not found" });
-        }
-    }
-
-    async handlePaymentGatewayFailed(req: Request, res: Response) {
-        const transactionUid = req.body.order_id;
-        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
-        if (transaction != null) {
-            const updatedTransaction = await this.TransactionService.paymentGatewayFailed(transactionUid);
-            if (updatedTransaction != null) {
-                res.status(200).json(updatedTransaction);
-            }
-        } else {
-            res.status(404).json({ message: "Transaction not found" });
-        }
-    }
-
     async getClosestWarehouse(req: Request): Promise<Warehouses> {
         const userCityId: number = parseInt(req.body.userCityId?.toString() ?? "-1");
         const userCity: UserCities = await this.UserCitiesTransactionService.getById(userCityId) as UserCities;
@@ -371,6 +345,59 @@ export default class TransactionController {
                 res.status(404).json({ message: "Transaction not found" });
             }
         }
+    }
+
+    async verifyPaymentProof(req: Request, res: Response): Promise<void> {
+        const transactionUid = req.body.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            const updatedTransaction = await this.TransactionService.verifyPayment(transactionUid);
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    async denyPaymentProof(req: Request, res: Response): Promise<void> {
+        const transactionUid = req.body.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            const updatedTransaction = await this.TransactionService.denyPayment(transactionUid);
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    async processOrder(req: Request, res: Response): Promise<void> {
+        const transactionUid = req.body.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            const updatedTransaction = await this.TransactionService.processOrder(transactionUid);
+            if (updatedTransaction != null) {
+                res.status(200).json(updatedTransaction);
+            }
+        } else {
+            res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    //not done
+    async shipOrder(req: Request, res: Response): Promise<void> {
+        // const transactionUid = req.body.transactionUid;
+        // const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        // if (transaction != null) {
+        //     const updatedTransaction = await this.TransactionService.shipOrder(transactionUid);
+        //     if (updatedTransaction != null) {
+        //         res.status(200).json(updatedTransaction);
+        //     }
+        // } else {
+        //     res.status(404).json({ message: "Transaction not found" });
+        // }
     }
 
 }

@@ -258,4 +258,80 @@ export default class TransactionApi {
                 return error.status;
             });
     }
+
+    async verifyPayment(transactionUid: string): Promise<{ status: number, data: TransactionsModel }> {
+        "use server"
+        const data = {
+            transactionUid: transactionUid
+        }
+        return await apiAuth.post<TransactionsModel>('/transaction/admin/orders/verify/', data, {
+            params: {
+                _: new Date().getTime(),
+            }
+        }).then((response) => {
+            const status = response.status;
+            const data = response.data;
+            return { status, data };
+        }).catch((error) => {
+            console.log(error);
+            return error.status;
+        });
+    }
+
+    async denyPayment(transactionUid: string): Promise<{ status: number, data: TransactionsModel }> {
+        "use server"
+        const data = {
+            transactionUid: transactionUid
+        }
+        return await apiAuth.post<TransactionsModel>('/transaction/admin/orders/deny/', data, {
+            params: {
+                _: new Date().getTime(),
+            }
+        }).then((response) => {
+            const status = response.status;
+            const data = response.data;
+            return { status, data };
+        }).catch((error) => {
+            console.log(error);
+            return error.status;
+        });
+    }
+
+    async processOrder(transactionUid: string): Promise<{ status: number, data: TransactionsModel }> {
+        "use server"
+        const data = {
+            transactionUid: transactionUid
+        }
+        return await apiAuth.post<TransactionsModel>('/transaction/admin/orders/process/', data, {
+            params: {
+                _: new Date().getTime(),
+            }
+        }).then((response) => {
+            const status = response.status;
+            const data = response.data;
+            return { status, data };
+        }).catch((error) => {
+            console.log(error);
+            return error.status;
+        });
+    }
+
+    async shipOrder(transactionUid: string): Promise<{ status: number, data: TransactionsModel }> {
+        "use server"
+        const data = {
+            transactionUid: transactionUid
+        }
+        return await apiAuth.post<TransactionsModel>('/transaction/admin/orders/ship/', data, {
+            params: {
+                _: new Date().getTime(),
+            }
+        }).then((response) => {
+            const status = response.status;
+            const data = response.data;
+            return { status, data };
+        }).catch((error) => {
+            console.log(error);
+            return error.status;
+        });
+    }
 }

@@ -228,6 +228,19 @@ export default class TransactionService {
                 transactionUid: transactionUid
             },
             data: {
+                orderStatus: 'PROCESSING',
+                verifiedDate: new Date(),
+                processDate: new Date()
+            }
+        });
+    }
+
+    async verifyPayment(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.update({
+            where: {
+                transactionUid: transactionUid
+            },
+            data: {
                 orderStatus: 'VERIFIED',
                 verifiedDate: new Date()
             }
@@ -327,5 +340,27 @@ export default class TransactionService {
         };
     }
 
+    async denyPayment(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.update({
+            where: {
+                transactionUid: transactionUid
+            },
+            data: {
+                orderStatus: 'PENDING_PROOF'
+            }
+        });
+    }
+
+    async processOrder(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.update({
+            where: {
+                transactionUid: transactionUid
+            },
+            data: {
+                orderStatus: 'PROCESSING',
+                processDate: new Date()
+            }
+        });
+    }
 
 }

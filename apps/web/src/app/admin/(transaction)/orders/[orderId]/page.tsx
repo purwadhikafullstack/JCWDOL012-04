@@ -69,33 +69,44 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         }
     }
 
-    async function handleConfirmOrder() {
-        if (transaction) {
-            const res = await transactionApi.confirmOrder(transaction.transactionUid);
+    async function handleVerifyPayment() {
+        if(transaction) {
+            const res = await transactionApi.verifyPayment(transaction.transactionUid);
             if (res.status == 200) {
                 setUpdate(!update);
             }
         }
     }
 
-    function handlePaymentProofButton() {
-        setIsPaymentProofOpen(!isPaymentProofOpen);
-    }
-
-    async function handleUploadPaymentProof(file: File) {
-        if (transaction) {
-            const res = await transactionApi.postPaymentProof(transaction.transactionUid, file);
+    async function handleDenyPayment() {
+        if(transaction) {
+            const res = await transactionApi.denyPayment(transaction.transactionUid);
             if (res.status == 200) {
                 setUpdate(!update);
-                handlePaymentProofButton();
-            } else {
-                alert("Failed to upload payment proof");
+            }
+        }
+    }
+    
+    async function handleProcessOrder() {
+        if(transaction) {
+            const res = await transactionApi.processOrder(transaction.transactionUid)
+            if (res.status == 200) {
+                setUpdate(!update);
+            }
+        }
+    }
+
+    async function handleShippingOrder() {
+        if(transaction) {
+            const res = await transactionApi.shipOrder(transaction.transactionUid)
+            if (res.status == 200) {
+                setUpdate(!update);
             }
         }
     }
 
     if (transaction) {
-        if (!isAuthenticated || (role !== 'SUPER_ADMIN' && role!=="WAREHOUSE_ADMIN")) {
+        if (!isAuthenticated || (role !== 'SUPER_ADMIN' && role !== "WAREHOUSE_ADMIN")) {
             return (
                 <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
                     Unauthorized | 401
@@ -177,70 +188,23 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                                     <h2 className="text-xl font-semibold mb-2">payment proof:</h2>
                                     <div className="flex gap-2">
                                         <img src={baseUrl + "" + transaction.paymentProof} alt="payment proof" className="w-1/2 max-w-[500px] max-h-[500px]" />
-                                        <div className="border-l border-l-[var(--lightPurple)]">
-                                        <button className="text-sm lg:text-md max-h-10 ml-2 mb-5 bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handlePaymentProofButton}>Edit Payment Proof</button>
-                                        {isPaymentProofOpen && (
-                                            <div className="border border-[var(--lightPurple)] rounded-xl p-2">
-                                                <form
-                                                    onSubmit={(event) => {
-                                                        event.preventDefault();
-                                                        const fileInput = event.currentTarget.elements.namedItem("file") as HTMLInputElement;
-                                                        const file = fileInput.files?.[0];
-                                                        if (file) {
-                                                            if (file.size > 1024 * 1024) { // file size limit 1MB
-                                                                alert("File size exceeds 1MB. Please select a smaller file.");
-                                                            } else {
-                                                                handleUploadPaymentProof(file);
-                                                            }
-                                                        }
-                                                    }}
-                                                >
-                                                    <input
-                                                        name="file"
-                                                        type="file"
-                                                        accept="image/jpeg, image/png"
-                                                        className=""
-                                                    />
-                                                    <button className="bg-[var(--primaryColor)] rounded-xl p-2 mt-2 mx-auto block text-white hover:bg-[var(--lightPurple)]" type="submit">Upload</button>
-                                                </form>
+                                        {(transaction.orderStatus == "PENDING_VERIFICATION" && transaction.paymentType == "TRANSFER") && (
+                                            <div className="flex flex-col gap-2">
+                                                <button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleVerifyPayment}>Verify Payment</button>
+                                                <button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleDenyPayment}>Deny Payment</button>
                                             </div>
                                         )}
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )}
                     </div>
                     <div className="flex flex-col gap-2 rounded-xl px-5 md:max-w-72 2xl:min-w-72 md:my-0 my-5">
-                        {(transaction.orderStatus == "PENDING_PROOF" && transaction.paymentType == "TRANSFER") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handlePaymentProofButton}>Upload Payment Proof</button>)}
-                        {isPaymentProofOpen && (
-                            <div className="border border-[var(--lightPurple)] rounded-xl p-2">
-                                <form
-                                    onSubmit={(event) => {
-                                        event.preventDefault();
-                                        const fileInput = event.currentTarget.elements.namedItem("file") as HTMLInputElement;
-                                        const file = fileInput.files?.[0];
-                                        if (file) {
-                                            if (file.size > 1024 * 1024) { // file size limit 1MB
-                                                alert("File size exceeds 1MB. Please select a smaller file.");
-                                            } else {
-                                                handleUploadPaymentProof(file);
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <input
-                                        name="file"
-                                        type="file"
-                                        accept="image/jpeg, image/png"
-                                        className=""
-                                    />
-                                    <button className="bg-[var(--primaryColor)] rounded-xl p-2 mt-2 mx-auto block text-white hover:bg-[var(--lightPurple)]" type="submit">Upload</button>
-                                </form>
-                            </div>
-                        )}
-                        {(transaction.orderStatus == "SHIPPING") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleConfirmOrder}>Confirm Recieved</button>)}
-                        {(transaction.orderStatus == "PENDING_PROOF" && transaction.paymentType == "TRANSFER") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleCancelOrder}>Cancel Order</button>)}
+
+                        {(transaction.orderStatus == "VERIFIED") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleProcessOrder}>Process Order</button>)}
+                        {(transaction.orderStatus == "PROCESSING") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleShippingOrder}>Ship Order</button>)}
+                        {(transaction.orderStatus != "SHIPPING" && transaction.orderStatus != "CONFIRMED" && transaction.orderStatus != "FAILED_PAYMENT") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleCancelOrder}>Cancel Order</button>)}
+
                     </div>
                 </div>
             </div>

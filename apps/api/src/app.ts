@@ -43,7 +43,7 @@ export default class App {
     this.app.use('/public', express.static('public'))
     this.app.use(cookieparser());
     startUpdateOrderStatusJob();
-    startUpdateTransactionOrderStatusJob();
+    // startUpdateTransactionOrderStatusJob();
   }
 
   private handleError(): void {
