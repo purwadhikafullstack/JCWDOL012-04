@@ -1,13 +1,11 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/store/auth/auth.provider';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import { archiveData, fetchData } from '@/utils/api';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCatBar } from '@/components/admin/ProductCatBar';
 import { Loading } from '@/components/Loading';
 import { ConfirmModal } from '@/components/admin/ConfirmModal';
@@ -30,7 +28,6 @@ export default function ProductCategories({
   const pageSize = (searchParams.pageSize || '15') as string;
   const sort = (searchParams.sort || 'asc') as string;
   const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
   const isAuthorLoading = auth?.isLoading;
@@ -72,11 +69,11 @@ export default function ProductCategories({
     );
 
   return (
-    <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
-      <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1120px]">
+    <div className="w-full flex flex-col pt-[20px]">
+      <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products Categories</div>
         <Link
-          href={'/admin/product-categories/product-categories-form'}
+          href={'/admin/product-category-management/product-categories-form'}
           className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'}`}
         >
           <div className="bg-[var(--primaryColor)] w-[200px] lg:w-auto text-white px-[17px] py-[10px] rounded-md font-semibold border cursor-pointer hover:bg-transparent hover:text-[var(--primaryColor)] hover:border-[var(--primaryColor)] duration-200">
@@ -102,7 +99,7 @@ export default function ProductCategories({
               >
                 <div
                   id="product-categories-container"
-                  className="bg-gradient-to-r from-white to-purple-300 border h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[650px] lg:w-[750px] xl:w-[1120px] rounded-md px-[30px] hover:scale-105 duration-200"
+                  className="bg-gradient-to-r from-white to-purple-300 border h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[500px] lg:w-[750px] xl:w-[1000px] 2xl:w-[1120px] rounded-md px-[30px] hover:scale-105 duration-200"
                 >
                   <div className="flex items-center">
                     <div className="font-semibold w-[140px] lg:w-[200px] truncate">
@@ -128,7 +125,9 @@ export default function ProductCategories({
                         className="border border-white p-[7px] rounded-md hover:scale-125 duration-200"
                         onClick={(e) => {
                           e.preventDefault();
-                          router.push(`/admin/product-categories/${procat.id}`);
+                          router.push(
+                            `/admin/product-category-management/${procat.id}`,
+                          );
                         }}
                       >
                         <div className="relative w-[15px] h-[15px]">

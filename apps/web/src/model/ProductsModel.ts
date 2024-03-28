@@ -10,6 +10,7 @@ export interface ProductsModel {
   name: string;
   description: string;
   price: number;
+  weight: number;
   productCategoryId: number;
   productCategory: ProductCategoriesModel;
   createdAt: Date;

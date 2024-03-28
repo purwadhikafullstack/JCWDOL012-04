@@ -5,10 +5,10 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        pathname: '**'
-      }
-    ]
-  }
+        pathname: '**',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;

@@ -53,7 +53,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
         id="drop-filter"
         className={`${
           props.isOpenFil ? '' : 'hidden'
-        } absolute flex flex-col font-normal border mt-[90px] right-[6px] lg:right-[105px] px-[20px] py-[10px] bg-[white] shadow-md rounded-md hover:bg-slate-200 cursor-pointer`}
+        } z-10 absolute flex flex-col font-normal border mt-[90px] right-[6px] lg:right-[105px] px-[20px] py-[10px] bg-[white] shadow-md rounded-md hover:bg-slate-200 cursor-pointer`}
         onClick={() => {
           props.setIsOpenFil(!props.isOpenFil);
           props.setIsOpenCat(!props.isOpenCat);
@@ -65,7 +65,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
         id="drop-category"
         className={`${
           props.isOpenCat ? '' : 'hidden'
-        } absolute flex flex-col font-normal border top-14 right-0 lg:right-[70px] bg-[white] shadow-md rounded-md max-h-[300px] overflow-y-auto`}
+        } z-10 absolute flex flex-col font-normal border top-32 md:top-14 right-0 w-[185px] lg:right-[70px] bg-[white] shadow-md rounded-md max-h-[300px] overflow-y-auto`}
       >
         {props.productCategories.map((procat, index) => {
           return (
@@ -75,7 +75,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
               className={`${
                 procat.name === props.category
                   ? 'bg-[var(--primaryColor)] hover:bg-[var(--primaryColor)] text-white cursor-pointer px-[20px] py-[5px]'
-                  : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px]'
+                  : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px] truncate'
               }`}
               onClick={() => {
                 props.setIsOpenCat(false);
@@ -108,7 +108,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
         id="drop-sort"
         className={`${
           props.isOpenSor ? '' : 'hidden'
-        } absolute flex flex-col font-normal border mt-[90px] right-0 lg:right-[18px] px-[28px] py-[10px] bg-[white] shadow-md rounded-md hover:bg-slate-200 cursor-pointer`}
+        } z-10 absolute flex flex-col font-normal border mt-[90px] right-0 lg:right-[18px] px-[28px] py-[10px] bg-[white] shadow-md rounded-md hover:bg-slate-200 cursor-pointer`}
         onClick={() => {
           props.setIsOpenSor(!props.isOpenSor);
           props.setIsOpenPri(!props.isOpenPri);
@@ -120,7 +120,7 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
         id="drop-price"
         className={`${
           props.isOpenPri ? '' : 'hidden'
-        } absolute flex flex-col font-normal border mt-[120px] right-[0px] bg-[white] shadow-md rounded-md`}
+        } z-10 absolute flex flex-col font-normal border mt-[120px] right-[0px] bg-[white] shadow-md rounded-md`}
         onClick={() => {
           props.setIsOpenPri(false);
         }}

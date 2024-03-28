@@ -21,6 +21,7 @@ import { userRouter } from './routers/user.router';
 import { dataRouter } from './routers/data.router';
 import { shippingRouter } from './routers/shipping.router';
 import warehouseRouter from './routers/warehouse.router';
+import { ReportRouter } from './routers/report.router';
 
 export default class App {
   private app: Express;
@@ -36,7 +37,7 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(express.static('public'))
+    this.app.use(express.static('public'));
     this.app.use(cookieparser());
   }
 
@@ -65,6 +66,7 @@ export default class App {
 
   private routes(): void {
     const productRouter = new ProductRouter();
+    const reportRouter = new ReportRouter();
     // const sampleRouter = new SampleRouter();
     require('./services/auth/googleStrategy');
     require('./services/auth/localStrategy');
@@ -75,6 +77,7 @@ export default class App {
       res.send(`Hello, Purwadhika Student !`);
     });
     this.app.use('/api/cart', cartRouter);
+
     this.app.use('/api', productRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
@@ -82,7 +85,8 @@ export default class App {
     this.app.use('/user', userRouter);
     this.app.use('/data', dataRouter);
     this.app.use('/shipping', shippingRouter);
-    this.app.use('/warehouses', warehouseRouter)
+    this.app.use('/warehouses', warehouseRouter);
+    this.app.use('/api/sales', reportRouter.getRouter());
   }
 
   public start(): void {

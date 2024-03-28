@@ -1,4 +1,4 @@
-import { prisma } from './prisma.service';
+import { prisma } from '../prisma.service';
 
 export default class ProductCategoryService {
   prisma;
@@ -102,6 +102,13 @@ export default class ProductCategoryService {
     return prisma.warehouses.findMany({
       where: {
         archived: false,
+      },
+    });
+  }
+  async getWarehouseById(warehouseId: number) {
+    return prisma.warehouses.findUnique({
+      where: {
+        id: warehouseId,
       },
     });
   }

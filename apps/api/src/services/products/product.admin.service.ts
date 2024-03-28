@@ -1,5 +1,5 @@
 import { Prisma, ProductsWarehouses } from '@prisma/client';
-import { prisma } from './prisma.service';
+import { prisma } from '../prisma.service';
 
 export default class AdminProductService {
   prisma;
@@ -68,6 +68,7 @@ export default class AdminProductService {
     name: string,
     description: string,
     price: number,
+    weight: number,
     productCategoryId: number,
     productImages: { path: string }[],
     productsWarehouses: ProductsWarehouses,
@@ -77,6 +78,7 @@ export default class AdminProductService {
         name,
         description,
         price,
+        weight,
         productCategoryId,
         productImages: {
           create: productImages,
@@ -101,7 +103,7 @@ export default class AdminProductService {
     productCategoryId: number,
     productImages: { path: string }[],
   ) {
-    const updatedProduct = await prisma.products.update({
+    const updatedProduct = await this.prisma.products.update({
       where: {
         id: id,
       },

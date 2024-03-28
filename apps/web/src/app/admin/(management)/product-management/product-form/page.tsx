@@ -11,7 +11,6 @@ import { SuccessModal } from '@/components/admin/SuccessModal';
 import * as Yup from 'yup';
 import Image from 'next/image';
 import { FormInput } from '@/components/admin/product-form/FormInput';
-import { FormSelect } from '@/components/admin/product-form/FormSelect';
 
 export default function CreateProductForm() {
   const [warehouses, setWarehouses] = useState<WarehousesModel[]>([]);
@@ -31,6 +30,7 @@ export default function CreateProductForm() {
       name: '',
       description: '',
       price: '',
+      weight: '',
       productCategoryId: '',
       productsWarehouses: warehouses.map((warehouse) => ({
         warehouseId: warehouse.id,
@@ -42,10 +42,13 @@ export default function CreateProductForm() {
       name: Yup.string().required('Required'),
       description: Yup.string().required('Required'),
       price: Yup.number().required('Required'),
+      weight: Yup.number().required('Required'),
       productCategoryId: Yup.number().required('Required'),
       productsWarehouses: Yup.array().of(
         Yup.object({
-          stock: Yup.number().required('Required'),
+          stock: Yup.number()
+            .min(0, 'Stock can not be negative')
+            .required('Required'),
         }),
       ),
       productImages: Yup.array().min(1, 'At least one image is required'),
@@ -56,6 +59,7 @@ export default function CreateProductForm() {
         formData.append('name', values.name);
         formData.append('description', values.description);
         formData.append('price', values.price);
+        formData.append('weight', values.weight);
         formData.append('productCategoryId', values.productCategoryId);
         formData.append(
           'productsWarehouses',
@@ -199,6 +203,18 @@ export default function CreateProductForm() {
           touched={formik.touched.price}
           errors={formik.errors.price}
         />
+        <FormInput
+          htmlFor="weight"
+          label="Weight(g)"
+          type="number"
+          id="weight"
+          name="weight"
+          handleChange={formik.handleChange}
+          handleBlur={formik.handleBlur}
+          values={formik.values.weight}
+          touched={formik.touched.weight}
+          errors={formik.errors.weight}
+        />
         <div className="mb-4">
           <label
             htmlFor="productCategoryId"
@@ -241,6 +257,7 @@ export default function CreateProductForm() {
               </label>
               <input
                 type="number"
+                min={0}
                 name={`productsWarehouses[${index}].stock`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -317,8 +334,9 @@ export default function CreateProductForm() {
         <SuccessModal
           isModalOpen={isModalOpen}
           item="Product Created"
-          path="/admin/products"
+          path="/admin/product-management"
           setIsModalOpen={setIsModalOpen}
+          preventDefault={false}
         />
       </form>
     </div>

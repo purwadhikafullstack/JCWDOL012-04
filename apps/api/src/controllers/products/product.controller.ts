@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ProductService from '@/services/product.service';
+import ProductService from '@/services/products/product.service';
 import { userProductsTotalStock } from '@/lib/productsHelper';
 import { Products } from '@prisma/client';
 
@@ -81,6 +81,15 @@ export class ProductController {
     try {
       const { search } = req.query;
       const products = await productService.searchProducts(search as string);
+      return res.status(200).json(products);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getProductNames(req: Request, res: Response) {
+    try {
+      const products = await productService.getProductNames();
       return res.status(200).json(products);
     } catch (error) {
       console.log(error);

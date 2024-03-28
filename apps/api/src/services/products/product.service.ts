@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from './prisma.service';
+import { prisma } from '../prisma.service';
 
 export default class ProductService {
   prisma;
@@ -27,6 +27,7 @@ export default class ProductService {
       where: {
         name: {
           contains: search,
+          mode: 'insensitive',
         },
         productCategory: {
           name: {
@@ -60,6 +61,7 @@ export default class ProductService {
       where: {
         name: {
           contains: search,
+          mode: 'insensitive',
         },
         productCategory: {
           name: {
@@ -111,10 +113,21 @@ export default class ProductService {
       where: {
         name: {
           contains: search,
+          mode: 'insensitive',
         },
         archived: false,
       },
       take: 7,
+    });
+  }
+  async getProductNames() {
+    return this.prisma.products.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        archived: false,
+      },
     });
   }
 }
