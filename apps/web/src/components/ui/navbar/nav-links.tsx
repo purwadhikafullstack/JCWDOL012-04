@@ -36,7 +36,7 @@ export default function NavLinks({ links }: { links: NavLinks }) {
             </div>
 
             {nav && (
-                <div className={clsx("flex justify-end  absolute top-16 right-4 xl:right-auto z-30 ",
+                <div className={clsx("flex justify-end  absolute top-16 right-4 z-30 ",
                     { "md:hidden": !auth?.user?.isAuthenticated },
                 )}>
                     <ul className="flex w-fit flex-col capitalize font-medium p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50  rtl:space-x-reverse   md:bg-white dark:bg-gray-800 dark:border-gray-700">

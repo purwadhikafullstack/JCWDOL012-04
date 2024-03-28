@@ -6,6 +6,7 @@ import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWith
 import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import UnauthorizedPage from "@/components/auth/unauthorized";
 
 export type AuthContextType = {
     isLoading: boolean;
@@ -37,6 +38,7 @@ export type UserAuthType = {
 export type UserAuthErrorType = {
     status: number | null | undefined;
     message: string | null | undefined;
+    code?: number | null | undefined;
 }
 
 const initialUserAuth = {
@@ -46,6 +48,7 @@ const initialUserAuth = {
 
 const AuthContext = createContext<AuthContextType>(null);
 const cookieName: string = process.env.NEXT_PUBLIC_COOKIE_NAME || "";
+if (!cookieName) throw new Error('COOKIE_NAME is not defined')
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const hasCookie = getCookie(cookieName);
@@ -76,6 +79,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         }
         if (path.includes('/auth/reset-password') && !isLoading && user.isAuthenticated) {
             return router.push('/')
+        }
+        if (path.includes('/admin') && !isLoading && !(user.data?.role == 'SUPER_ADMIN' || user.data?.role == 'WAREHOUSE_ADMIN')) {
+            <UnauthorizedPage />
+            return router.push('/')
+        }
+        if ((path.includes('/warehouse-management') || path.includes('/admin-management') || path.includes('/customer-management')) && user.data?.role !== 'SUPER_ADMIN' && !isLoading) {
+            <UnauthorizedPage />
+            return router.push('/admin')
         }
     }, [path, user])
 

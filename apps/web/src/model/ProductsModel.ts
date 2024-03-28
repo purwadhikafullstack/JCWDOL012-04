@@ -10,6 +10,7 @@ export interface ProductsModel {
   name: string;
   description: string;
   price: number;
+  weight: number;
   productCategoryId: number;
   productCategory: ProductCategoriesModel;
   createdAt: Date;
@@ -21,5 +22,4 @@ export interface ProductsModel {
   mutations?: MutationsModel[];
   shoppingCart?: ShoppingCartModel[];
   totalStock: number;
-  weight: number;
 }

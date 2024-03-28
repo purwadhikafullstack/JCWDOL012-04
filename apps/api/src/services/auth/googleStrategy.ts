@@ -1,4 +1,4 @@
-import passport, { Profile } from "passport";
+import passport from "passport";
 import { PrismaClient } from "@prisma/client";
 
 type GoogleAuthResponse = {
@@ -18,16 +18,23 @@ type GoogleAuthResponse = {
     picture: string,
 }
 
-const GoogleStrategy = require("passport-google-oauth2").Strategy;
-
 const serverURL = process.env.NODE_ENV === "production" ? process.env.SERVER_URL_PROD : process.env.SERVER_URL_DEV;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
+if (!GOOGLE_CLIENT_ID) throw new Error('GOOGLE_CLIENT_ID is not defined')
+if (!GOOGLE_CLIENT_SECRET) throw new Error('GOOGLE_CLIENT_SECRET is not defined')
+if (!GOOGLE_CALLBACK_URL) throw new Error('GOOGLE_CALLBACK_URL is not defined')
+if (!serverURL) throw new Error('SERVER_URL is not defined')
+
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const prisma = new PrismaClient();
 
 const googleLogin = new GoogleStrategy(
     {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${serverURL}${process.env.GOOGLE_CALLBACK_URL}`,
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL: `${serverURL}${GOOGLE_CALLBACK_URL}`,
         proxy: true
     },
     async (accessToken: any, refreshToken: any, profile: GoogleAuthResponse, done: any) => {
@@ -65,7 +72,7 @@ const googleLogin = new GoogleStrategy(
             done(null, newUser);
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
             done(error, null);
         }
     }

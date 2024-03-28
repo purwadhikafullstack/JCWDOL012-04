@@ -22,7 +22,10 @@ export function AddAddress() {
     const formik = useFormik({
         initialValues: AddressInitialValues,
         validationSchema: AddressValidationSchema,
-        onSubmit: async (values) => await address.addAddress(values)
+        onSubmit: async (values) => {
+            await address.addAddress(values)
+            formik.setSubmitting(false)
+        }
     })
 
     useEffect(() => {
@@ -52,7 +55,7 @@ export function AddAddress() {
                 <DialogHeader>
                     <DialogTitle>Add Address</DialogTitle>
                     <DialogDescription>
-                        Add your new address. Click Save when you're done.
+                        {"Add your new address. Click Save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {!auth?.isLoading &&
@@ -134,7 +137,7 @@ export function AddAddress() {
                                 {formik.values.latitude && formik.values.longitude ? <div className="col-span-3 font-light">{`lat: ${formik.values.latitude}, lng: ${formik.values.longitude}`}</div> : <div className="col-span-3 font-light italic">No Pinpoint set</div>}
                             </div>
                             {formik.errors.latitude && formik.touched.latitude ? (<div className="text-red-500 text-xs">{formik.errors.latitude}</div>) : null}
-                            <div className="text-xs text-gray-500">Search or drag the marker to pinpoint your address. Click Set Pinpoint when you're done.</div>
+                            <div className="text-xs text-gray-500">{"Search or drag the marker to pinpoint your address. Click Set Pinpoint when you're done."}</div>
                             <div className="h-[256px] w-full">
                                 <Maps onMarkerUpdated={setRawLatLng} />
                             </div>
@@ -166,7 +169,7 @@ export function AddAddress() {
 
                             <DialogFooter>
                                 {auth?.isLoading || address.isLoading && (<div className="mx-auto"><Spinner /></div>)}
-                                <Button type="submit" className="min-w-[160px]" disabled={auth?.isLoading || address.isLoading} >Save</Button>
+                                <Button type="submit" className="min-w-[160px]" disabled={auth?.isLoading || address.isLoading || formik.isSubmitting} >Save</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

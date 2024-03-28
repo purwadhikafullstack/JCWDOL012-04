@@ -10,7 +10,6 @@ import ChooseShippingAddressDialog from "./dialog-choose-shipping-address"
 
 export default function ShippingAddress() {
     const address = useAddress()
-    console.log("Address provider", address)
     if (!address.isAvailable && !address.isLoading) throw new Error("Address context is not loaded")
 
     const { choosenAddress } = address
@@ -47,8 +46,8 @@ export default function ShippingAddress() {
                         ))}
 
                     {!address.userAddress.length
-                        ? <p className="text-xs">You haven't added any addresses.</p>
-                        : !choosenAddressExist && <p className="text-xs">You haven't choose any address.</p>}
+                        ? <p className="text-xs">{"You haven't added any addresses."}</p>
+                        : !choosenAddressExist && <p className="text-xs">{"You haven't choose any address."}</p>}
                 </CardContent>
                 <CardFooter>
                     {!address.userAddress.length

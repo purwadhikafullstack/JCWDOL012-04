@@ -31,7 +31,7 @@ async function main() {
     .then((data) => data.rajaongkir.results)
     .catch((err) => console.error(err));
 
-  console.log(provincesRO)
+  console.log(provincesRO);
 
   for (const item of provincesRO) {
     await prisma.provinces.create({
@@ -49,8 +49,8 @@ async function main() {
         id: parseInt(item.city_id),
         name: item.city_name,
         type: item.type.toUpperCase(),
-        provinceId: parseInt(item.province_id)
-      }
+        provinceId: parseInt(item.province_id),
+      },
     });
     console.log(`Created city ${item.city_name}`);
   }
@@ -98,8 +98,52 @@ async function main() {
       address: 'Jl Jend A Yani 808, Jawa Barat',
       cityId: 23,
       latitude: '-6.902376173747783',
-      longitude: '107.65503155389912'
-    }
+      longitude: '107.65503155389912',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_bandung_2',
+      address:
+        'JL Soekarno Hatta, No. 727 Km. 6, 1336, Sukapura, Kec. Kiaracondong, Kota Bandung, Jawa Barat 40286',
+      cityId: 23,
+      latitude: '-6.938390436524459',
+      longitude: '107.66755424696743',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_jakarta_1',
+      address:
+        'Jl. Raya Bekasi, RT.5/RW.6, Jatinegara, Kec. Jatinegara, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13310',
+      cityId: 154,
+      latitude: '-6.211962405395948',
+      longitude: '106.8897346743206',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_jakarta_2',
+      address:
+        'Jl. Pesanggrahan No.168H, Kembangan Sel., Kec. Kembangan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11610',
+      cityId: 151,
+      latitude: '-6.1867055286665655',
+      longitude: '106.75489086290104',
+    },
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_semarang_1',
+      address:
+        'Jl. MH Thamrin No.45, Miroto, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50134',
+      cityId: 399,
+      latitude: '-6.983539717325672',
+      longitude: '110.41737938581653',
+    },
   });
 
   await prisma.warehouses.create({
@@ -218,8 +262,8 @@ async function main() {
           latitude: 'latitude' + j,
           longitude: 'longitude' + j,
           isPrimaryAddress: isPrimaryAddressTemp,
-          label: 'Address label' + j
-        }
+          label: 'Address label' + j,
+        },
       });
       console.log(`Created address${j} for customer${i}`);
     }
@@ -252,10 +296,9 @@ async function main() {
     });
     console.log(`Created product${i}`);
   }
-
   //product images
   for (let i = 1; i <= 30; i++) {
-    let randImageCount = Math.floor(Math.random() * 7) + 2;
+    let randImageCount = Math.floor(Math.random() * 3) + 2;
     for (let j = 1; j <= randImageCount; j++) {
       await prisma.productImages.create({
         data: {
@@ -315,7 +358,7 @@ async function main() {
     'CONFIRMED',
   ];
 
-  // 100 transaction
+  // 100 transactions
   for (let i = 1; i <= 100; i++) {
     let userIdTemp = Math.floor(Math.random() * 20) + 1;
     let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[
@@ -342,10 +385,13 @@ async function main() {
     console.log(`Created transaction ${i}`);
   }
 
+  const moment = require('moment');
+
   //transaction products
   for (let i = 1; i <= 100; i++) {
     let transactionIdTemp = i;
     let productCountTemp = Math.floor(Math.random() * 5) + 1;
+    let currentDate = moment().subtract(1, 'year'); // Start from one year ago
     for (let j = 1; j <= productCountTemp; j++) {
       let productIdTemp = Math.floor(Math.random() * 30) + 1;
       let quantityTemp = Math.floor(Math.random() * 5) + 1;
@@ -356,17 +402,16 @@ async function main() {
           productId: productIdTemp,
           quantity: quantityTemp,
           price: priceTemp,
+          createdAt: currentDate.toDate(),
         },
       });
       console.log(`Created transaction${i} product${j}`);
+      currentDate.add(1, 'month');
     }
   }
 
-  let mutationType = [
-    'TRANSACTION',
-    'MANUAL_ADMIN',
-    'AUTOMATED'
-  ]
+  let mutationType = ['TRANSACTION', 'MANUAL_ADMIN', 'AUTOMATED', 'REQUEST'];
+
   //mutations
   for (let i = 1; i <= 100; i++) {
     let productIdTemp = Math.floor(Math.random() * 30) + 1;

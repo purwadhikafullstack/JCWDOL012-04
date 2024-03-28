@@ -27,7 +27,7 @@ export const Footer = (
       <div className="flex flex-col gap-5 justify-between w-full px-6 py-6 md:flex-row md:max-w-screen-xl	">
         <div className={clsx("flex flex-col gap-2", { "hidden": hideLogo })}>
           <Image src="/images/palugada-icon.png" alt="Palugada Logo" width={150} height={200} />
-          <h1 className="text-xl mt-1 ">We've got all your needs.</h1>
+          <h1 className="text-xl mt-1 ">{"We've got all your needs."}</h1>
         </div>
         <div className="flex flex-col md:flex-row gap-6 md:gap-11">
           <div className={clsx("flex flex-col gap-2", { "hidden": hideFollowUs })}>

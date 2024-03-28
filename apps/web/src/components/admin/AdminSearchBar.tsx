@@ -42,7 +42,7 @@ export const AdminSearchBar = ({
   return (
     <div
       id="search-bar"
-      className="bg-white flex items-center justify-between px-[10px] md:px-[20px] sticky top-[73px] shadow-md z-10 w-full lg:w-[740px] xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
+      className="bg-white flex items-center justify-between px-[10px] md:px-[20px] sticky top-[0px] md:top-[-33px] shadow-md z-10 w-full lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
     >
       <div id="search-left" className="flex items-center flex-1">
         <input
@@ -88,7 +88,7 @@ export const AdminSearchBar = ({
           id="product-categories-container"
           className={`${
             isOpenCat ? '' : 'hidden'
-          }  absolute flex flex-col bg-white top-[55px] shadow-md border right-0 md:right-[200px] lg:right-[205px] xl:right-[555px] rounded-md max-h-[300px] overflow-y-auto overflow-x-hidden`}
+          }  absolute flex flex-col bg-white top-[55px] w-[172px] shadow-md border right-0 md:right-[200px] lg:right-[205px] xl:right-[435px] 2xl:right-[555px] rounded-md max-h-[300px] overflow-y-auto overflow-x-hidden`}
         >
           {productCategories.map((procat, index) => {
             return (
@@ -102,8 +102,8 @@ export const AdminSearchBar = ({
                 <div
                   className={`${
                     category === procat.name
-                      ? 'bg-[var(--primaryColor)] text-white px-[15px] py-[7px] cursor-pointer hover:bg-purple-600'
-                      : 'px-[15px] py-[7px] cursor-pointer hover:bg-slate-300'
+                      ? 'bg-[var(--primaryColor)] truncate text-white px-[15px] py-[7px] cursor-pointer hover:bg-purple-600'
+                      : 'px-[15px] py-[7px] cursor-pointer truncate hover:bg-slate-300'
                   }`}
                 >
                   {procat.name}
@@ -134,7 +134,7 @@ export const AdminSearchBar = ({
           </div>
         </div>
         <div
-          className={`absolute bg-white flex flex-col rounded-md border shadow-md top-[55px] right-0 md:right-[106px] xl:right-[455px] ${
+          className={`absolute bg-white flex flex-col rounded-md border shadow-md top-[55px] right-0 md:right-[106px] xl:right-[340px] 2xl:right-[455px] ${
             isOpenPri ? '' : 'hidden'
           }`}
         >

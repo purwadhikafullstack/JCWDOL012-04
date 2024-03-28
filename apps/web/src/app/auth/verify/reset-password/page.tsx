@@ -36,11 +36,9 @@ export default function VerifyChangeEmailPage() {
         }),
         onSubmit: async (values) => {
             await auth?.resetPassword.setNewPassword({ newPassword: values.newPassword }, tokenQuery)
+            formik.setSubmitting(false)
         }
     })
-
-    console.log(auth?.error)
-    console.log('User:', auth?.user)
 
     if (!auth?.user.data?.id && !auth?.isLoading) return (
         < UnauthorizedPage message={auth?.error?.message!} ctaLabel="Go To Home Page" redirectTo="/" />
@@ -54,7 +52,7 @@ export default function VerifyChangeEmailPage() {
                         <CardTitle>Reset Your Password</CardTitle>
                         {auth?.isLoading ? <Spinner /> : null}
                     </div>
-                    <CardDescription>One more step to reset your password. Please provide your new password and then click Save Changes when you're done.</CardDescription>
+                    <CardDescription>{"One more step to reset your password. Please provide your new password and then click Save Changes when you're done."}</CardDescription>
                 </CardHeader>
 
                 <CardContent >
@@ -106,7 +104,7 @@ export default function VerifyChangeEmailPage() {
                         </div>
 
                         <DialogFooter className="mt-4 gap-3 flex flex-col">
-                            <Button type="submit" disabled={auth?.isLoading} > Save Changes</Button>
+                            <Button type="submit" disabled={auth?.isLoading || formik.isSubmitting} > Save Changes</Button>
                         </DialogFooter>
                     </form>
                 </CardContent>

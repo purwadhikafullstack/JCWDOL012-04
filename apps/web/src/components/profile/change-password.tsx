@@ -41,6 +41,7 @@ export function ChangePasswordDialog() {
         }),
         onSubmit: async (values) => {
             await auth?.changePassword(values)
+            formik.setSubmitting(false)
         }
     })
 
@@ -53,7 +54,7 @@ export function ChangePasswordDialog() {
                 <DialogHeader>
                     <DialogTitle>Change Password</DialogTitle>
                     <DialogDescription>
-                        Change your password here. Click save when you're done.
+                        {"Change your password here. Click save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}
@@ -123,7 +124,7 @@ export function ChangePasswordDialog() {
                             </div>
 
                             <DialogFooter>
-                                <Button type="submit" >Save Changes</Button>
+                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading} >Save Changes</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

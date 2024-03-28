@@ -41,6 +41,7 @@ export function ChangeNameDialog() {
         }),
         onSubmit: async (values) => {
             await auth?.changeName(values)
+            formik.setSubmitting(false)
         }
     })
 
@@ -61,7 +62,7 @@ export function ChangeNameDialog() {
                 <DialogHeader>
                     <DialogTitle>Change Name</DialogTitle>
                     <DialogDescription>
-                        Make changes to your name here. Click save when you're done.
+                        {"Make changes to your name here. Click save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}
@@ -131,7 +132,7 @@ export function ChangeNameDialog() {
                                     : null}
                             </div>
                             <DialogFooter>
-                                <Button type="submit" >Save changes</Button>
+                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading}>Save changes</Button>
                             </DialogFooter>
                         </div>
                     </form>)

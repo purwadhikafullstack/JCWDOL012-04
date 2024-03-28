@@ -9,9 +9,6 @@ import Link from "next/link"
 import { notFound, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 
-const isProduction = process.env.NODE_ENV === "production"
-const BASE_AUTH_URL = isProduction ? process.env.NEXT_PUBLIC_BASE_AUTH_URL_PROD : process.env.NEXT_PUBLIC_BASE_AUTH_URL_DEV
-
 export default function Verify() {
     const tokenQuery = useSearchParams().get('token')
     if (!tokenQuery) notFound()

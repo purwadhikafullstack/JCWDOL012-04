@@ -45,6 +45,7 @@ export function AddAddress() {
         }),
         onSubmit: async (values) => {
             await address.addAddress(values)
+            formik.setSubmitting(false)
         }
     })
 
@@ -60,7 +61,7 @@ export function AddAddress() {
                 <DialogHeader>
                     <DialogTitle>Add Address</DialogTitle>
                     <DialogDescription>
-                        Add your new address. Click Save when you're done.
+                        {"Add your new address. Click Save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {!auth?.isLoading &&
@@ -161,7 +162,7 @@ export function AddAddress() {
 
                             <DialogFooter>
                                 {auth?.isLoading || address.isLoading && (<div className="mx-auto"><Spinner /></div>)}
-                                <Button type="submit" disabled={auth?.isLoading || address.isLoading} >Save</Button>
+                                <Button type="submit" disabled={auth?.isLoading || address.isLoading || formik.isSubmitting} >Save</Button>
                             </DialogFooter>
                         </div>
                     </form>)}

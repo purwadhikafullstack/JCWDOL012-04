@@ -16,14 +16,12 @@ export default function SelectShippingMethodDialog({ ctaLabel, totalWeight }: { 
         if (dialogOpen) shipping.getShippingMethod(Number(totalWeight))
     }, [dialogOpen])
 
-    console.log(shippingMethod)
-
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
             <DialogTrigger asChild>
                 <Button variant={'outline'} disabled={address.isLoading || shipping.isLoading || !address.choosenAddress?.id} className="text-[0.6rem] h-fit">{ctaLabel}</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-[90vw] sm:max-w-[450px] overflow-y-scroll max-h-[90vh]">
                 <DialogHeader>
                     <DialogTitle>Select Shipping Method</DialogTitle>
                 </DialogHeader>

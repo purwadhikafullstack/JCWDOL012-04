@@ -1,3 +1,4 @@
+import { UserCitiesModel } from '@/model/UserCitiesModel'
 import * as Yup from 'yup'
 
 export const AddressValidationSchema = Yup.object({
@@ -16,10 +17,26 @@ export const AddressValidationSchema = Yup.object({
 
 export const AddressInitialValues = {
     label: '',
-    address: '',
-    isPrimaryAddress: false,
     provinceId: '',
     cityId: '',
+    address: '',
     latitude: '',
-    longitude: ''
+    longitude: '',
+    isPrimaryAddress: false,
+}
+
+export function validateChangesOnEdit(
+    address: UserCitiesModel & { provinceId: string | null | undefined } | null,
+    formikValues: UserCitiesModel & { provinceId: string | null | undefined } | null
+) {
+    const noChangesOnEdit =
+        address?.label === formikValues?.label &&
+        address?.city?.provinceId === formikValues?.city?.provinceId &&
+        address?.cityId == formikValues?.cityId &&
+        address?.address === formikValues?.address &&
+        address?.latitude === formikValues?.latitude &&
+        address?.longitude === formikValues?.longitude &&
+        address?.isPrimaryAddress === formikValues?.isPrimaryAddress
+
+    return noChangesOnEdit
 }

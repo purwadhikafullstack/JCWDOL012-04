@@ -5,6 +5,8 @@ import { AddressContext } from "../address/address.provider";
 
 const BASE_DATA_URL = process.env.NEXT_PUBLIC_BASE_DATA_URL
 const BASE_SHIPPING_URL = process.env.NEXT_PUBLIC_BASE_SHIPPING_URL
+if (!BASE_DATA_URL) throw new Error('BASE_DATA_URL is not defined')
+if (!BASE_SHIPPING_URL) throw new Error('BASE_SHIPPING_URL is not defined')
 
 const data = axios.create({
     baseURL: BASE_DATA_URL,
@@ -21,12 +23,8 @@ export async function getClosestWarehouseAction(
     setClosestWarehouse: Dispatch<SetStateAction<ShippingContext['closestWarehouse']>>,
     setError: Dispatch<SetStateAction<ShippingContext['error']>>
 ) {
-    console.log(chosenShippingAddress)
     await data.get('/closest-wh', { params: { lat: chosenShippingAddress?.latitude, lng: chosenShippingAddress?.longitude } })
-        .then((response) => {
-            console.log(response.data)
-            setClosestWarehouse(response.data.data)
-        })
+        .then((response) => setClosestWarehouse(response.data.data))
         .catch((error) => handleError(error, setError))
 }
 
@@ -43,10 +41,7 @@ export async function getShippingMethodAction(
         weight: Number(weight),
         courier: 'pos'
     })
-        .then((response) => {
-            console.log(response.data)
-            setShippingMethod(response.data.data)
-        })
+        .then((response) => setShippingMethod(response.data.data))
         .catch((error) => handleError(error, setError))
 }
 

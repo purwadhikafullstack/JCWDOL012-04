@@ -24,6 +24,8 @@ import { dataRouter } from './routers/data.router';
 import { shippingRouter } from './routers/shipping.router';
 import { startUpdateOrderStatusJob } from './lib/updateOrderStatusJob';
 import { startUpdateTransactionOrderStatusJob } from './lib/updateTransactionOrderStatusJob';
+import warehouseRouter from './routers/warehouse.router';
+import { ReportRouter } from './routers/report.router';
 
 export default class App {
   private app: Express;
@@ -71,6 +73,7 @@ export default class App {
 
   private routes(): void {
     const productRouter = new ProductRouter();
+    const reportRouter = new ReportRouter();
     // const sampleRouter = new SampleRouter();
     require('./services/auth/googleStrategy');
     require('./services/auth/localStrategy');
@@ -91,6 +94,8 @@ export default class App {
     this.app.use('/user', userRouter);
     this.app.use('/data', dataRouter);
     this.app.use('/shipping', shippingRouter);
+    this.app.use('/warehouses', warehouseRouter);
+    this.app.use('/api/sales', reportRouter.getRouter());
   }
 
   public start(): void {

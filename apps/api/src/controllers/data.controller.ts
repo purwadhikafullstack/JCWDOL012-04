@@ -19,20 +19,24 @@ export async function getCities(req: Request, res: Response) {
             }
         })
             .then((cities) => res.json({ data: cities }))
-            .catch((error) => res.status(500).json({ message: error.message }))
+            .catch((error) => {
+                console.error(error);
+                resInternalServerError(res, "Error getting cities", null)
+            })
     } else {
         await prisma.cities.findMany()
             .then((cities) => res.json({ data: cities }))
-            .catch((error) => res.status(500).json({ message: error.message }))
+            .catch((error) => {
+                console.error(error);
+                resInternalServerError(res, "Error getting cities", null)
+            })
     }
 }
 
 export async function getClosestWarehouse(req: Request, res: Response) {
-    console.log(req.query);
     const latitude = req.query.lat ? String(req.query.lat) : null;
     const longitude = req.query.lng ? String(req.query.lng) : null;
-    console.log(latitude, longitude);
-    console.log('parseFloat', parseFloat("latitude"))
+
     if (!latitude || !longitude) return resUnprocessable(res, 'Please provide shipping address', null);
 
     const warehouses = await prisma.warehouses.findMany({

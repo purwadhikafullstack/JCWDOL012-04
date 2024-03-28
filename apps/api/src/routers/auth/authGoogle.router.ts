@@ -8,6 +8,7 @@ import passport from "passport";
 const googleAuthRouter = Router();
 const isProduction = process.env.NODE_ENV === 'production';
 const WEB_BASE_URL = isProduction ? process.env.WEB_CLIENT_BASE_URL_PROD : process.env.WEB_CLIENT_BASE_URL_DEV;
+if (!WEB_BASE_URL) throw new Error('WEB_BASE_URL is not defined')
 
 googleAuthRouter.get('/', (req: Request, res: Response) => {
     res.send('Auth route')
