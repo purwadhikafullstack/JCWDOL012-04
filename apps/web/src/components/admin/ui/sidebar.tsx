@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { MenuLinks, superAdminLinks, warehouseAdminLinks } from "@/components/admin/ui/menu-links";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -22,7 +23,15 @@ export default function Sidebar() {
         }
     }, [role])
 
-    return (
+    if (auth?.isLoading) return (
+        <div className="flex flex-col space-y-3 w-full">
+            {Array(6).fill(0).map((_, index) => (
+                <Skeleton key={index} className="h-[48px] w-full" />
+            ))}
+        </div>
+    )
+
+    if (!auth?.isLoading) return (
         <>
             <div className="flex flex-col space-y-2">
                 {links && links.length && links.map((link) => {

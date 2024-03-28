@@ -74,6 +74,7 @@ export default function ProductDetails({
       name: product?.name || '',
       description: product?.description || '',
       price: product?.price || 0,
+      weight: product?.weight || 0,
       productCategoryId: product?.productCategoryId || 0,
       productImages: product?.productImages || [],
     },
@@ -81,6 +82,7 @@ export default function ProductDetails({
       name: Yup.string().required('Required'),
       description: Yup.string().required('Required'),
       price: Yup.number().required('Required'),
+      weight: Yup.number().required('Required'),
       productCategoryId: Yup.number().required('Required'),
       productImages: Yup.array().min(1, 'At least one image is required'),
     }),
@@ -91,6 +93,7 @@ export default function ProductDetails({
         formData.append('name', values.name || '');
         formData.append('description', values.description || '');
         formData.append('price', (values.price || 0).toString());
+        formData.append('weight', (values.weight || 0).toString());
         formData.append(
           'productCategoryId',
           (values.productCategoryId || 0).toString(),
@@ -132,6 +135,7 @@ export default function ProductDetails({
       formik.values.name !== formik.initialValues.name ||
       formik.values.description !== formik.initialValues.description ||
       formik.values.price !== formik.initialValues.price ||
+      formik.values.weight !== formik.initialValues.weight ||
       formik.values.productCategoryId !==
         formik.initialValues.productCategoryId ||
       formik.values.productImages?.some(
@@ -280,6 +284,28 @@ export default function ProductDetails({
               {formik.touched.price && formik.errors.price ? (
                 <div className="text-red-500 text-sm">
                   {formik.errors.price}
+                </div>
+              ) : null}
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="weight"
+                className="block font-semibold text-lg mb-1"
+              >
+                Weight(g)
+              </label>
+              <input
+                type="number"
+                id="weight"
+                name="weight"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.weight}
+                className="w-full border px-3 py-2 rounded"
+              />
+              {formik.touched.weight && formik.errors.weight ? (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.weight}
                 </div>
               ) : null}
             </div>

@@ -16,10 +16,12 @@ export default function TabAddress() {
     const auth = useAuth()
     const address = useAddress()
     const { userAddress } = useAddress()
+    const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY
+    if (!GOOGLE_MAPS_API_KEY) throw new Error('GOOGLE_MAPS_API_KEY is not defined')
 
     return (
         <>
-            <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} >
+            <APIProvider apiKey={GOOGLE_MAPS_API_KEY} >
                 <TabsContent value="address">
                     <Card>
                         <CardHeader className="flex flex-row gap-1 justify-between flex-wrap">

@@ -46,19 +46,23 @@ enum CityType {
 }
 
 model UserCities {
-  id               Int      @id @default(autoincrement())
-  userId           Int
-  user             Users    @relation(fields: [userId], references: [id])
-  city             Cities   @relation(fields: [cityId], references: [id])
-  cityId           Int
-  address          String
-  latitude         String
-  longitude        String
-  isPrimaryAddress Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  archieved        Boolean  @default(false)
-  label            String
+  id                 Int     @id @default(autoincrement())
+  userId             Int
+  user               Users   @relation(fields: [userId], references: [id])
+  city               Cities  @relation(fields: [cityId], references: [id])
+  cityId             Int
+  address            String
+  latitude           String
+  longitude          String
+  isPrimaryAddress   Boolean @default(false)
+  closestWarehouseId Int?
+
+  warehouse Warehouses? @relation(fields: [closestWarehouseId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  archieved  Boolean     @default(false)
+  label     String
+  Transactions Transactions[]
 }
 
 model Warehouses {
@@ -73,6 +77,7 @@ model Warehouses {
   updatedAt DateTime @updatedAt
   archived  Boolean  @default(false)
 
+  usercities         UserCities[]
   warehouseAdmin     Users[]
   productsWarehouses ProductsWarehouses[]
   transactions       Transactions[]
@@ -141,6 +146,7 @@ model Products {
   name                 String
   description          String
   price                Float
+  weight               Int
   productCategoryId    Int
   productCategory      ProductCategories      @relation(fields: [productCategoryId], references: [id])
   createdAt            DateTime               @default(now())
@@ -166,7 +172,7 @@ model ProductsWarehouses {
 }
 
 enum paymentType {
-  PAYMENT_GATEWAY
+  PAYMENTGATEWAY
   TRANSFER
 }
 
@@ -184,6 +190,7 @@ enum orderStatus {
 
 model Transactions {
   id                Int                    @id @default(autoincrement())
+  transactionUid    String                 @unique
   userId            Int
   user              Users                  @relation(fields: [userId], references: [id])
   paymentType       paymentType
@@ -191,6 +198,8 @@ model Transactions {
   orderStatus       orderStatus            @default(PENDING_PROOF)
   warehouseId       Int
   warehouse         Warehouses             @relation(fields: [warehouseId], references: [id])
+  shippingAddressId Int
+  shippingAddress   UserCities             @relation(fields: [shippingAddressId], references: [id])
   paymentProofDate  DateTime?
   verifiedDate      DateTime?
   shippingDate      DateTime?
@@ -223,6 +232,7 @@ model TransactionsProducts {
 
 enum mutationType {
   TRANSACTION
+  TRANSACTION_REVERSAL
   MANUAL_ADMIN
   AUTOMATED
   REQUEST

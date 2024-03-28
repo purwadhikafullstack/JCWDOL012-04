@@ -69,7 +69,7 @@ export default function ProductCategories({
     );
 
   return (
-    <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
+    <div className="w-full flex flex-col pt-[20px]">
       <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products Categories</div>
         <Link
@@ -125,7 +125,9 @@ export default function ProductCategories({
                         className="border border-white p-[7px] rounded-md hover:scale-125 duration-200"
                         onClick={(e) => {
                           e.preventDefault();
-                          router.push(`/admin/product-categories/${procat.id}`);
+                          router.push(
+                            `/admin/product-category-management/${procat.id}`,
+                          );
                         }}
                       >
                         <div className="relative w-[15px] h-[15px]">

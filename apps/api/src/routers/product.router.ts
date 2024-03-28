@@ -119,6 +119,10 @@ export class ProductRouter {
       '/admin/product-warehouses',
       this.ProductCategoryController.getProductWarehouse,
     );
+    this.router.get(
+      '/admin/product-warehouses/:id',
+      this.ProductCategoryController.getWarehouseById,
+    );
     this.router.put(
       '/admin/product-images/:id',
       requireJwtAuth,

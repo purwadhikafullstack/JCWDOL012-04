@@ -6,6 +6,7 @@ import {
   PiWarehouse,
   PiArchive,
   PiCirclesFour,
+  PiTruck,
 } from 'react-icons/pi';
 
 export type MenuLinks = {
@@ -29,6 +30,11 @@ export const superAdminLinks = [
     href: '/admin/product-category-management',
     icon: PiCirclesFour,
   },
+  {
+    name: 'Mutations',
+    href: '/admin/mutation',
+    icon: PiTruck,
+  },
 ];
 
 export const warehouseAdminLinks = [
@@ -38,5 +44,10 @@ export const warehouseAdminLinks = [
     name: 'Product Categories',
     href: '/admin/product-categories',
     icon: PiCirclesFour,
+  },
+  {
+    name: 'Mutations',
+    href: '/admin/mutation',
+    icon: PiTruck,
   },
 ];

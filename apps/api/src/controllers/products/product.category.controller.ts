@@ -108,6 +108,17 @@ export class ProductCategoryController {
     }
   }
 
+  async getWarehouseById(req: Request, res: Response) {
+    try {
+      const warehouseId = parseInt(req.params.id);
+      const productWarehouses =
+        await productCategoryService.getWarehouseById(warehouseId);
+      return res.status(200).json(productWarehouses);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async deleteProductImage(req: Request, res: Response) {
     try {
       const id = parseInt(req.params.id);

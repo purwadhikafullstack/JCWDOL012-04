@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { MenuLinks, superAdminLinks, warehouseAdminLinks } from "@/components/admin/ui/menu-links";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BottomMenu() {
     const pathname = usePathname();
@@ -21,6 +22,14 @@ export default function BottomMenu() {
             setLinks(superAdminLinks);
         }
     }, [role])
+
+    if (auth?.isLoading) return (
+        <div className="flex space-x-3 w-full">
+            {Array(6).fill(0).map((_, index) => (
+                <Skeleton key={index} className="h-12 w-full" />
+            ))}
+        </div>
+    )
 
     return (
         <>

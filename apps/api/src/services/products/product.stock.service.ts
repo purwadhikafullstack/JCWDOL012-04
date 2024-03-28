@@ -122,6 +122,7 @@ export default class ProductStockService {
     productId: number,
     warehouseId: number,
     destinationWarehouseId: number,
+    transactionId: number,
     quantity: number,
   ) {
     return this.prisma.mutations.create({
@@ -129,6 +130,7 @@ export default class ProductStockService {
         productId,
         warehouseId,
         destinationWarehouseId,
+        transactionId,
         isAdd: true,
         quantity,
         mutationType: 'AUTOMATED',

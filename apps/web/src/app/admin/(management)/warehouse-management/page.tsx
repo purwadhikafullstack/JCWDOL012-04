@@ -4,18 +4,18 @@ import axios from "axios"
 import { cookies } from 'next/headers'
 import AddNewWarehouseDialog from "./com/dialog-add-new-warehouse"
 
-export const cookie = cookies().get('palugada-auth-token')?.value
-export const WAREHOUSE_BASE_URL = process.env.WAREHOUE_BASE_URL
-if (!WAREHOUSE_BASE_URL) throw new Error('WAREHOUSE_BASE_URL is not defined')
-
-export const warehouse = axios.create({
-    baseURL: WAREHOUSE_BASE_URL,
-    headers: {
-        'Cookie': `palugada-auth-token=${cookie}`
-    }
-})
-
 async function getWarehouses(): Promise<any> {
+    const cookie = cookies().get('palugada-auth-token')?.value
+    const WAREHOUSE_BASE_URL = process.env.WAREHOUE_BASE_URL
+    if (!WAREHOUSE_BASE_URL) throw new Error('WAREHOUSE_BASE_URL is not defined')
+
+    const warehouse = axios.create({
+        baseURL: WAREHOUSE_BASE_URL,
+        headers: {
+            'Cookie': `palugada-auth-token=${cookie}`
+        }
+    })
+
     return await warehouse.get('')
         .then((response) => response.data.data as TWarehouse[])
         .catch((error) => {

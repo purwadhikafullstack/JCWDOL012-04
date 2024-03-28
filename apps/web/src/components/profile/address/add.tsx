@@ -61,7 +61,7 @@ export function AddAddress() {
                 <DialogHeader>
                     <DialogTitle>Add Address</DialogTitle>
                     <DialogDescription>
-                        Add your new address. Click Save when you're done.
+                        {"Add your new address. Click Save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {!auth?.isLoading &&

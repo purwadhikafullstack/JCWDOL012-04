@@ -40,6 +40,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
             }
         })
         if (!user) return resUnprocessable(res, 'User with that email does not exist', null)
+        if (!user.password) return resUnprocessable(res, "You haven't set up any password. Register an account with your email and set up your password.", null, -1)
 
         await prisma.users.update({
             where: {

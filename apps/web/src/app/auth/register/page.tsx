@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function UserRegistrationPage() {
     const auth = useAuth();
+    const registParam = useSearchParams().get('registration');
 
     if (auth?.isLoading) return (
         <main className="flex items-center justify-center h-screen ">
@@ -15,7 +16,7 @@ export default function UserRegistrationPage() {
         </main>
     )
 
-    if (useSearchParams().get('registration') == 'success') return (
+    if (registParam == 'success') return (
         <main className="flex items-center justify-center h-screen ">
             <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
                 <h1 className="text-2xl text-center text-[var(--primaryColor)]">Registration Successful</h1>

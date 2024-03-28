@@ -84,7 +84,7 @@ export default function Mutation({
     <div className="flex flex-col xl:flex-row w-full max-w-[1440px] mx-auto min-h-[700px] pt-5 px-4 md:px-0">
       <div
         id="mutation-request-sent"
-        className="flex flex-col xl:w-1/2 md:px-2 2xl:px-10"
+        className="flex flex-col xl:w-1/2 md:px-2 xl:px-5 2xl:px-10"
       >
         <div className="flex justify-between items-center">
           <div className="text-xl font-semibold">Sent Mutation Request</div>

@@ -170,8 +170,48 @@ async function main() {
     console.log(`Created warehouse admin ${i}`);
   }
 
+  //address for user 1 is tailored for testing:[jakarta barat, bandung, jogja]
+  const addressTemp = [
+    {
+      address:
+        'Jl. Anggur I No.12, RT.8/RW.8, Rw. Buaya, Kecamatan Cengkareng, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11740',
+      latitude: '-6.165108126130613',
+      longitude: '106.7390943459621',
+      cityId: 151,
+    },
+    {
+      address:
+        'Jl. Jend. Sudirman No.570-574, Dungus Cariang, Kec. Andir, Kota Bandung, Jawa Barat 40183',
+      latitude: '-6.917775515031044',
+      longitude: '107.58223681000858',
+      cityId: 23,
+    },
+    {
+      address:
+        'Jl. Ibu Ruswo No.57, Prawirodirjan, Kec. Gondomanan, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55121',
+      latitude: '-7.803502717664534',
+      longitude: '110.36862768762019',
+      cityId: 501,
+    },
+  ];
+  for (let j = 0; j < addressTemp.length; j++) {
+    let isPrimaryAddressTemp = j === 0;
+    await prisma.userCities.create({
+      data: {
+        userId: 1,
+        cityId: addressTemp[j].cityId,
+        address: addressTemp[j].address,
+        latitude: addressTemp[j].latitude,
+        longitude: addressTemp[j].longitude,
+        isPrimaryAddress: isPrimaryAddressTemp,
+        label: 'Address label' + j,
+      },
+    });
+    console.log(`Created address${j} for customer${1}`);
+  }
+
   //address
-  for (let i = 1; i <= 20; i++) {
+  for (let i = 2; i <= 20; i++) {
     let randAddressCount = Math.floor(Math.random() * 5) + 1;
     for (let j = 1; j <= randAddressCount; j++) {
       let randCityId = Math.floor(Math.random() * 5) + 1;
@@ -206,17 +246,18 @@ async function main() {
   for (let i = 1; i <= 30; i++) {
     let categoryTemp = Math.floor(Math.random() * 5) + 1;
     let priceTemp = Math.floor(Math.random() * 20000000) + 1000;
+    let weightTemp = Math.floor(Math.random() * 2500) + 500;
     await prisma.products.create({
       data: {
         name: 'product' + i,
         description: 'description' + i,
         price: priceTemp,
+        weight: weightTemp,
         productCategoryId: categoryTemp,
       },
     });
     console.log(`Created product${i}`);
   }
-
   //product images
   for (let i = 1; i <= 30; i++) {
     let randImageCount = Math.floor(Math.random() * 3) + 2;
@@ -280,7 +321,7 @@ async function main() {
     'CONFIRMED',
   ];
 
-  // 100 transaction
+  // 100 transactions
   for (let i = 1; i <= 100; i++) {
     let userIdTemp = Math.floor(Math.random() * 20) + 1;
     let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[
@@ -289,14 +330,18 @@ async function main() {
     let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
     let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
     let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
-    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENT_GATEWAY' : 'TRANSFER';
+    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENTGATEWAY' : 'TRANSFER';
+    let transactionUid = `ORDER-${i}-${Date.now()}`;
+    let shippingAddressId = Math.floor(Math.random() * 3) + 1;
     await prisma.transactions.create({
       data: {
+        transactionUid: transactionUid,
         userId: userIdTemp,
         paymentType: paymentTypeTemp as Transactions['paymentType'],
         orderStatus: orderStatusTemp,
         warehouseId: warehouseIdTemp,
         shippingCost: shippingCostTemp,
+        shippingAddressId: shippingAddressId,
         total: totalTemp,
       },
     });
@@ -328,7 +373,7 @@ async function main() {
     }
   }
 
-  let mutationType = ['TRANSACTION', 'MANUAL_ADMIN', 'AUTOMATED'];
+  let mutationType = ['TRANSACTION', 'MANUAL_ADMIN', 'AUTOMATED', 'REQUEST'];
 
   //mutations
   for (let i = 1; i <= 100; i++) {

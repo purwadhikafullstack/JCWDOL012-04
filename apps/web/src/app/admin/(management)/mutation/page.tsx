@@ -9,15 +9,15 @@ import Image from 'next/image';
 import { Pagination } from '@/components/admin/warehouse/pagination';
 import { WarehouseBar } from '@/components/admin/warehouse/WarehouseBar';
 import Link from 'next/link';
+import { WarehousesModel } from '@/model/WarehousesModel';
 
 export default function WarehouseDetail({
-  params,
   searchParams,
 }: {
-  params: { warehouseId: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const [products, setProducts] = useState<ProductsModel[]>([]);
+  const [warehouses, setWarehouses] = useState<WarehousesModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [edit, setEdit] = useState<boolean>(false);
   const [stock, setStock] = useState<number>(0);
@@ -25,10 +25,18 @@ export default function WarehouseDetail({
   const [selectedId, setSelectedId] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [totalProducts, setTotalProducts] = useState<number>(0);
+  const [isOpenWare, setIsOpenWare] = useState<boolean>(false);
   const auth = useAuth();
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
   const isAuthorLoading = auth?.isLoading;
+  const warehouseId =
+    role === 'WAREHOUSE_ADMIN'
+      ? auth?.user.data?.wareHouseAdmin_warehouseId
+      : searchParams.warehouseId || 1;
+  const warehouseName = warehouses.filter((warehouse) => {
+    return warehouse.id == warehouseId;
+  });
   const page = (searchParams.page || '1') as string;
   const hasNextPage = totalProducts > Number(page) * 15;
   const isAdd = initialStock < stock ? true : false;
@@ -47,14 +55,23 @@ export default function WarehouseDetail({
       setIsLoading(false);
     }
   }
+  async function fetchWarehouses() {
+    try {
+      const response = await fetchData('admin/product-warehouses');
+      setWarehouses(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   useEffect(() => {
     fetchProducts();
+    fetchWarehouses();
   }, [page]);
 
   const handleUpdate = async () => {
     try {
       const updatedStock = await createData(
-        `admin/product-warehouses/${parseInt(params.warehouseId)}`,
+        `admin/product-warehouses/${warehouseId}`,
         {
           productId: selectedId,
           isAdd: isAdd,
@@ -80,23 +97,79 @@ export default function WarehouseDetail({
     );
 
   return (
-    <div className="flex flex-col w-full min-h-[700px] py-10 px-5 md:px-24 lg:px-32 max-w-[1440px] mx-auto">
-      <div className="flex flex-col md:flex-row justify-between space-y-2 md:space-y-0 md:items-center mb-[30px]">
-        <div className="text-2xl font-semibold">
-          Warehouse {params.warehouseId} Stock
-        </div>
+    <div className="flex flex-col w-full min-h-[700px] py-10 px-5 xl:px-20 2xl:px-32 max-w-[1440px] mx-auto">
+      <div
+        className={`${
+          role === 'SUPER_ADMIN' ? 'mb-[10px]' : 'mb-[30px]'
+        } flex flex-col md:flex-row justify-between space-y-2 md:space-y-0 md:items-center`}
+      >
+        <div className="text-2xl font-semibold">{warehouseName[0]?.name}</div>
         <Link
-          href={`/admin/warehouses/${params.warehouseId}/mutation`}
+          href={`/admin/mutation/${warehouseId}`}
           className="bg-[var(--primaryColor)] px-4 py-2 text-white rounded-md hover:opacity-70 duration-200"
         >
           Mutation Request <span className="font-semibold">-&gt;</span>
         </Link>
       </div>
+      <div
+        className={`${
+          role === 'SUPER_ADMIN' ? '' : 'hidden'
+        } flex mb-5 justify-end`}
+      >
+        <div className="relative">
+          <div
+            className="flex items-center space-x-2 border rounded-md px-3 py-1 cursor-pointer hover:bg-gray-200  border-slate-400"
+            onClick={() => {
+              setIsOpenWare(!isOpenWare);
+            }}
+          >
+            <div>Select Warehouse</div>
+            <div className="relative w-3 h-3">
+              <Image
+                src={
+                  isOpenWare
+                    ? '/images/icon/arrow-up.png'
+                    : '/images/icon/arrow-down.png'
+                }
+                fill
+                alt="arrow"
+              />
+            </div>
+          </div>
+          <div
+            className={`${
+              isOpenWare ? '' : 'hidden'
+            } z-10 left-[-10px] top-10 rounded-md bg-white absolute border shadow-md max-h-[300px] w-[210px] overflow-y-auto`}
+          >
+            {warehouses.map((warehouse, index) => {
+              return (
+                <Link
+                  key={index}
+                  href={`?warehouseId=${warehouse.id}`}
+                  onClick={() => {
+                    setIsOpenWare(false);
+                  }}
+                >
+                  <div
+                    className={`${
+                      warehouse.id === Number(warehouseId)
+                        ? 'px-3 py-2 bg-[var(--primaryColor)] truncate text-white'
+                        : 'px-3 py-2 hover:bg-slate-200 cursor-pointer truncate duration-150'
+                    }`}
+                  >
+                    {warehouse.name}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
       <WarehouseBar />
       <div className="flex flex-col space-y-5">
         {products.map((product, index) => {
           const productStock = product.productsWarehouses?.find(
-            (warehouse) => warehouse.warehouseId === Number(params.warehouseId),
+            (warehouse) => warehouse.warehouseId === Number(warehouseId),
           );
           return (
             <div
@@ -195,7 +268,7 @@ export default function WarehouseDetail({
         })}
       </div>
       <SuccessModal
-        path={`/admin/warehouses/${params.warehouseId}?page=${page}&pageSize=15`}
+        path={`/admin/warehouses/${warehouseId}?page=${page}&pageSize=15`}
         item="Product Stock Updated"
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

@@ -102,7 +102,10 @@ export default function Products({
         >
           {products.map((product, index) => {
             return (
-              <Link key={index} href={`/admin/products/${product.id}`}>
+              <Link
+                key={index}
+                href={`/admin/product-management/${product.id}`}
+              >
                 <div
                   id="product-container"
                   className="flex flex-col w-[290px] lg:w-[320px] 2xl:w-[360px] h-[210px] bg-white m-[10px] p-[15px] rounded-md shadow-md hover:bg-slate-100"

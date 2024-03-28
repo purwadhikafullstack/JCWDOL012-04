@@ -4,20 +4,25 @@ import axios from "axios"
 import { cookies } from 'next/headers'
 import DialogAddNewAdmin from "./com/dialog-add-new-admin"
 
-export const cookie = cookies().get('palugada-auth-token')?.value
-export const USER_BASE_URL = process.env.USER_BASE_URL
-export const user = axios.create({
-    baseURL: USER_BASE_URL,
-    headers: {
-        'Cookie': `palugada-auth-token=${cookie}`
-    }
-})
 
-async function getAdmins(): Promise<any> {
+async function getAdmins(): Promise<AdminModel[]> {
+
+    const cookie = cookies().get('palugada-auth-token')?.value
+    const USER_BASE_URL = process.env.USER_BASE_URL || ''
+    if (!USER_BASE_URL) throw new Error('USER_BASE_URL is not defined')
+
+    const user = axios.create({
+        baseURL: USER_BASE_URL,
+        headers: {
+            'Cookie': `palugada-auth-token=${cookie}`
+        }
+    })
+
     return await user.get('/admin')
         .then((response) => response.data.data as AdminModel[])
         .catch((error) => {
             console.error('Error getting Administrator data', error);
+            return [] as AdminModel[]; // Add this line to return an empty array
         });
 }
 

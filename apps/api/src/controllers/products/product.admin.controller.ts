@@ -10,10 +10,12 @@ import {
 import ProductService from '@/services/products/product.service';
 import AdminProductService from '@/services/products/product.admin.service';
 import { ProductStockController } from './product.stock.controller';
+import ProductStockService from '@/services/products/product.stock.service';
 
 const productService = new ProductService();
 const adminProductService = new AdminProductService();
 const productStockController = new ProductStockController();
+const productStockService = new ProductStockService();
 
 interface getAdminProducts extends Products {
   productsWarehouses: {
@@ -28,7 +30,8 @@ export class AdminProductController {
   async createProduct(req: Request, res: Response) {
     try {
       upload(req, res, async () => {
-        const { name, description, price, productCategoryId } = req.body;
+        const { name, description, price, weight, productCategoryId } =
+          req.body;
         const productsWarehouses = parseProWare(req.body.productsWarehouses);
         const existedProduct = await adminProductService.findProductName(name);
         if (existedProduct) return sameProduct(res);
@@ -37,6 +40,7 @@ export class AdminProductController {
           name,
           description,
           parseInt(price),
+          parseInt(weight),
           parseInt(productCategoryId),
           productImages,
           productsWarehouses,
@@ -127,14 +131,26 @@ export class AdminProductController {
   async testAutoMutation(req: Request, res: Response) {
     try {
       const warehouseId = 1;
-      const productId = 10;
-      const quantity = 123;
-      const automatedMutation = await productStockController.automatedMutation(
-        warehouseId,
+      const transactionId = 3;
+      const productId = 4;
+      const rawQuantity = 30;
+      const warehouseStock = await productStockService.findProductWarehouse(
         productId,
-        quantity,
+        warehouseId,
       );
-      return res.status(201).json(automatedMutation);
+      if (rawQuantity > warehouseStock?.stock!) {
+        const automatedMutation =
+          await productStockController.automatedMutation(
+            warehouseId,
+            productId,
+            transactionId,
+            rawQuantity,
+          );
+        return res.status(201).json(automatedMutation);
+      }
+      return res
+        .status(200)
+        .json({ message: 'warehouse stock meet the required quantity' });
     } catch (error) {
       console.log(error);
     }

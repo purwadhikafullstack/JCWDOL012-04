@@ -54,7 +54,7 @@ export function ChangePasswordDialog() {
                 <DialogHeader>
                     <DialogTitle>Change Password</DialogTitle>
                     <DialogDescription>
-                        Change your password here. Click save when you're done.
+                        {"Change your password here. Click save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}

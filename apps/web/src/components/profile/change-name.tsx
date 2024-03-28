@@ -62,7 +62,7 @@ export function ChangeNameDialog() {
                 <DialogHeader>
                     <DialogTitle>Change Name</DialogTitle>
                     <DialogDescription>
-                        Make changes to your name here. Click save when you're done.
+                        {"Make changes to your name here. Click save when you're done."}
                     </DialogDescription>
                 </DialogHeader>
                 {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}

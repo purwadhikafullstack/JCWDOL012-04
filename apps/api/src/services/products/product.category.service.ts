@@ -105,6 +105,13 @@ export default class ProductCategoryService {
       },
     });
   }
+  async getWarehouseById(warehouseId: number) {
+    return prisma.warehouses.findUnique({
+      where: {
+        id: warehouseId,
+      },
+    });
+  }
   async deleteProductImages(id: number) {
     return this.prisma.productImages.update({
       where: {

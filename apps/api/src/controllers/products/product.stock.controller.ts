@@ -98,10 +98,16 @@ export class ProductStockController {
   async automatedMutation(
     warehouseId: number,
     productId: number,
-    quantity: number,
+    transactionId: number,
+    rawQuantity: number,
   ) {
     try {
       return await prisma.$transaction(async (tx) => {
+        const warehouseStock = await productStockService.findProductWarehouse(
+          productId,
+          warehouseId,
+        );
+        let quantity = rawQuantity - warehouseStock?.stock!;
         const excludedId = [warehouseId];
         console.log('runned');
         do {
@@ -137,6 +143,7 @@ export class ProductStockController {
                 productId,
                 warehouseId,
                 shortestWarehouseId,
+                transactionId,
                 destinationWarehouse?.stock! >= quantity
                   ? quantity
                   : destinationWarehouse?.stock!,

@@ -30,6 +30,7 @@ export default function CreateProductForm() {
       name: '',
       description: '',
       price: '',
+      weight: '',
       productCategoryId: '',
       productsWarehouses: warehouses.map((warehouse) => ({
         warehouseId: warehouse.id,
@@ -41,6 +42,7 @@ export default function CreateProductForm() {
       name: Yup.string().required('Required'),
       description: Yup.string().required('Required'),
       price: Yup.number().required('Required'),
+      weight: Yup.number().required('Required'),
       productCategoryId: Yup.number().required('Required'),
       productsWarehouses: Yup.array().of(
         Yup.object({
@@ -57,6 +59,7 @@ export default function CreateProductForm() {
         formData.append('name', values.name);
         formData.append('description', values.description);
         formData.append('price', values.price);
+        formData.append('weight', values.weight);
         formData.append('productCategoryId', values.productCategoryId);
         formData.append(
           'productsWarehouses',
@@ -199,6 +202,18 @@ export default function CreateProductForm() {
           values={formik.values.price}
           touched={formik.touched.price}
           errors={formik.errors.price}
+        />
+        <FormInput
+          htmlFor="weight"
+          label="Weight(g)"
+          type="number"
+          id="weight"
+          name="weight"
+          handleChange={formik.handleChange}
+          handleBlur={formik.handleBlur}
+          values={formik.values.weight}
+          touched={formik.touched.weight}
+          errors={formik.errors.weight}
         />
         <div className="mb-4">
           <label
