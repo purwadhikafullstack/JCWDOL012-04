@@ -1,6 +1,6 @@
 "use client"
 
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAddress } from "@/lib/store/address/address.provider"
@@ -19,7 +19,7 @@ export default function ChooseShippingAddressDialog({ ctaLabel }: { ctaLabel: st
                 <DialogTrigger asChild>
                     <Button variant={'outline'} className="text-[0.6rem] h-fit">{ctaLabel}</Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[90vw] sm:max-w-[450px] overflow-y-scroll max-h-[90vh]">
                     <DialogHeader>
                         <DialogTitle>Select Shipping Address</DialogTitle>
                     </DialogHeader>

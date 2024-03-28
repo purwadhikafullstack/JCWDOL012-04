@@ -1,12 +1,63 @@
-import { resInternalServerError, resSuccess, resUnauthorized, resUnprocessable } from "@/services/responses";
+import { resBadRequest, resCreated, resInternalServerError, resSuccess, resUnauthorized, resUnprocessable } from "@/services/responses";
 import { Users } from "@prisma/client";
 import { Response, Request, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt, { genSalt, hash } from "bcrypt";
 import { generateJWT } from "@/services/auth/auth";
-import { sendResetPasswordInstructions } from "@/services/email/templates";
+import { sendResetPasswordInstructions, sendVerificationEmail } from "@/services/email/templates";
 
 const prisma = new PrismaClient();
+
+export async function login(req: Request, res: Response) {
+    const token = generateJWT(req.user as Users);
+    const user = req.user
+    res.cookie('palugada-auth-token', token, { maxAge: 1000 * 60 * 60 * 24 })
+    resSuccess(res, 'Login successful', { user: user! }, 1)
+}
+
+export async function logout(req: Request, res: Response) {
+    req.logout(() => res.send('Logged out'))
+}
+
+export async function registerNewUser(req: Request, res: Response, next: NextFunction) {
+    if (!req.body.email) return resBadRequest(res, 'Email is required', null)
+    if (!req.body.firstName || !req.body.lastName) return resBadRequest(res, 'First name and last name are required', null)
+
+    try {
+        const existingUser = await prisma.users.findUnique({ where: { email: req.body.email } })
+
+        if (existingUser?.email && existingUser?.isVerified && existingUser.password) return resUnprocessable(res, 'Email is in use', null, 0)
+        if (existingUser?.email && !existingUser?.isVerified) return resUnauthorized(res, 'Email is not verified', null, -1)
+
+        const { email, firstName, lastName } = req.body;
+
+        const newUser = existingUser?.email === email
+            ? await prisma.users.update({
+                where: {
+                    email
+                },
+                data: {
+                    firstName,
+                    lastName,
+                }
+            })
+            : await prisma.users.create({
+                data: {
+                    email,
+                    firstName,
+                    lastName,
+                }
+            })
+        if (!newUser) return resUnprocessable(res, 'Unexpected Error when creating user', null, -1)
+
+        await sendVerificationEmail(newUser.email, generateJWT(newUser, null, "1h"))
+        return resCreated(res, 'User registered successfully', newUser)
+
+    } catch (error) {
+        console.error(error)
+        return next(error)
+    }
+}
 
 export async function setPassword(req: Request, res: Response, next: NextFunction) {
     try {
@@ -51,7 +102,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
             }
         })
 
-        await sendResetPasswordInstructions(email, generateJWT(user))
+        await sendResetPasswordInstructions(email, generateJWT(user, null, '1h'))
 
         resSuccess(res, 'Reset password instructions sent to the email', null, 1)
     } catch (error) {

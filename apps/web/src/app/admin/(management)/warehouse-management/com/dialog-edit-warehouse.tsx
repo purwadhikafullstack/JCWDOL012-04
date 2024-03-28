@@ -183,7 +183,7 @@ export default function EditWarehouseDialog({ id }: { id: string | number }) {
                                 {formik.values.latitude && formik.values.longitude ? <div className="col-span-3 font-light">{`lat: ${formik.values.latitude}, lng: ${formik.values.longitude}`}</div> : <div className="col-span-3 font-light italic">No Pinpoint set</div>}
                             </div>
                             {formik.errors.latitude && formik.touched.latitude ? (<div className="text-red-500 text-xs">{formik.errors.latitude}</div>) : null}
-                            {parseFloat(warehouse.latitude) ? null : <p className="text-xs text-red-500">{"Current Pinpoint is not in correct coordinates. Please update it."}</p>}
+                            {parseFloat(formik.values.latitude) ? null : <p className="text-xs text-red-500">{"Current Pinpoint is not in correct coordinates. Please update it."}</p>}
                             <div className="text-xs text-gray-500">{"Search or drag the marker to pinpoint your address. Click Set Pinpoint when you're done."}</div>
                             <div className="h-[256px] w-full">
                                 <Maps

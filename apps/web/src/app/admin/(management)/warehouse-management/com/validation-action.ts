@@ -1,9 +1,11 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import * as Yup from 'yup';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { clientSideRedirect } from '@/lib/store/auth/auth.action';
 import { ProvincesModel } from '@/model/ProvincesModel';
 import { CitiesModel } from '@/model/CitiesModel';
+import { FormikProps } from 'formik';
+import { LatLng } from '@/components/profile/address/maps';
 
 export const initialValues = {
     name: '',
@@ -169,4 +171,24 @@ export function validateChangesOnEdit(
         warehouse?.warehouseAdmin[0]?.id.toString() === formikValues?.adminId?.toString()
 
     return noChangesOnEdit
+}
+
+export function setPinpoint(
+    rawLatLng: LatLng,
+    formikSetValues: FormikProps<any>['setFieldValue'],
+) {
+    formikSetValues('latitude', rawLatLng.lat)
+    formikSetValues('longitude', rawLatLng.lng)
+}
+
+export function hasPacContainerAction(e: any) {
+    const hasPacContainer = e.composedPath().some((el: EventTarget) => {
+        if ("classList" in el) {
+            return Array.from((el as Element).classList).includes("pac-container")
+        }
+        return false
+    })
+    if (hasPacContainer) {
+        e.preventDefault()
+    }
 }

@@ -3,34 +3,34 @@ import { PrismaClient } from "@prisma/client";
 import { resInternalServerError, resSuccess, resUnprocessable } from "@/services/responses";
 
 const prisma = new PrismaClient();
+const warehouseSelectValue = {
+    id: true,
+    name: true,
+    address: true,
+    latitude: true,
+    longitude: true,
+    city: {
+        select: {
+            id: true,
+            name: true,
+            type: true,
+            provinceId: true
+        }
+    },
+    warehouseAdmin: {
+        select: {
+            id: true,
+            firstName: true,
+        }
+    }
+}
 
 export async function getWarehouses(req: Request, res: Response) {
 
     await prisma.warehouses.findMany({
-        where: {
-            archived: false,
-        },
-        select: {
-            id: true,
-            name: true,
-            address: true,
-            latitude: true,
-            longitude: true,
-            city: {
-                select: {
-                    id: true,
-                    name: true,
-                    type: true,
-                    provinceId: true
-                }
-            },
-            warehouseAdmin: {
-                select: {
-                    id: true,
-                    firstName: true,
-                }
-            }
-        }
+        where: { archived: false, },
+        select: warehouseSelectValue,
+        orderBy: { name: 'asc' }
     })
         .then((warehouses) => resSuccess(res, 'Get all warehouses', warehouses))
         .catch((error) => {
@@ -44,28 +44,8 @@ export async function getWarehouse(req: Request, res: Response) {
     if (!id) return resUnprocessable(res, 'Missing mandatory field: warehouseId', null)
 
     await prisma.warehouses.findUnique({
-        where: { id: parseInt(id) },
-        select: {
-            id: true,
-            name: true,
-            address: true,
-            latitude: true,
-            longitude: true,
-            city: {
-                select: {
-                    id: true,
-                    name: true,
-                    type: true,
-                    provinceId: true
-                }
-            },
-            warehouseAdmin: {
-                select: {
-                    id: true,
-                    firstName: true,
-                }
-            }
-        }
+        where: { id: parseInt(id), archived: false },
+        select: warehouseSelectValue
     })
         .then((warehouse) => resSuccess(res, 'Get warehouse success', warehouse))
         .catch((error) => {
@@ -83,8 +63,8 @@ export async function createWarehouse(req: Request, res: Response) {
                     name,
                     address,
                     cityId: parseInt(cityId),
-                    latitude,
-                    longitude,
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString(),
                 }
             });
 
@@ -120,6 +100,7 @@ export async function updateWarehouse(req: Request, res: Response) {
             const initialWarehouseData = await tx.warehouses.findUnique({
                 where: { id: parseInt(id) },
                 select: {
+                    id: true,
                     warehouseAdmin: {
                         select: {
                             id: true,
@@ -135,34 +116,28 @@ export async function updateWarehouse(req: Request, res: Response) {
                     name,
                     address,
                     cityId: parseInt(cityId),
-                    latitude,
-                    longitude,
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString(),
                 }
             })
 
             if (adminId === '') {
                 await tx.users.update({
-                    where: {
-                        id: initialWarehouseData?.warehouseAdmin[0].id
-                    },
-                    data: {
-                        wareHouseAdmin_warehouseId: null
-                    }
+                    where: { id: initialWarehouseData?.warehouseAdmin[0]?.id },
+                    data: { wareHouseAdmin_warehouseId: null }
                 })
             }
 
             if (adminId !== '' && adminId != initialWarehouseData?.warehouseAdmin[0]?.id) {
-                // Update the new admin
                 await tx.users.update({
                     where: {
-                        id: adminId ? parseInt(adminId) : initialWarehouseData?.warehouseAdmin[0].id
+                        id: adminId ? parseInt(adminId) : initialWarehouseData?.warehouseAdmin[0]?.id
                     },
                     data: {
                         wareHouseAdmin_warehouseId: adminId ? parseInt(id) : null
                     }
                 })
 
-                //update the old admin
                 if (initialWarehouseData?.warehouseAdmin[0]?.id) {
                     await tx.users.update({
                         where: {
@@ -174,7 +149,6 @@ export async function updateWarehouse(req: Request, res: Response) {
                     })
                 }
             }
-
             return updatedWarehouse
         })
         return resSuccess(res, 'Warehouse updated', trx)
@@ -211,15 +185,10 @@ export async function archiveWarehouse(req: Request, res: Response) {
 
             const updatedAdmin = initialWarehouseData?.warehouseAdmin.length
                 ? await tx.users.update({
-                    where: {
-                        id: initialWarehouseData?.warehouseAdmin[0].id
-                    },
-                    data: {
-                        wareHouseAdmin_warehouseId: null
-                    }
+                    where: { id: initialWarehouseData?.warehouseAdmin[0].id },
+                    data: { wareHouseAdmin_warehouseId: null }
                 })
                 : Promise.resolve();
-
             return { archivedWH, updatedAdmin }
         })
         return resSuccess(res, 'Warehouse archived', trx.archivedWH)
