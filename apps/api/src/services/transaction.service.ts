@@ -30,6 +30,29 @@ export default class TransactionService {
             },
             where: {
                 archived: false,
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
+    }
+
+    async getAllTransactionAdminWarehouse(wareHouseAdmin_warehouseId: number): Promise<Transactions[]> {
+        return await prisma.transactions.findMany({
+            include: {
+                products: {
+                    include: {
+                        product: true
+                    }
+                },
+                mutations: true
+            },
+            where: {
+                warehouseId: wareHouseAdmin_warehouseId,
+                archived: false,
+            },
+            orderBy: {
+                id: 'desc'
             }
         });
     }

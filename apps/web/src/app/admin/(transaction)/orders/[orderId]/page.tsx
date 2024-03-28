@@ -28,7 +28,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     useEffect(() => {
         updateCart();
         const timeoutId = setTimeout(() => {
-            transactionApi.getTransaction(params.orderId)
+            transactionApi.getTransactionAdmin(params.orderId)
                 .then((res) => {
                     setTransaction(res.data);
                     setStatus(res.status);
@@ -95,7 +95,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     }
 
     if (transaction) {
-        if (transaction.userId !== userId || !isAuthenticated || role !== 'CUSTOMER') {
+        if (!isAuthenticated || (role !== 'SUPER_ADMIN' && role!=="WAREHOUSE_ADMIN")) {
             return (
                 <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
                     Unauthorized | 401
@@ -105,7 +105,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
 
 
         return (
-            <div className="px-[24px] 2xl:mx-64 mt-5">
+            <div className="px-[24px] h-fit mx-16 mt-5 overflow-auto">
                 <div>
                     <div className="flex">
                         <h1 className="text-2xl font-semibold pr-2">Transaction Detail</h1>

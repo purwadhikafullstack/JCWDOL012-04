@@ -32,6 +32,10 @@ transactionRouter.get('/', requireJwtAuth, (req: Request, res: Response): void =
     transactionController.getAll(req, res);
 });
 
+transactionRouter.get('/admin', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.getAllForAdmin(req, res);
+});
+
 transactionRouter.get('/orderstatus', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.getAllOrderStatus(req, res);
 });
@@ -46,6 +50,10 @@ transactionRouter.get('/orders/latest', requireJwtAuth, (req: Request, res: Resp
 
 transactionRouter.get('/orders/:transactionUid', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.getTransactionByUid(req, res);
+});
+
+transactionRouter.get('/admin/orders/:transactionUid', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.getTransactionByUidAdmin(req, res);
 });
 
 transactionRouter.post('/orders/cancel', requireJwtAuth, (req: Request, res: Response): void => {

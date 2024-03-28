@@ -44,6 +44,22 @@ export default class TransactionController {
         res.status(200).json(transactions);
     }
 
+    async getAllForAdmin(req: Request, res: Response): Promise<void> {
+        const user = req.user as Users;
+        let transactions: Transactions[] = [];
+        if (user.role == "SUPER_ADMIN") {
+            transactions = await this.TransactionService.getAllTransactionAdmin();
+        }
+        if (user.role == "WAREHOUSE_ADMIN" && user.wareHouseAdmin_warehouseId != null) {
+            transactions = await this.TransactionService.getAllTransactionAdminWarehouse(user.wareHouseAdmin_warehouseId);
+        }
+        if(transactions.length === 0){
+            res.status(404).json({ message: "Transaction not found" });return;
+        }else{
+            res.status(200).json(transactions);
+        }
+    }
+
     async getAllOrderStatus(req: Request, res: Response): Promise<void> {
         const orderStatus = await this.TransactionService.getAllOrderStatus();
         res.status(200).json(orderStatus);
@@ -64,6 +80,17 @@ export default class TransactionController {
             res.status(403).json({ message: "Forbidden" });
         } else {
             res.status(404).json({ message: "Transaction not found" });
+        }
+    }
+
+    async getTransactionByUidAdmin(req: Request, res: Response): Promise<void> {
+        const user = req.user as Users;
+        const transactionUid = req.params.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null && (user.role === "SUPER_ADMIN" || (user.role === "WAREHOUSE_ADMIN" && user.wareHouseAdmin_warehouseId === transaction.warehouseId))) {
+            res.status(200).json(transaction);
+        } else {
+            res.status(403).json({ message: "Forbidden" });
         }
     }
 
@@ -234,7 +261,7 @@ export default class TransactionController {
             let updatedTransaction: Transactions | null = null;
             if (status == 'settlement' || status == "capture") {
                 updatedTransaction = await this.TransactionService.paymentGatewaySuccess(transactionUid);
-            }else if(status != "pending"){
+            } else if (status != "pending") {
                 updatedTransaction = await this.TransactionService.paymentGatewayFailed(transactionUid);
             }
 

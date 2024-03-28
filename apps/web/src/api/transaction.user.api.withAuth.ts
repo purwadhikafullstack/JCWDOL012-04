@@ -55,6 +55,25 @@ export default class TransactionApi {
             });
     }
 
+    async getAllForAdmin(): Promise<{ status: number, data: TransactionsModel[] }> {
+        "use server"
+        return await apiAuth.get<TransactionsModel[]>('/transaction/admin/', {
+            params: {
+                _: new Date().getTime(),
+            }
+        })
+            .then((response) => {
+                const status = response.status;
+                const data = response.data;
+                return { status, data };
+            })
+            .catch((error) => {
+                console.log(error);
+                return error.status;
+            });
+
+    }
+
     async getAllProductCategory(): Promise<{ status: number, data: ProductCategoriesModel[] }> {
         "use server"
         return await apiAuth.get<ProductCategoriesModel[]>('/transaction/productcategory', {
@@ -75,11 +94,21 @@ export default class TransactionApi {
 
     async getTransaction(transactionUid: string): Promise<{ status: number, data: TransactionsModel }> {
         "use server"
-        return await apiAuth.get<TransactionsModel>('/transaction/orders/' + transactionUid, {
-            params: {
-                _: new Date().getTime(),
-            }
-        })
+        return await apiAuth.get<TransactionsModel>('/transaction/orders/' + transactionUid)
+            .then((response) => {
+                const status = response.status;
+                const data = response.data;
+                return { status, data };
+            })
+            .catch((error) => {
+                console.log(error);
+                return error.status;
+            });
+    }
+
+    async getTransactionAdmin(transactionUid: string): Promise<{ status: number, data: TransactionsModel }> {
+        "use server"
+        return await apiAuth.get<TransactionsModel>('/transaction/admin/orders/' + transactionUid)
             .then((response) => {
                 const status = response.status;
                 const data = response.data;
