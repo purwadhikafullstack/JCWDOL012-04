@@ -8,18 +8,22 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
+import {prisma} from './services/prisma.service';
+import { join } from 'path';
+import { ProductRouter } from './routers/product.router';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
+import cartRouter from './routers/cart.router.withAuth';
+import transactionRouter from './routers/transaction.router.withAuth';
 import { googleAuthRouter } from './routers/auth/authGoogle.router';
 import { localAuthRouter } from './routers/auth/localAuth.router';
 import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
-import cartRouter from './routers/cart.router';
-import { prisma } from './services/prisma.service';
-import { ProductRouter } from './routers/product.router';
 import { profileRouter } from './routers/profile.router';
 import { userRouter } from './routers/user.router';
 import { dataRouter } from './routers/data.router';
 import { shippingRouter } from './routers/shipping.router';
+import { startUpdateOrderStatusJob } from './lib/updateOrderStatusJob';
+import { startUpdateTransactionOrderStatusJob } from './lib/updateTransactionOrderStatusJob';
 import warehouseRouter from './routers/warehouse.router';
 import { ReportRouter } from './routers/report.router';
 
@@ -37,8 +41,11 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(express.static('public'));
+    this.app.use(express.static('public'))
+    this.app.use('/public', express.static('public'))
     this.app.use(cookieparser());
+    startUpdateOrderStatusJob();
+    startUpdateTransactionOrderStatusJob();
   }
 
   private handleError(): void {
@@ -77,6 +84,8 @@ export default class App {
       res.send(`Hello, Purwadhika Student !`);
     });
     this.app.use('/api/cart', cartRouter);
+    this.app.use('/api/transaction', transactionRouter);
+
 
     this.app.use('/api', productRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
