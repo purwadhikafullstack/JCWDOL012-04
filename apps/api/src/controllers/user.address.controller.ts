@@ -127,6 +127,7 @@ export async function updateAddress(req: Request, res: Response) {
     const user = req.user as Users;
     const { isPrimaryAddress, cityId, address, latitude, longitude, label, archieved } = req.body;
     const { id } = req.params;
+
     try {
         if (isPrimaryAddress) {
             const updatedAddress = await prisma.$transaction([
@@ -159,6 +160,7 @@ export async function updateAddress(req: Request, res: Response) {
                     longitude,
                     label,
                     archieved,
+                    isPrimaryAddress,
                     cityId: parseInt(cityId)
                 }
             });

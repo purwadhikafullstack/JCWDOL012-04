@@ -14,13 +14,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/store/auth/auth.provider"
 import { useFormik } from 'formik';
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import * as Yup from 'yup';
 import Spinner from "../ui/spinner"
 
 export function ChangeNameDialog() {
     const auth = useAuth()
     const user = auth?.user?.data
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -46,15 +47,15 @@ export function ChangeNameDialog() {
     })
 
     useEffect(() => {
-        formik.setValues({
+        dialogOpen && formik.setValues({
             firstName: user?.firstName!,
             lastName: user?.lastName!,
             password: ''
         })
-    }, [auth?.user])
+    }, [dialogOpen])
 
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" disabled={auth?.isLoading} className="text-xs sm:text-sm">Change Name</Button>
             </DialogTrigger>

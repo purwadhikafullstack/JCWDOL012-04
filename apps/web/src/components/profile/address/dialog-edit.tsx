@@ -20,7 +20,7 @@ export function EditAddress({ initialAddress }: { initialAddress: UserCitiesMode
     const [dialogOpen, setDialogOpen] = useState(false)
     const [RawLatLng, setRawLatLng] = useState<LatLng>(initialAddress ? { lat: Number(initialAddress.latitude), lng: Number(initialAddress.longitude) } : { lat: - 6.175211007317426, lng: 106.82715358395524 })
     const { provinces, cities } = address.data
-
+    console.log(address.error)
     const formik = useFormik({
         initialValues: {
             ...initialAddress,
@@ -36,7 +36,12 @@ export function EditAddress({ initialAddress }: { initialAddress: UserCitiesMode
         if (cities.length <= 0) address.getCities()
     }, [])
 
-    useEffect(() => { !dialogOpen && formik.resetForm() }, [dialogOpen])
+    useEffect(() => {
+        if (!dialogOpen) {
+            formik.resetForm()
+            address?.clearError()
+        }
+    }, [dialogOpen])
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -172,9 +177,9 @@ export function EditAddress({ initialAddress }: { initialAddress: UserCitiesMode
                                 </div>
                             </div>
                             <div>
-                                {auth?.error?.status
+                                {address?.error?.status
                                     ? (<div className="text-red-500 text-xs">
-                                        {auth.error?.message ? auth.error?.message : 'An Error occured. Something went wrong'}
+                                        {address.error?.message ? address.error?.message : 'An Error occured. Something went wrong'}
                                     </div>)
                                     : null}
                             </div>
