@@ -18,6 +18,7 @@ export function AddAddress() {
     const address = useAddress()
     const [RawLatLng, setRawLatLng] = useState<LatLng>({ lat: - 6.175211007317426, lng: 106.82715358395524 })
     const { provinces, cities } = address.data
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     const formik = useFormik({
         initialValues: AddressInitialValues,
@@ -34,8 +35,10 @@ export function AddAddress() {
         if (cities.length <= 0) address.getCities()
     }, [])
 
+    useEffect(() => { !dialogOpen && address.clearError() }, [dialogOpen])
+
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
             <DialogTrigger asChild >
                 <Button variant="default" disabled={auth?.isLoading} className="text-xs sm:text-sm">New Address</Button>
             </DialogTrigger>

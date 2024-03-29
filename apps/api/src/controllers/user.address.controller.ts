@@ -76,8 +76,8 @@ export async function addAddress(req: Request, res: Response) {
 }
 
 export async function archieveAddress(req: Request, res: Response) {
-    const user = req.user as Users;
     const { id } = req.params;
+    if (!id) return resUnprocessable(res, "Missing fields: address id", null)
     try {
         const archievedAddress = await prisma.userCities.update({
             where: {
@@ -97,6 +97,7 @@ export async function archieveAddress(req: Request, res: Response) {
 export async function setAsPrimaryAddress(req: Request, res: Response) {
     const user = req.user as Users;
     const { id } = req.params;
+    if (!id) return resUnprocessable(res, "Missing field: Address Id", null)
     try {
         const updatedAddress = await prisma.$transaction([
             prisma.userCities.updateMany({
@@ -127,6 +128,7 @@ export async function updateAddress(req: Request, res: Response) {
     const user = req.user as Users;
     const { isPrimaryAddress, cityId, address, latitude, longitude, label, archieved } = req.body;
     const { id } = req.params;
+    if (!id) return resUnprocessable(res, "Missing field: Address Id", null)
 
     try {
         if (isPrimaryAddress) {
