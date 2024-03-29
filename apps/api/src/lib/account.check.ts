@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import AccountCheckService from '@/services/account.check.service';
+import AccountCheckService from '../services/account.check.service';
 
 export default async function accCheck(user:any, res:Response): Promise<boolean>{
     const accountCheckService = new AccountCheckService();

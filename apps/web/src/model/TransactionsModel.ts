@@ -4,9 +4,11 @@ import { WarehousesModel } from "./WarehousesModel";
 import { UsersModel } from "./UsersModel";
 import { TransactionsProductsModel } from "./TransactionsProductsModel";
 import { MutationsModel } from "./MutationsModel";
+import { UserCitiesModel } from "./UserCitiesModel";
 
 export interface TransactionsModel {
     id: number;
+    transactionUid: string;
     userId: number;
     user?: UsersModel;
     paymentType: PaymentTypeModel;
@@ -14,6 +16,7 @@ export interface TransactionsModel {
     orderStatus: OrderStatusModel;
     warehouseId: number;
     warehouse?: WarehousesModel;
+    shippingAddressId: number;
     paymentProofDate?: Date;
     verifiedDate?: Date;
     shippingDate?: Date;
@@ -29,4 +32,5 @@ export interface TransactionsModel {
     archived: boolean;
     products?: TransactionsProductsModel[];
     mutations?: MutationsModel[];
+    shippingAddress?: UserCitiesModel;
 }

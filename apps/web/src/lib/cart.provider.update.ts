@@ -1,6 +1,6 @@
 import React from "react";
 import { CartContext, cartContextType} from "@/lib/cart.provider";
-import CartApi from "@/api/cart.api";
+import CartApi from "@/api/cart.api.withAuth";
 
 export function useUpdateCart(){
     const cartApi = new CartApi();

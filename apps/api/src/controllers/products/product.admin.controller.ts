@@ -128,4 +128,31 @@ export class AdminProductController {
       console.log(error);
     }
   }
+  async testAutoMutation(req: Request, res: Response) {
+    try {
+      const warehouseId = 1;
+      const transactionId = 3;
+      const productId = 4;
+      const rawQuantity = 30;
+      const warehouseStock = await productStockService.findProductWarehouse(
+        productId,
+        warehouseId,
+      );
+      if (rawQuantity > warehouseStock?.stock!) {
+        const automatedMutation =
+          await productStockController.automatedMutation(
+            warehouseId,
+            productId,
+            transactionId,
+            rawQuantity,
+          );
+        return res.status(201).json(automatedMutation);
+      }
+      return res
+        .status(200)
+        .json({ message: 'warehouse stock meet the required quantity' });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

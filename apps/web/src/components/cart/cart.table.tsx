@@ -9,12 +9,14 @@ import { useUpdateCart } from "@/lib/cart.provider.update";
 import { toast, ToastContainer } from 'react-toastify';
 import ImagePlaceholder from "../image.placeholder";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-import CartApi from "@/api/cart.api";
+import CartApi from "@/api/cart.api.withAuth";
 import idr from "@/lib/idrCurrency";
 
 export default function CartTable() {
     const updateCartContext = useUpdateCart();
+    const router = useRouter();
     const [cart, setCart] = useState<ShoppingCartModel[]>([]);
     const [status, setStatus] = useState<number>(0);
     const [error, setError] = useState<string>("");
@@ -86,23 +88,25 @@ export default function CartTable() {
         total += item.quantity * price;
     });
 
-    if (status && status !== 200) {
-        return <Errors statusCode={status} message={error} />
-    }
-
-    if (!loading && cart.length === 0) {
-        return (
-            <div>
-                <h1>Your cart is empty</h1>
-            </div>
-        )
-    }
     if (loading) {
         return (
             <div>
                 <h1>Loading...</h1>
             </div>
         )
+    }
+
+    
+    if (!loading && cart.length === 0) {
+        return (
+            <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+                <h1>Your cart is empty</h1>
+            </div>
+        )
+    }
+    
+    if (status && status !== 200) {
+        return <Errors statusCode={status} message={error} />
     }
 
     function getPrimaryImagePath(product?: ProductsModel) {
@@ -112,9 +116,9 @@ export default function CartTable() {
     }
 
     return (
-        <div className="my-10">
+        <div className="my-10 lg:max-w-[1080px]">
             <ToastContainer />
-            <div className="lg:max-w-[1080px] bg-gray-100 rounded-lg p-10">
+            <div className="bg-gray-100 rounded-lg p-10">
                 {cart.map((item) => {
                     return (
                         <div key={item.id} className="flex gap-2 py-5 m-2 border-b-2 border-[var(--primaryColor)]">
@@ -135,7 +139,7 @@ export default function CartTable() {
                                             }
                                         }}
                                     >
-                                        <Image src="/images/trashcan.png" alt="delete" width={24} height={24}/>
+                                        <Image src="/images/trashcan.png" alt="delete" width={24} height={24} />
                                     </button>
                                     <input
                                         key={item.quantity}
@@ -163,6 +167,9 @@ export default function CartTable() {
                 })}
                 <p className="px-6 py-4 text-xl font-bold">Total</p>
                 <p className="px-6 py-4 text-xl font-bold">{idr(total)}</p>
+            </div>
+            <div className="flex">
+                <button className="rounded-xl ml-auto mt-2 p-2 bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] text-white" onClick={() => router.push(`cart/shipment`)}>Checkout</button>
             </div>
         </div>
     )
