@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 
-export default function latestTransaction() {
+export default function LatestTransaction() {
     const auth = useAuth();
     const transactionApi = new TransactionApi();
     const router = useRouter();

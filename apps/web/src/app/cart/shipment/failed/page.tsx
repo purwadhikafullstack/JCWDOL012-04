@@ -1,10 +1,8 @@
 'use client'
 import { useRouter } from "next/navigation";
 import {useEffect} from "react";
-import { useAuth } from "@/lib/store/auth/auth.provider";
 
-export default function latestTransaction() {
-    const auth = useAuth();
+export default function FailedTransaction() {
     const router = useRouter();
 
     useEffect(() => {

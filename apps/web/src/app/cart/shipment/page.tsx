@@ -2,7 +2,7 @@
 import ShippingSummary from "@/components/cart/shipping/shipping.summary"
 import ShippingProducts from "@/components/cart/shipping/shipping.products"
 import { CartContext } from '@/lib/cart.provider';
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { ShoppingCartModel } from '@/model/ShoppingCartModel';
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import ShippingProvider from "@/lib/store/shipping/shipping.provider";
@@ -13,19 +13,14 @@ import { WarehousesModel } from "@/model/WarehousesModel";
 import ShippingAddress from "@/components/profile/address/shipping-address";
 
 export default function Shipment() {
+    const { cart } = useContext(CartContext);
     const auth = useAuth();
     const isAuthenticated = auth?.user?.isAuthenticated;
     const role = auth?.user?.data?.role;
     const [shippingAddress, setShippingAddress] = useState<UserCitiesModel>({} as UserCitiesModel);
     const [shippingCost, setShippingCost] = useState<number>(0);
     const [closestWarehouse, setClosestWarehouse] = useState<WarehousesModel>({} as WarehousesModel);
-    // shippingCost: number | null;
-    // shippingMethod: RajaOngkirCostResults[] | null;
-    // chosenShippingMethod: RajaOngkirCostResults['costs'][0] & { courier: string } | null;
-    // closestWarehouse: WarehousesModel | null;
-    // choosenAddress: UserCitiesModel | null;
-    // const isAuthorLoading = auth?.isLoading;
-
+   
     if (!isAuthenticated || role !== 'CUSTOMER') {
         return (
             <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
@@ -34,15 +29,13 @@ export default function Shipment() {
         )
     }
 
-    const { cart } = useContext(CartContext);
+    
     const cartData: ShoppingCartModel[] = Array.isArray(cart) ? cart : [];
 
     let total = 0;
     let totalWeight = 0;
     const closestWarehouseId = closestWarehouse.id;
     const shippingAddressId = shippingAddress.id ?? -1;
-    // const shippingCost = 10000; // dummy shipping cost
-    // const closestWarehouseId = 4; // dummy closest warehouse id
 
     cartData.forEach((item) => {
         total += (item.product?.price ?? 0) * item.quantity;

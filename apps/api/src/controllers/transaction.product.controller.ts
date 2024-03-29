@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { TransactionsProducts, Products, ProductsWarehouses, Users } from "@prisma/client";
+import { TransactionsProducts, ProductsWarehouses, Users } from "@prisma/client";
 import TransactionProductService from "@/services/transaction.product.service";
 import { prisma } from "@/services/prisma.service";
 
@@ -28,7 +28,12 @@ export default class TransactionProductController {
         }
 
         const result: TransactionProductWithStockModel[] = await Promise.all(transactionProducts.map(async (transactionProduct: TransactionsProducts) => {
-            const productWarehouse: ProductsWarehouses = await this.transactionProductService.getProductWarehouseByProductId(transactionProduct.productId, warehouseId) as ProductsWarehouses;
+            let productWarehouse: ProductsWarehouses = await this.transactionProductService.getProductWarehouseByProductId(transactionProduct.productId, warehouseId) as ProductsWarehouses;
+            if(!productWarehouse){
+                await this.transactionProductService.createProductWarehouse(transactionProduct.productId, warehouseId);
+                productWarehouse = await this.transactionProductService.getProductWarehouseByProductId(transactionProduct.productId, warehouseId) as ProductsWarehouses;
+            }
+
             const stock = productWarehouse.stock;
             const globalStock = await this.transactionProductService.getGlobalStockbyProductId(transactionProduct.productId);
             const productWithStock: TransactionProductWithStockModel = {

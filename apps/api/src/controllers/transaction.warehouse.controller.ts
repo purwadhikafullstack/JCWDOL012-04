@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Warehouses, Users } from "@prisma/client";
+import { Users } from "@prisma/client";
 import TransactionWarehouseService from "@/services/transaction.warehouse.service";
 import { prisma } from "@/services/prisma.service";
 

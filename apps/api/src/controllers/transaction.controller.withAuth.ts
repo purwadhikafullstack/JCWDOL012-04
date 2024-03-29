@@ -1,7 +1,6 @@
 import TransactionService from "@/services/transaction.service";
 import TransactionProductService from "@/services/transaction.product.service";
 import UserCitiesTransactionService from "@/services/transaction.userCities.service";
-import MutationOrderService from "@/services/transaction.mutation.service";
 import TransactionWarehouseService from "@/services/transaction.warehouse.service";
 import ProductTransactionService from "@/services/product.transaction.service";
 import TransactionMutationService from "@/services/transaction.mutation.service";
@@ -9,13 +8,12 @@ import { TransactionsCreateModel } from "@/model/transaction.create.model";
 import { transactionProductCreateModel } from "@/model/transaction.product.create.model";
 import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
 import distance from "@/lib/distance";
-import { Transactions, TransactionsProducts, mutationType, Users, UserCities, paymentType, ShoppingCart, Warehouses, orderStatus } from "@prisma/client";
+import { Transactions, Users, UserCities, paymentType, ShoppingCart, Warehouses, orderStatus } from "@prisma/client";
 import { Request, Response } from "express";
 import { midtransRequest } from "@/model/transaction.midtrans.create.model";
 import { ProductStockController } from "./products/product.stock.controller";
 import fs from 'fs';
 import path from 'path';
-import productCheck from "@/lib/product.check";
 
 type transactionData = {
     userId: number,
@@ -28,7 +26,6 @@ type transactionData = {
 export default class TransactionController {
     TransactionService: TransactionService;
     TransactionProductService: TransactionProductService;
-    MutationOrderService: MutationOrderService;
     UserCitiesTransactionService: UserCitiesTransactionService;
     TransactionWarehouseService: TransactionWarehouseService;
     ProductTransactionService: ProductTransactionService;
@@ -37,7 +34,6 @@ export default class TransactionController {
     constructor() {
         this.TransactionService = new TransactionService();
         this.TransactionProductService = new TransactionProductService();
-        this.MutationOrderService = new MutationOrderService();
         this.UserCitiesTransactionService = new UserCitiesTransactionService();
         this.TransactionWarehouseService = new TransactionWarehouseService();
         this.ProductTransactionService = new ProductTransactionService();
@@ -75,7 +71,7 @@ export default class TransactionController {
             transactions = await this.TransactionService.getAllTransactionAdminWarehouse(user.wareHouseAdmin_warehouseId);
         }
         if (transactions.length === 0) {
-            res.status(404).json({ message: "Transaction not found" }); return;
+            res.status(404).json({ message: "Transaction not found" });
         } else {
             res.status(200).json(transactions);
         }
@@ -231,7 +227,7 @@ export default class TransactionController {
                     }
                     mutationTempData.push(mutationData);
                 }
-                const result = await this.MutationOrderService.createShipment(mutationTempData);
+                const result = await this.TransactionMutationService.createShipment(mutationTempData);
                 if (result) {
                     res.status(201).json(transaction);
                 } else {

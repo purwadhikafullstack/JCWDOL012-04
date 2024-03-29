@@ -8,6 +8,16 @@ export default class TransactionProductService {
         });
     }
 
+    async createProductWarehouse(productId: number, warehouseId: number): Promise<any> {
+        return await prisma.productsWarehouses.create({
+            data: {
+                productId: productId,
+                warehouseId: warehouseId,
+                stock: 0
+            }
+        });
+    }
+
     async getGlobalStockbyProductId(productId: number): Promise<any> {
         return await prisma.productsWarehouses.aggregate({
             _sum: {

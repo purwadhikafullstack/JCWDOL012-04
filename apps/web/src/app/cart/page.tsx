@@ -1,7 +1,5 @@
 'use client'
 import CartTable from "@/components/cart/cart.table";
-import CartAdd from "@/components/cart/cart.add";
-import CartIcon from "@/components/cart/cart.icon";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import { useUpdateCart } from "@/lib/cart.provider.update";
 import { useEffect, useState } from "react";
@@ -12,7 +10,6 @@ export default function Cart() {
     const role = auth?.user?.data?.role;
     const updateCart = useUpdateCart();
     const [loading, setLoading] = useState<boolean>(true);
-    // const isAuthorLoading = auth?.isLoading;
 
     useEffect(() => {
         updateCart();

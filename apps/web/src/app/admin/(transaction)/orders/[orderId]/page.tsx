@@ -5,7 +5,7 @@ import TransactionApi from "@/api/transaction.user.api.withAuth";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import { date_format } from "@/lib/date.format";
 import Timeline from "@/components/transaction/timeline";
-import TransactionProductDetail from "@/components/transaction/detail.product";
+import TransactionProductDetail from "@/components/transaction/detail.product.admin";
 import idr from "@/lib/idrCurrency";
 import { useUpdateCart } from "@/lib/cart.provider.update";
 import { TransactionProductWithStockModel } from "@/model/TransactionProductWithStockModel";
@@ -52,7 +52,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
 
     useEffect(() => {
         if (transaction && transaction.products) {
-            const transactionsProductList:TransactionsProductsModel[] = transaction.products;
+            const transactionsProductList: TransactionsProductsModel[] = transaction.products;
             if (transactionsProductList && transactionsProductList.length > 0) {
                 transactionProductApi.getAllTransactionProductsWithStock(transactionsProductList, transaction.warehouseId)
                     .then((res) => {
@@ -68,16 +68,18 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     }, [transaction]);
 
     useEffect(() => {
-        if (transactionProductsWithStock) {
-            let flag = true;
-            transactionProductsWithStock.forEach((item) => {
-                if (item.stock < item.quantity) {
-                    flag=false;
-                }
-            });
-            setIsStockEnough(flag);
+        if (transaction) {
+            if (transactionProductsWithStock) {
+                let flag = true;
+                transactionProductsWithStock.forEach((item) => {
+                    if (item.stock < item.quantity) {
+                        flag = false;
+                    }
+                });
+                setIsStockEnough(flag);
+            }
         }
-    }, [transactionProductsWithStock, update, isStockEnough]);
+    }, [transaction, transactionProductsWithStock, update, isStockEnough]);
 
 
     if (loading) {
@@ -96,7 +98,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         )
     }
 
-    async function handleUpdate(){
+    async function handleUpdate() {
         setUpdate(!update);
     }
 
@@ -110,7 +112,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     }
 
     async function handleVerifyPayment() {
-        if(transaction) {
+        if (transaction) {
             const res = await transactionApi.verifyPayment(transaction.transactionUid);
             if (res.status == 200) {
                 handleUpdate();
@@ -119,16 +121,16 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     }
 
     async function handleDenyPayment() {
-        if(transaction) {
+        if (transaction) {
             const res = await transactionApi.denyPayment(transaction.transactionUid);
             if (res.status == 200) {
                 handleUpdate();
             }
         }
     }
-    
+
     async function handleProcessOrder() {
-        if(transaction) {
+        if (transaction) {
             const res = await transactionApi.processOrder(transaction.transactionUid)
             if (res.status == 200) {
                 handleUpdate();
@@ -137,7 +139,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     }
 
     async function handleShippingOrder() {
-        if(transaction) {
+        if (transaction) {
             const res = await transactionApi.shipOrder(transaction.transactionUid)
             if (res.status == 200) {
                 handleUpdate();
@@ -187,7 +189,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                             </div>
                         </div>
                         <div className="mt-5">
-                            <TransactionProductDetail handleUpdate={handleUpdate} transaction={transaction} transactionProductWithStock={transactionProductsWithStock} />
+                            {transaction && <TransactionProductDetail handleUpdate={handleUpdate} transaction={transaction} transactionProductWithStock={transactionProductsWithStock} />}
                         </div>
                         <div className="mt-5">
                             <div className="border border-[var(--lightPurple)] p-2 rounded-xl">
@@ -244,7 +246,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                     <div className="flex flex-col gap-2 rounded-xl px-5 md:max-w-72 2xl:min-w-72 md:my-0 my-5">
 
                         {(transaction.orderStatus == "VERIFIED") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleProcessOrder}>Process Order</button>)}
-                        {(transaction.orderStatus == "PROCESSING") && (<button className={isStockEnough ?"bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] text-white rounded-xl p-2":"bg-gray-400 rounded-xl p-2"} onClick={handleShippingOrder} disabled={!isStockEnough} >Ship Order</button>)}
+                        {(transaction.orderStatus == "PROCESSING") && (<button className={isStockEnough ? "bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] text-white rounded-xl p-2" : "bg-gray-400 rounded-xl p-2"} onClick={handleShippingOrder} disabled={!isStockEnough} >Ship Order</button>)}
                         {(transaction.orderStatus != "CANCELLED" && transaction.orderStatus != "SHIPPING" && transaction.orderStatus != "CONFIRMED" && transaction.orderStatus != "FAILED_PAYMENT") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleCancelOrder}>Cancel Order</button>)}
 
                     </div>

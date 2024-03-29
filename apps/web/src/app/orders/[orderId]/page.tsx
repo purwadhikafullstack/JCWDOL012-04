@@ -5,7 +5,7 @@ import TransactionApi from "@/api/transaction.user.api.withAuth";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import { date_format } from "@/lib/date.format";
 import Timeline from "@/components/transaction/timeline";
-import TransactionProductDetail from "@/components/transaction/detail.product";
+import TransactionProductDetailUser from "@/components/transaction/detail.product.user";
 import idr from "@/lib/idrCurrency";
 import { useUpdateCart } from "@/lib/cart.provider.update";
 
@@ -137,7 +137,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                             </div>
                         </div>
                         <div className="mt-5">
-                            <TransactionProductDetail transaction={transaction} />
+                            <TransactionProductDetailUser transaction={transaction} />
                         </div>
                         <div className="mt-5">
                             <div className="border border-[var(--lightPurple)] p-2 rounded-xl">

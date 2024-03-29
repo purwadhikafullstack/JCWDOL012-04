@@ -1,7 +1,6 @@
 import { prisma } from "./prisma.service";
 import { Transactions, orderStatus } from "@prisma/client";
 import { TransactionsCreateModel } from "@/model/transaction.create.model";
-import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
 import { transactionProductCreateModel } from "@/model/transaction.product.create.model";
 import { midtransRequest } from "@/model/transaction.midtrans.create.model";
 
@@ -219,7 +218,7 @@ export default class TransactionService {
                 }
             });
             if (update) {
-                const updateOrderStatus = await prisma.transactions.update({
+                await prisma.transactions.update({
                     where: {
                         transactionUid: transactionUid,
                         archived: false
