@@ -21,7 +21,7 @@ export default class ReportService {
       where: {
         transaction: {
           archived: false,
-          orderStatus: 'SENT' || 'CONFIRMED',
+          orderStatus: 'CONFIRMED',
           warehouse: {
             name: {
               contains: warehouse,
@@ -62,7 +62,7 @@ export default class ReportService {
       where: {
         transaction: {
           archived: false,
-          orderStatus: 'SENT' || 'CONFIRMED',
+          orderStatus: 'CONFIRMED',
           warehouse: {
             name: {
               contains: warehouse,

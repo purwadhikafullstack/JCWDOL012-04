@@ -146,6 +146,46 @@ async function main() {
     },
   });
 
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_bandung_2',
+      address: 'JL Soekarno Hatta, No. 727 Km. 6, 1336, Sukapura, Kec. Kiaracondong, Kota Bandung, Jawa Barat 40286',
+      cityId: 23,
+      latitude: '-6.938390436524459',
+      longitude: '107.66755424696743'
+    }
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_jakarta_1',
+      address: 'Jl. Raya Bekasi, RT.5/RW.6, Jatinegara, Kec. Jatinegara, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13310',
+      cityId: 154,
+      latitude: '-6.211962405395948', 
+      longitude: '106.8897346743206'
+    }
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_jakarta_2',
+      address: 'Jl. Pesanggrahan No.168H, Kembangan Sel., Kec. Kembangan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11610',
+      cityId: 151,
+      latitude: '-6.1867055286665655',
+      longitude: '106.75489086290104'
+    }
+  });
+
+  await prisma.warehouses.create({
+    data: {
+      name: 'warehouse_semarang_1',
+      address: 'Jl. MH Thamrin No.45, Miroto, Kec. Semarang Tengah, Kota Semarang, Jawa Tengah 50134',
+      cityId: 399,
+      latitude: '-6.983539717325672',
+      longitude: '110.41737938581653'
+    }
+  });
+  
   //5 warehouse admin
   for (let i = 1; i <= 5; i++) {
     const warehouseId = i;
@@ -173,27 +213,25 @@ async function main() {
   //address for user 1 is tailored for testing:[jakarta barat, bandung, jogja]
   const addressTemp = [
     {
-      address:
-        'Jl. Anggur I No.12, RT.8/RW.8, Rw. Buaya, Kecamatan Cengkareng, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11740',
-      latitude: '-6.165108126130613',
-      longitude: '106.7390943459621',
-      cityId: 151,
+      "address": "Jl. Anggur I No.12, RT.8/RW.8, Rw. Buaya, Kecamatan Cengkareng, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11740",
+      "latitude": "-6.165108126130613",
+      "longitude": "106.7390943459621",
+      "cityId": 151
     },
     {
-      address:
-        'Jl. Jend. Sudirman No.570-574, Dungus Cariang, Kec. Andir, Kota Bandung, Jawa Barat 40183',
-      latitude: '-6.917775515031044',
-      longitude: '107.58223681000858',
-      cityId: 23,
+      "address": "Jl. Jend. Sudirman No.570-574, Dungus Cariang, Kec. Andir, Kota Bandung, Jawa Barat 40183",
+      "latitude": "-6.917775515031044",
+      "longitude": "107.58223681000858",
+      "cityId": 23
     },
     {
-      address:
-        'Jl. Ibu Ruswo No.57, Prawirodirjan, Kec. Gondomanan, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55121',
-      latitude: '-7.803502717664534',
-      longitude: '110.36862768762019',
-      cityId: 501,
+      "address": "Jl. Ibu Ruswo No.57, Prawirodirjan, Kec. Gondomanan, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55121",
+      "latitude": "-7.803502717664534",
+      "longitude": "110.36862768762019",
+      "cityId": 501
     },
-  ];
+
+  ]
   for (let j = 0; j < addressTemp.length; j++) {
     let isPrimaryAddressTemp = j === 0;
     await prisma.userCities.create({
@@ -204,8 +242,8 @@ async function main() {
         latitude: addressTemp[j].latitude,
         longitude: addressTemp[j].longitude,
         isPrimaryAddress: isPrimaryAddressTemp,
-        label: 'Address label' + j,
-      },
+        label: 'Address label' + j
+      }
     });
     console.log(`Created address${j} for customer${1}`);
   }
@@ -317,7 +355,6 @@ async function main() {
     'CANCELLED',
     'PROCESSING',
     'SHIPPING',
-    'SENT',
     'CONFIRMED',
   ];
 
@@ -325,13 +362,13 @@ async function main() {
   for (let i = 1; i <= 100; i++) {
     let userIdTemp = Math.floor(Math.random() * 20) + 1;
     let orderStatusTemp: Transactions['orderStatus'] = orderStatusEnum[
-      Math.floor(Math.random() * 9)
+      Math.floor(Math.random() * 8)
     ] as Transactions['orderStatus'];
     let warehouseIdTemp = Math.floor(Math.random() * 5) + 1;
     let shippingCostTemp = Math.floor(Math.random() * 100000) + 1000;
     let totalTemp = Math.floor(Math.random() * 1000000) + 1000;
-    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENTGATEWAY' : 'TRANSFER';
-    let transactionUid = `ORDER-${i}-${Date.now()}`;
+    let paymentTypeTemp = Math.random() > 0.5 ? 'PAYMENT_GATEWAY' : 'TRANSFER';
+    let transactionUid = `ORDER-${i}-${Date.now()}`
     let shippingAddressId = Math.floor(Math.random() * 3) + 1;
     await prisma.transactions.create({
       data: {

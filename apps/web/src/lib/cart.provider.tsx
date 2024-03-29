@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { useEffect, useState } from 'react';
-import CartApi from '@/api/cart.api';
+import CartApi from '@/api/cart.api.withAuth';
 import { ShoppingCartModel } from '@/model/ShoppingCartModel';
 
 export type cartContextType = {

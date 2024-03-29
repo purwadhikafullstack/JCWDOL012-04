@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import { useUpdateCart } from "@/lib/cart.provider.update";
 import {toast, ToastContainer} from 'react-toastify';
 
-import CartApi from "@/api/cart.api";
+import CartApi from "@/api/cart.api.withAuth";
 import idr from "@/lib/idrCurrency";
 
 export default function CartTable() {

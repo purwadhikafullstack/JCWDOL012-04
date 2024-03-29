@@ -40,7 +40,11 @@ export default class CartService {
                 archived: false
             },
             include: {
-                productImages: true,
+                productImages:  {
+                    where: {
+                      archived: false,
+                    },
+                  },
             }
         });
     }

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ProductsModel } from '@/model/ProductsModel';
 import { ProductImagesModel } from '@/model/ProductImagesModel';
-import CartApi from '@/api/cart.api';
+import CartApi from '@/api/cart.api.withAuth';
 import ImagePlaceholder from '../image.placeholder';
 import { debounce, set} from 'lodash';
 import idr from '@/lib/idrCurrency';
