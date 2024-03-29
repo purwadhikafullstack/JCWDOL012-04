@@ -5,10 +5,12 @@ interface SuccessModalProps {
   path: string;
   item: string;
   isModalOpen: boolean;
+  preventDefault: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const SuccessModal: React.FC<SuccessModalProps> = (props) => {
+  const preventDefault = props.preventDefault;
   return (
     <AnimatePresence>
       {props.isModalOpen && (
@@ -37,7 +39,8 @@ export const SuccessModal: React.FC<SuccessModalProps> = (props) => {
             <Link href={props.path}>
               <button
                 className="bg-[var(--primaryColor)] text-white px-5 py-2 border border-[var(--primaryColor)] rounded-md hover:bg-white hover:text-[var(--primaryColor)] duration-200"
-                onClick={() => {
+                onClick={(e) => {
+                  preventDefault ? e.preventDefault() : '';
                   props.setIsModalOpen(false);
                 }}
               >

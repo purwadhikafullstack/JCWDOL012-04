@@ -113,6 +113,10 @@ export default function ProductDetails({
               <div className=" w-1/2">{data.productCategory.name}</div>
             </div>
             <div className="flex text-sm mt-[5px]">
+              <div className=" w-1/2 text-gray-700">Weight</div>
+              <div className=" w-1/2">{data.weight} gram</div>
+            </div>
+            <div className="flex text-sm mt-[5px]">
               <div className=" w-1/2 text-gray-700">Minimum Purchase</div>
               <div className=" w-1/2">1 Item</div>
             </div>

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { sameProductCategory } from '@/lib/productsHelper';
-import ProductCategoryService from '@/services/product.category.service';
+import ProductCategoryService from '@/services/products/product.category.service';
 
 const productCategoryService = new ProductCategoryService();
 
@@ -102,6 +102,17 @@ export class ProductCategoryController {
     try {
       const productWarehouses =
         await productCategoryService.getProductWarehouse();
+      return res.status(200).json(productWarehouses);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getWarehouseById(req: Request, res: Response) {
+    try {
+      const warehouseId = parseInt(req.params.id);
+      const productWarehouses =
+        await productCategoryService.getWarehouseById(warehouseId);
       return res.status(200).json(productWarehouses);
     } catch (error) {
       console.log(error);

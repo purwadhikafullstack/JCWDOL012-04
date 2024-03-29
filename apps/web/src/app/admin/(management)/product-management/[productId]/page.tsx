@@ -74,6 +74,7 @@ export default function ProductDetails({
       name: product?.name || '',
       description: product?.description || '',
       price: product?.price || 0,
+      weight: product?.weight || 0,
       productCategoryId: product?.productCategoryId || 0,
       productImages: product?.productImages || [],
     },
@@ -81,6 +82,7 @@ export default function ProductDetails({
       name: Yup.string().required('Required'),
       description: Yup.string().required('Required'),
       price: Yup.number().required('Required'),
+      weight: Yup.number().required('Required'),
       productCategoryId: Yup.number().required('Required'),
       productImages: Yup.array().min(1, 'At least one image is required'),
     }),
@@ -91,6 +93,7 @@ export default function ProductDetails({
         formData.append('name', values.name || '');
         formData.append('description', values.description || '');
         formData.append('price', (values.price || 0).toString());
+        formData.append('weight', (values.weight || 0).toString());
         formData.append(
           'productCategoryId',
           (values.productCategoryId || 0).toString(),
@@ -132,6 +135,7 @@ export default function ProductDetails({
       formik.values.name !== formik.initialValues.name ||
       formik.values.description !== formik.initialValues.description ||
       formik.values.price !== formik.initialValues.price ||
+      formik.values.weight !== formik.initialValues.weight ||
       formik.values.productCategoryId !==
         formik.initialValues.productCategoryId ||
       formik.values.productImages?.some(
@@ -191,7 +195,12 @@ export default function ProductDetails({
     }
   };
   if (isAuthorLoading) return <Loading />;
-
+  if (!isAuthenticated || role === 'CUSTOMER')
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
+        Unauthorized | 401
+      </div>
+    );
   if (
     product === null ||
     warehouses.length === 0 ||
@@ -200,20 +209,13 @@ export default function ProductDetails({
     return <Loading />;
   }
 
-  if (!isAuthenticated || role === 'CUSTOMER')
-    return (
-      <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
-        Unauthorized | 401
-      </div>
-    );
-
   return (
-    <div className="w-full md:px-[20px] max-w-[1440px] mx-auto">
+    <div className="w-full p-10 md:p-0 min-h-[1300px] lg:min-h-[800px] max-w-[1440px] mx-auto">
       <form
         onSubmit={formik.handleSubmit}
         className={`${
           role === 'SUPER_ADMIN' ? '' : 'pointer-events-none'
-        } flex flex-col w-full p-10`}
+        } flex flex-col w-full`}
       >
         <div className="flex flex-col lg:flex-row w-full">
           <div id="left" className="flex flex-col lg:w-3/5 md:px-5">
@@ -287,6 +289,28 @@ export default function ProductDetails({
             </div>
             <div className="my-2">
               <label
+                htmlFor="weight"
+                className="block font-semibold text-lg mb-1"
+              >
+                Weight(g)
+              </label>
+              <input
+                type="number"
+                id="weight"
+                name="weight"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.weight}
+                className="w-full border px-3 py-2 rounded"
+              />
+              {formik.touched.weight && formik.errors.weight ? (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.weight}
+                </div>
+              ) : null}
+            </div>
+            <div className="my-2">
+              <label
                 htmlFor="productCategoryId"
                 className="block font-semibold text-lg mb-1"
               >
@@ -322,7 +346,7 @@ export default function ProductDetails({
                 <span className="text-slate-600 font-normal">(read only)</span>
               </div>
               {role === 'WAREHOUSE_ADMIN' ? (
-                <div className="flex w-[220px] space-x-3 items-end my-3">
+                <div className="flex min-w-[280px] space-x-3 items-end my-3">
                   <div className="relative w-6 h-6">
                     <Image src={'/images/icon/home.png'} fill alt="house" />
                   </div>
@@ -340,7 +364,7 @@ export default function ProductDetails({
                     return (
                       <div
                         key={index}
-                        className="flex w-[220px] space-x-3 items-end mr-3 my-2 "
+                        className="flex min-w-[280px] space-x-3 items-end mr-3 my-2"
                       >
                         <div className="relative w-6 h-6">
                           <Image
@@ -369,7 +393,7 @@ export default function ProductDetails({
                 {formik.values.productImages?.map((image, index) => (
                   <div
                     key={index}
-                    className="relative w-[60px] h-[60px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px] xl:w-[180px] xl:h-[180px] mx-[20px] my-[10px] shadow-md border rounded-md"
+                    className="relative w-[60px] h-[60px] md:w-[90px] md:h-[90px] xl:w-[150px] xl:h-[150px] 2xl:w-[180px] 2xl:h-[180px] mx-[20px] my-[10px] shadow-md border rounded-md"
                   >
                     <Image
                       src={
@@ -425,8 +449,9 @@ export default function ProductDetails({
         <SuccessModal
           isModalOpen={isModalOpen}
           item="Product Edited"
-          path="/admin/product-categories"
+          path="/admin/product-management"
           setIsModalOpen={setIsModalOpen}
+          preventDefault={false}
         />
       </form>
     </div>

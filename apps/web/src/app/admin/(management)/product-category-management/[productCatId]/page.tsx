@@ -2,12 +2,9 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/store/auth/auth.provider';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ProductCategoriesModel } from '@/model/ProductCategoriesModel';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { fetchData, updateData } from '@/utils/api';
-import Link from 'next/link';
 import { Loading } from '@/components/Loading';
 import { SuccessModal } from '@/components/admin/SuccessModal';
 
@@ -16,7 +13,6 @@ export default function ProductCategoriesUpdateForm({
 }: {
   params: { productCatId: string };
 }) {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [productCategory, setProductCategory] =
     useState<ProductCategoriesModel | null>(null);
@@ -150,8 +146,9 @@ export default function ProductCategoriesUpdateForm({
       <SuccessModal
         isModalOpen={isModalOpen}
         item="Product Category Edited"
-        path="/admin/product-categories"
+        path="/admin/product-category-management"
         setIsModalOpen={setIsModalOpen}
+        preventDefault={false}
       />
     </div>
   );

@@ -1,9 +1,12 @@
 import { Request } from 'express';
+import { join } from 'path';
 import multer from 'multer';
+
+const defaultDir = join(__dirname, '../../public');
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
-    cb(null, 'public/images/products');
+    cb(null, defaultDir + '/images/products');
   },
   filename: (req: Request, file: Express.Multer.File, cb) => {
     cb(null, new Date().getTime() + '-' + file.originalname);
