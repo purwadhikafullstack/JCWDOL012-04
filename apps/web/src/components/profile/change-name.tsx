@@ -61,6 +61,8 @@ export function ChangeNameDialog() {
         }
     }, [dialogOpen])
 
+    const noChanges = user?.firstName === formik.values.firstName && user?.lastName === formik.values.lastName
+
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
@@ -142,7 +144,7 @@ export function ChangeNameDialog() {
                             <DialogFooter>
                                 <Button
                                     type="submit"
-                                    disabled={formik.isSubmitting || auth?.isLoading}
+                                    disabled={formik.isSubmitting || auth?.isLoading || noChanges}
                                 >
                                     Save Changes
                                 </Button>

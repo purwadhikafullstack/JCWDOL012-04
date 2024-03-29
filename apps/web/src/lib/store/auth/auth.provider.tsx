@@ -91,7 +91,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             setIsLoading(true);
             verifyToken(setUser, setError, setIsLoading, undefined, path);
         }
-    }, []);
+    }, [cookie]);
 
     useEffect(() => {
         if (tokenQuery && path.includes('/auth/verify/change-email')) {
