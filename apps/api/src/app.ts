@@ -86,7 +86,7 @@ export default class App {
     this.app.use('/data', dataRouter);
     this.app.use('/shipping', shippingRouter);
     this.app.use('/warehouses', warehouseRouter);
-    this.app.use('/api/sales', reportRouter.getRouter());
+    this.app.use('/api/report', reportRouter.getRouter());
   }
 
   public start(): void {

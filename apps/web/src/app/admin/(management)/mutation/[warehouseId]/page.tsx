@@ -21,6 +21,10 @@ export default function Mutation({
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
   const isAuthorLoading = auth?.isLoading;
+  const warehouseId =
+    role === 'SUPER_ADMIN'
+      ? params.warehouseId
+      : auth?.user.data?.wareHouseAdmin_warehouseId;
   async function fetchIncomingMutations() {
     try {
       const response = await fetchData(
@@ -74,7 +78,11 @@ export default function Mutation({
     }
   };
   if (isAuthorLoading) return <Loading />;
-  if (!isAuthenticated || role === 'CUSTOMER')
+  if (
+    !isAuthenticated ||
+    role === 'CUSTOMER' ||
+    warehouseId != params.warehouseId
+  )
     return (
       <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
         Unauthorized | 401
@@ -154,60 +162,66 @@ export default function Mutation({
         <div className="text-xl font-semibold">Incoming Mutation Request</div>
         <hr className="mt-2 border-[var(--primaryColor)]" />
         <div className="flex flex-col mt-5">
-          {incomingMutations.map((incomingMutation, index) => {
-            return (
-              <div key={index} className="flex flex-col mb-6">
-                <div className="bg-gray-300 font-semibold w-[230px] rounded-tl-[2000px] rounded-tr-full pl-5 h-7 flex items-center truncate">
-                  {incomingMutation.warehouse?.name}
-                </div>
-                <div className="flex items-center justify-between h-28 md:h-16 rounded-r-full shadow border bg-gray-50 px-5">
-                  <div>{incomingMutation.product?.name}</div>
-                  <div>Qty : {incomingMutation.quantity}</div>
-                  <div>
-                    {new Date(incomingMutation.createdAt).toLocaleDateString()}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            incomingMutations.map((incomingMutation, index) => {
+              return (
+                <div key={index} className="flex flex-col mb-6">
+                  <div className="bg-gray-300 font-semibold w-[230px] rounded-tl-[2000px] rounded-tr-full pl-5 h-7 flex items-center truncate">
+                    {incomingMutation.warehouse?.name}
                   </div>
-                  {incomingMutation.isAccepted === null ? (
-                    <div className="flex flex-col space-y-1 md:space-y-0 md:flex-row items-center md:space-x-3">
-                      <div
-                        className="bg-red-600 text-white px-3 pr-5 md:pr-4 md:px-4 py-2 rounded-tr-full md:rounded-full cursor-pointer hover:opacity-70 duration-100"
-                        onClick={() => {
-                          handleMutationRequest(
-                            incomingMutation.id,
-                            incomingMutation.productId,
-                            incomingMutation.warehouseId,
-                            incomingMutation.destinationWarehouseId,
-                            false,
-                            incomingMutation.quantity,
-                          );
-                        }}
-                      >
-                        Decline
-                      </div>
-                      <div
-                        className="bg-green-600 text-white px-3 pr-5 md:pr-4 md:px-4 py-2 rounded-br-full md:rounded-full cursor-pointer hover:opacity-70 duration-100"
-                        onClick={() => {
-                          handleMutationRequest(
-                            incomingMutation.id,
-                            incomingMutation.productId,
-                            incomingMutation.warehouseId,
-                            incomingMutation.destinationWarehouseId,
-                            true,
-                            incomingMutation.quantity,
-                          );
-                        }}
-                      >
-                        Accept
-                      </div>
+                  <div className="flex items-center justify-between h-28 md:h-16 rounded-r-full shadow border bg-gray-50 px-5">
+                    <div>{incomingMutation.product?.name}</div>
+                    <div>Qty : {incomingMutation.quantity}</div>
+                    <div>
+                      {new Date(
+                        incomingMutation.createdAt,
+                      ).toLocaleDateString()}
                     </div>
-                  ) : incomingMutation.isAccepted ? (
-                    <span className="text-green-600">Accepted</span>
-                  ) : (
-                    <span className="text-red-600">Declined</span>
-                  )}
+                    {incomingMutation.isAccepted === null ? (
+                      <div className="flex flex-col space-y-1 md:space-y-0 md:flex-row items-center md:space-x-3">
+                        <div
+                          className="bg-red-600 text-white px-3 pr-5 md:pr-4 md:px-4 py-2 rounded-tr-full md:rounded-full cursor-pointer hover:opacity-70 duration-100"
+                          onClick={() => {
+                            handleMutationRequest(
+                              incomingMutation.id,
+                              incomingMutation.productId,
+                              incomingMutation.warehouseId,
+                              incomingMutation.destinationWarehouseId,
+                              false,
+                              incomingMutation.quantity,
+                            );
+                          }}
+                        >
+                          Decline
+                        </div>
+                        <div
+                          className="bg-green-600 text-white px-3 pr-5 md:pr-4 md:px-4 py-2 rounded-br-full md:rounded-full cursor-pointer hover:opacity-70 duration-100"
+                          onClick={() => {
+                            handleMutationRequest(
+                              incomingMutation.id,
+                              incomingMutation.productId,
+                              incomingMutation.warehouseId,
+                              incomingMutation.destinationWarehouseId,
+                              true,
+                              incomingMutation.quantity,
+                            );
+                          }}
+                        >
+                          Accept
+                        </div>
+                      </div>
+                    ) : incomingMutation.isAccepted ? (
+                      <span className="text-green-600">Accepted</span>
+                    ) : (
+                      <span className="text-red-600">Declined</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
       <MutationFormModal

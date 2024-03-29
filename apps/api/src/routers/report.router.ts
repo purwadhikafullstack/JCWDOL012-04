@@ -14,7 +14,8 @@ export class ReportRouter {
 
   private initializeRoutes(): void {
     this.router.get('/', this.ReportController.getMonthlySales);
-    this.router.get('/stocks', this.ReportController.getMonthlyAddHistory);
+    this.router.get('/stocks', this.ReportController.getMonthlySummary);
+    this.router.get('/products', this.ReportController.getMonthlyHistory);
   }
 
   getRouter(): Router {

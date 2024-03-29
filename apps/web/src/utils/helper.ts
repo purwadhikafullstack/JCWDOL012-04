@@ -44,3 +44,17 @@ export const months = [
   'Last 23 months',
   'Last 24 months',
 ];
+
+export function summaryDate() {
+  let arrDate = [];
+  for (let i = 0; i < 12; i++) {
+    arrDate.push(
+      `${new Date(
+        new Date().setMonth(new Date().getMonth() - (i + 1) + 1),
+      ).toLocaleDateString()} - ${new Date(
+        new Date().setMonth(new Date().getMonth() - (i + 1)),
+      ).toLocaleDateString()}`,
+    );
+  }
+  return arrDate;
+}

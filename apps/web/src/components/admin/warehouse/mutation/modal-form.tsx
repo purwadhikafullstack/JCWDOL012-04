@@ -86,7 +86,7 @@ export const MutationFormModal: React.FC<MutationModalProps> = (props) => {
 
             <motion.div
               initial={{ opacity: 0, y: -300, x: -187 }}
-              animate={{ opacity: 1, y: -250, x: -187 }}
+              animate={{ opacity: 1, y: -220, x: -187 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.2 }}
               className="fixed flex flex-col items-center space-y-5 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white w-[400px] rounded-md px-10 py-7 shadow-md z-50"

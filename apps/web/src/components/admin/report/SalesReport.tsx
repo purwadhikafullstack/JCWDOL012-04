@@ -43,13 +43,12 @@ export default function SalesReport({
     async function fetchSales() {
       try {
         const response = await fetchData(
-          `sales?warehouse=${
+          `report?warehouse=${
             role === 'WAREHOUSE_ADMIN' ? warehouseName : warehouse
           }&productCategory=${productCategory}&product=${product}&startMonth=${startMonth}&endMonth=${endMonth}`,
         );
         setSales(response.monthlySales);
         setTotal(response.revenue);
-        console.log(response);
       } catch (error) {
         console.log(error);
       }

@@ -70,26 +70,8 @@ export class ProductRouter {
       this.ProductStockController.getIncomingMutationRequest,
     );
     this.router.get(
-      '/admin/test-mutation',
-      this.AdminProductController.testAutoMutation,
-    );
-    this.router.get(
       '/admin/mutation-form/:id',
       this.ProductStockController.getProductsWarehouses,
-    );
-    this.router.patch(
-      '/admin/products/:id',
-      requireJwtAuth,
-      this.AdminProductController.updateProduct,
-    );
-    this.router.patch(
-      '/admin/mutation',
-      this.ProductStockController.processMutationRequest,
-    );
-    this.router.put(
-      '/admin/products/:id',
-      requireJwtAuth,
-      this.AdminProductController.deleteProduct,
     );
     this.router.get(
       '/admin/product-categories',
@@ -105,6 +87,28 @@ export class ProductRouter {
       requireJwtAuth,
       this.ProductCategoryController.getProductCategory,
     );
+    this.router.get(
+      '/admin/product-warehouses',
+      this.ProductCategoryController.getProductWarehouse,
+    );
+    this.router.get(
+      '/admin/product-warehouses/:id',
+      this.ProductCategoryController.getWarehouseById,
+    );
+    this.router.patch(
+      '/admin/products/:id',
+      requireJwtAuth,
+      this.AdminProductController.updateProduct,
+    );
+    this.router.patch(
+      '/admin/mutation',
+      this.ProductStockController.processMutationRequest,
+    );
+    this.router.put(
+      '/admin/products/:id',
+      requireJwtAuth,
+      this.AdminProductController.deleteProduct,
+    );
     this.router.patch(
       '/admin/product-categories/:id',
       requireJwtAuth,
@@ -114,14 +118,6 @@ export class ProductRouter {
       '/admin/product-categories/:id',
       requireJwtAuth,
       this.ProductCategoryController.deleteProductCategory,
-    );
-    this.router.get(
-      '/admin/product-warehouses',
-      this.ProductCategoryController.getProductWarehouse,
-    );
-    this.router.get(
-      '/admin/product-warehouses/:id',
-      this.ProductCategoryController.getWarehouseById,
     );
     this.router.put(
       '/admin/product-images/:id',

@@ -109,7 +109,7 @@ export class ProductStockController {
         );
         let quantity = rawQuantity - warehouseStock?.stock!;
         const excludedId = [warehouseId];
-        console.log('runned');
+        console.log(excludedId);
         do {
           const warehouses =
             await productStockService.getWarehousesExclude(excludedId);

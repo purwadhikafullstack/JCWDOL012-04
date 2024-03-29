@@ -140,7 +140,7 @@ export const SalesFilter: React.FC<SalesFilterProps> = (props) => {
             {categories.map((category, index) => {
               return (
                 <Link
-                  href={`?warehouse=${props.warehouse}&productCategory=${category.name}&product=${props.product}&startMonth=${props.startMonth}`}
+                  href={`?warehouse=${props.warehouse}&productCategory=${category.name}&startMonth=${props.startMonth}`}
                   key={index}
                   className={`${
                     category.name === props.category
@@ -187,7 +187,7 @@ export const SalesFilter: React.FC<SalesFilterProps> = (props) => {
             {products.map((product, index) => {
               return (
                 <Link
-                  href={`?warehouse=${props.warehouse}&productCategory=${props.category}&product=${product.name}&startMonth=${props.startMonth}`}
+                  href={`?warehouse=${props.warehouse}&product=${product.name}&startMonth=${props.startMonth}`}
                   key={index}
                   onClick={() => {
                     setIsOpenCat(false);
