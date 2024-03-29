@@ -27,7 +27,8 @@ export type AuthContextType = {
         initChangeRequest: (values: { email: string }) => void;
         verifyRequest: (token: string) => void;
         setNewPassword: (values: { newPassword: string }, token: string) => void;
-    }
+    };
+    clearError: () => void
 } | null;
 
 export type UserAuthType = {
@@ -54,7 +55,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const hasCookie = getCookie(cookieName);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [user, setUser] = useState<UserAuthType>(initialUserAuth);
-    const [error, setError] = useState<UserAuthErrorType>({ status: null, message: null });
+    const [error, setError] = useState<UserAuthErrorType>({ status: undefined, message: undefined });
     const path = usePathname();
     const tokenQuery = useSearchParams().get('token')
     const router = useRouter();
@@ -68,7 +69,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             setIsLoading(true);
             verifyToken(setUser, setError, setIsLoading, undefined, path);
         }
-    }, [hasCookie]);
+    }, []);
 
     useEffect(() => {
         if (tokenQuery && path.includes('/auth/verify/change-email')) {
@@ -120,7 +121,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const changeName = async (values: { firstName: string, lastName: string, password: string }) => {
         setIsLoading(true);
         await changeNameAction(values, setUser, setError, setIsLoading);
-        setIsLoading(false)
     }
 
     const changePassword = async (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => {
@@ -163,6 +163,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         },
     }
 
+    const clearError = () => {
+        setError({ status: null, message: null })
+    }
+
     return (
         <AuthContext.Provider value={
             {
@@ -180,7 +184,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 changeEmail,
                 updateEmail,
                 updateProfilePicture,
-                resetPassword
+                resetPassword,
+                clearError
             }
         }>
             {children}

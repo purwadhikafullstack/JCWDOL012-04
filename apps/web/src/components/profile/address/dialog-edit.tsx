@@ -14,13 +14,13 @@ import Maps, { LatLng } from '@/components/profile/address/maps'
 import { AddressValidationSchema, validateChangesOnEdit } from "./fom-validation"
 import { UserCitiesModel } from "@/model/UserCitiesModel"
 
-export function EditAddress({ initialAddress }: { initialAddress: UserCitiesModel & { provinceId: string | null } | null }) {
+export function EditAddress({ initialAddress }: { initialAddress: UserCitiesModel & { provinceId?: string | null } | null }) {
     const auth = useAuth()
     const address = useAddress()
     const [dialogOpen, setDialogOpen] = useState(false)
     const [RawLatLng, setRawLatLng] = useState<LatLng>(initialAddress ? { lat: Number(initialAddress.latitude), lng: Number(initialAddress.longitude) } : { lat: - 6.175211007317426, lng: 106.82715358395524 })
     const { provinces, cities } = address.data
-    console.log(address.error)
+
     const formik = useFormik({
         initialValues: {
             ...initialAddress,

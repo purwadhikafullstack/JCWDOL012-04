@@ -130,9 +130,8 @@ export async function changeEmail(
 export async function updateProfilePicture(
   req: Request,
   res: Response,
-  next: NextFunction,
 ) {
-  console.log('here');
+  return resInternalServerError(res, "Errorrrrr", null)
   const user = req.user as Users;
   const file = req.file;
   if (!file) return resUnprocessable(res, 'File is not acceptable', null);

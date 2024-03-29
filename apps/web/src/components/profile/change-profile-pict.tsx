@@ -21,7 +21,6 @@ import { useEffect, useState } from "react"
 export default function ChangeProfilePictDialog() {
     const [dialogOpen, setDialogOpen] = useState(false)
     const auth = useAuth()
-    const user = useAuth()?.user?.data
     const SUPPORTED_FORMATS = "image/jpeg, image/png, image/gif, image/jpg"
     const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1MB
 
@@ -76,6 +75,9 @@ export default function ChangeProfilePictDialog() {
                             </div>
                             {formik.errors.file && formik.touched.file
                                 ? (<div className=" text-red-500 text-xs">{formik.errors.file as string} </div>)
+                                : null}
+                            {auth?.error.status
+                                ? <div className=" text-red-500 text-xs">{auth.error?.message}</div>
                                 : null}
                             <DialogFooter className="mt-4">
                                 <Button type="submit" disabled={Boolean(formik.errors.file) || auth?.isLoading || formik.isSubmitting}>Save Changes</Button>

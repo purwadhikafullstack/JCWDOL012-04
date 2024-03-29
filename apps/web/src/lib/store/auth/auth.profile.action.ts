@@ -24,13 +24,11 @@ export async function changeNameAction(
             clientSideRedirect('/profile')
         })
         .catch((error) => {
-            console.log(error.response.status)
             if (error.response.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
                 setError({ status: error.response.status, message: error.response.data })
                 clientSideRedirect('/auth/login')
             } else if (error.response.status === 422 || error.response.status === 500) {
-                console.log("here")
                 setError({ status: error.response.status, message: error.response.data.msg })
             } else {
                 setLoadingState(false)
@@ -73,7 +71,7 @@ export async function changeEmailAction(
 ) {
     await profile.post('request-change-email', values)
         .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
+            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response?.data?.data?.user }))
             setLoadingState ? () => setLoadingState(false) : null
             clientSideRedirect('/profile')
         })
@@ -106,10 +104,10 @@ export async function updateEmailAction(
         .catch((error) => {
             if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
+                setError({ status: error.response.status, message: error.response?.data })
                 clientSideRedirect('/auth/login?origin=401')
             } else if (error?.response?.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
+                setError({ status: error.response.status, message: error.response.data?.msg })
             } else {
                 setLoadingState ? setLoadingState(false) : null
                 throw new Error('An unhandled error occured')

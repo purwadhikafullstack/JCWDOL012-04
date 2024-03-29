@@ -47,11 +47,18 @@ export function ChangeNameDialog() {
     })
 
     useEffect(() => {
-        dialogOpen && formik.setValues({
-            firstName: user?.firstName!,
-            lastName: user?.lastName!,
-            password: ''
-        })
+        if (dialogOpen) {
+            formik.setValues({
+                firstName: user?.firstName!,
+                lastName: user?.lastName!,
+                password: ''
+            })
+
+        }
+        if (!dialogOpen) {
+            formik.resetForm()
+            auth?.clearError()
+        }
     }, [dialogOpen])
 
     return (
@@ -133,11 +140,15 @@ export function ChangeNameDialog() {
                                     : null}
                             </div>
                             <DialogFooter>
-                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading}>Save changes</Button>
+                                <Button
+                                    type="submit"
+                                    disabled={formik.isSubmitting || auth?.isLoading}
+                                >
+                                    Save Changes
+                                </Button>
                             </DialogFooter>
                         </div>
-                    </form>)
-                }
+                    </form>)}
             </DialogContent>
         </Dialog>
     )
