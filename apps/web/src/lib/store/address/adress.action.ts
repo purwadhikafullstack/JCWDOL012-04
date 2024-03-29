@@ -118,8 +118,6 @@ function handleError(
 ) {
     const errorStatus = error.response?.status
     const errorMessage = error.response?.data.message || error.response?.data.msg
-    console.log(errorMessage, errorStatus)
-    console.log(setError)
     if (errorStatus === 401) {
         setError({ status: errorStatus, message: errorMessage })
     } else if (errorStatus === 422 || errorStatus === 500) {

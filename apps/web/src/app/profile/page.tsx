@@ -16,7 +16,6 @@ export default function ProfilePage() {
     const origin = useSearchParams().get('tab')
     const defaultTab = origin === 'address' ? 'address' : 'account'
     const auth = useAuth()
-    console.log(auth?.user)
 
     if (auth?.isLoading && defaultTab === 'account') return <AccountTabSkelLoading />
     if (auth?.isLoading && defaultTab === 'address') return <AddressTabSkelLoading />

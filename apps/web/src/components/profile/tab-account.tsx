@@ -22,7 +22,6 @@ import Spinner from "../ui/spinner"
 export default function TabAccount() {
     const auth = useAuth()
     const user = auth?.user?.data
-    console.log(auth?.error)
     const BASE_IMAGE_URL = process.env.NEXT_PUBLIC_BASE_IMAGE_URL
     if (!BASE_IMAGE_URL) throw new Error('BASE_IMAGE_URL is not defined')
 
