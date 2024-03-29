@@ -160,9 +160,9 @@ export function AddAddress() {
                                 </div>
                             </div>
                             <div>
-                                {auth?.error?.status
+                                {address?.error?.status
                                     ? (<div className="text-red-500 text-xs">
-                                        {auth.error?.message ? auth.error?.message : 'An Error occured. Something went wrong'}
+                                        {address.error?.message ? address.error?.message : 'An Error occured. Something went wrong'}
                                     </div>)
                                     : null}
                             </div>
