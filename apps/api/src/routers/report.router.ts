@@ -13,9 +13,17 @@ export class ReportRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.get('/', this.ReportController.getMonthlySales);
-    this.router.get('/stocks', this.ReportController.getMonthlySummary);
-    this.router.get('/products', this.ReportController.getMonthlyHistory);
+    this.router.get('/', requireJwtAuth, this.ReportController.getMonthlySales);
+    this.router.get(
+      '/stocks',
+      requireJwtAuth,
+      this.ReportController.getMonthlySummary,
+    );
+    this.router.get(
+      '/products',
+      requireJwtAuth,
+      this.ReportController.getMonthlyHistory,
+    );
   }
 
   getRouter(): Router {

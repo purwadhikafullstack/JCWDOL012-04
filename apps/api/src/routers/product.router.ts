@@ -39,6 +39,7 @@ export class ProductRouter {
     );
     this.router.post(
       '/admin/mutation',
+      requireJwtAuth,
       this.ProductStockController.createMutationRequest,
     );
     this.router.get('/products', this.ProductController.getProductsUser);
@@ -63,14 +64,17 @@ export class ProductRouter {
     );
     this.router.get(
       '/admin/mutation/:id',
+      requireJwtAuth,
       this.ProductStockController.getMutationRequest,
     );
     this.router.get(
       '/admin/incoming-mutation/:id',
+      requireJwtAuth,
       this.ProductStockController.getIncomingMutationRequest,
     );
     this.router.get(
       '/admin/mutation-form/:id',
+      requireJwtAuth,
       this.ProductStockController.getProductsWarehouses,
     );
     this.router.get(
@@ -89,10 +93,12 @@ export class ProductRouter {
     );
     this.router.get(
       '/admin/product-warehouses',
+      requireJwtAuth,
       this.ProductCategoryController.getProductWarehouse,
     );
     this.router.get(
       '/admin/product-warehouses/:id',
+      requireJwtAuth,
       this.ProductCategoryController.getWarehouseById,
     );
     this.router.patch(
@@ -102,6 +108,7 @@ export class ProductRouter {
     );
     this.router.patch(
       '/admin/mutation',
+      requireJwtAuth,
       this.ProductStockController.processMutationRequest,
     );
     this.router.put(

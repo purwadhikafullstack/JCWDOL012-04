@@ -172,7 +172,7 @@ model ProductsWarehouses {
 }
 
 enum paymentType {
-  PAYMENTGATEWAY
+  PAYMENT_GATEWAY
   TRANSFER
 }
 

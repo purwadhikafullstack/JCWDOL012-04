@@ -20,7 +20,7 @@ export default class ReportService {
       where: {
         transaction: {
           archived: false,
-          orderStatus: 'SENT' || 'CONFIRMED',
+          orderStatus: 'SHIPPING' || 'CONFIRMED',
           warehouse: {
             name: {
               contains: warehouse,
@@ -61,7 +61,7 @@ export default class ReportService {
       where: {
         transaction: {
           archived: false,
-          orderStatus: 'SENT' || 'CONFIRMED',
+          orderStatus: 'SHIPPING' || 'CONFIRMED',
           warehouse: {
             name: {
               contains: warehouse,
@@ -184,12 +184,36 @@ export default class ReportService {
                 contains: warehouse,
               },
             },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
+            },
           },
           {
             destinationWarehouse: {
               name: {
                 contains: warehouse,
               },
+            },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
             },
           },
         ],
@@ -244,12 +268,36 @@ export default class ReportService {
                 contains: warehouse,
               },
             },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
+            },
           },
           {
             destinationWarehouse: {
               name: {
                 contains: warehouse,
               },
+            },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
             },
           },
         ],
