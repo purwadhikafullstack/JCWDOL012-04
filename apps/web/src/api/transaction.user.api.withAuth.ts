@@ -154,7 +154,6 @@ export default class TransactionApi {
         }).then((response) => {
             const status = response.status;
             const data = response.data;
-            console.log(JSON.stringify(response.data));
             return { status, data };
         }).catch((error) => {
             console.log(error);
@@ -178,7 +177,6 @@ export default class TransactionApi {
         }).then((response) => {
             const status = response.status;
             const data = response.data;
-            console.log(JSON.stringify(response.data));
             return { status, data };
         }).catch((error) => {
             console.log(error);

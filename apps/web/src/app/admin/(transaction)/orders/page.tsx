@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { TransactionsModel } from "@/model/TransactionsModel";
 import TransactionApi from "@/api/transaction.user.api.withAuth";
+import TransactionWarehouseApi from "@/api/transaction.warehouse.api";
 import idr from "@/lib/idrCurrency";
 import { ProductsModel } from "@/model/ProductsModel";
-import { ProductCategoriesModel } from "@/model/ProductCategoriesModel";
+import { WarehousesModel } from "@/model/WarehousesModel";
 import { OrderStatusModel } from "@/model/OrderStatusModel";
 import { date_format } from "@/lib/date.format";
 import ImagePlaceholder from "@/components/image.placeholder";
@@ -14,11 +15,14 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 import { useUpdateCart } from "@/lib/cart.provider.update";
 
+
 export default function TransactionHistory() {
     const updateCart = useUpdateCart();
     const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState<TransactionsModel[]>([]);
-    const [searchByOrderIdTerm, setsearchByOrderIdTerm] = useState('');
+    const [searchByOrderIdTerm, setSearchByOrderIdTerm] = useState('');
+    const [warehouses, setWarehouses] = useState<WarehousesModel[]>([]);
+    const [warehouseTerm, setWarehouseTerm] = useState<number>();
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [orderStatus, setOrderStatus] = useState<OrderStatusModel[]>([]);
@@ -26,11 +30,11 @@ export default function TransactionHistory() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const transactionApi = new TransactionApi();
+    const transactionWarehouseApi = new TransactionWarehouseApi();
     const router = useRouter();
     const auth = useAuth();
     const isAuthenticated = auth?.user?.isAuthenticated;
     const role = auth?.user?.data?.role;
-    // const isAuthorLoading = auth?.isLoading;
 
     useEffect(() => {
         updateCart();
@@ -46,6 +50,12 @@ export default function TransactionHistory() {
             console.log(error);
         });
 
+        transactionWarehouseApi.getAllWarehouses().then((response) => {
+            setWarehouses(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+
         setLoading(false);
     }, []);
 
@@ -57,7 +67,7 @@ export default function TransactionHistory() {
         )
     }
 
-    if (!isAuthenticated || (role !== 'SUPER_ADMIN' && role!=="WAREHOUSE_ADMIN")) {
+    if (!isAuthenticated || (role !== 'SUPER_ADMIN' && role !== "WAREHOUSE_ADMIN")) {
         return (
             <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
                 Unauthorized | 401
@@ -65,17 +75,18 @@ export default function TransactionHistory() {
         )
     }
 
-    
+
 
     let filteredTransactions = transactions;
 
-    if (searchByOrderIdTerm!=='' ||  startDate || endDate || orderStatusTerm) {
+    if (searchByOrderIdTerm !== '' || startDate || endDate || orderStatusTerm || warehouseTerm) {
         filteredTransactions = transactions.filter(transaction => {
             const orderIdMatch = transaction.transactionUid.toLowerCase().includes(searchByOrderIdTerm.toLowerCase());
             const dateMatch = (!startDate || new Date(transaction.createdAt) >= startDate) &&
                 (!endDate || new Date(transaction.createdAt) <= endDate);
             const orderStatusMatch = orderStatusTerm ? transaction.orderStatus === orderStatusTerm : true;
-            return orderIdMatch && dateMatch && orderStatusMatch;
+            const warehouseMatch = warehouseTerm ? transaction.warehouseId === warehouseTerm : true;
+            return orderIdMatch && dateMatch && orderStatusMatch && warehouseMatch;
         });
     }
 
@@ -92,10 +103,22 @@ export default function TransactionHistory() {
                         <input
                             type="text"
                             value={searchByOrderIdTerm}
-                            onChange={e => setsearchByOrderIdTerm(e.target.value)}
+                            onChange={e => setSearchByOrderIdTerm(e.target.value)}
                             placeholder="Search by order-id"
                             className="rounded-xl p-2"
                         />
+                        {role == "SUPER_ADMIN" &&
+                            <select
+                                value={warehouseTerm}
+                                onChange={e => setWarehouseTerm(parseInt(e.target.value))}
+                                className="rounded-xl p-2 min-w-56"
+                            >
+                                <option value="">Warehouse</option>
+                                {warehouses.map(warehouse => (
+                                    <option key={warehouse.id} value={warehouse.id}>{warehouse.name}</option>
+                                ))}
+                            </select>
+                        }
                         <input
                             type="date"
                             value={startDate?.toISOString().substr(0, 10) || ''}
@@ -148,7 +171,7 @@ export default function TransactionHistory() {
                                             <div className="px-6 py-2">
                                                 <p className="">{product.name}</p>
                                                 <p className="mr-2 text-sm text-gray-500">{transactionProduct.quantity} {transactionProduct.quantity > 1 ? 'items' : 'item'} x {idr(product.price ?? 0)}</p>
-                                                {transactionProducts.length>1 && <a href={`/orders/${transaction.transactionUid}`} className="text-sm text-gray-500 hover:underline">+ {transactionProducts.length-1} other {transactionProducts.length>2?"products":"product"}</a>}
+                                                {transactionProducts.length > 1 && <a href={`/orders/${transaction.transactionUid}`} className="text-sm text-gray-500 hover:underline">+ {transactionProducts.length - 1} other {transactionProducts.length > 2 ? "products" : "product"}</a>}
                                             </div>
                                         </div>
                                         <div>
@@ -166,14 +189,14 @@ export default function TransactionHistory() {
                 <button
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className={filteredTransactions.length>10?'border border-[var(--primaryColor)] rounded-xl p-2 mt-2 hover:bg-[var(--primaryColor)] hover:text-white':'hidden'}
+                    className={filteredTransactions.length > 10 ? 'border border-[var(--primaryColor)] rounded-xl p-2 mt-2 hover:bg-[var(--primaryColor)] hover:text-white' : 'hidden'}
                 >
                     Previous
                 </button>
                 <button
                     disabled={currentPage === Math.ceil(filteredTransactions.length / itemsPerPage)}
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className={filteredTransactions.length>10?'border border-[var(--primaryColor)] rounded-xl p-2 mt-2 hover:bg-[var(--primaryColor)] hover:text-white':'hidden'}
+                    className={filteredTransactions.length > 10 ? 'border border-[var(--primaryColor)] rounded-xl p-2 mt-2 hover:bg-[var(--primaryColor)] hover:text-white' : 'hidden'}
                 >
                     Next
                 </button>

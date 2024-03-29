@@ -153,10 +153,12 @@ export class ProductStockController {
             const destinationStock = destinationWarehouse?.stock! - quantity;
             const sourceStock = sourceWarehouse?.stock! + quantity;
             quantity = 0;
+            console.log("line 156")
             await productStockService.updateStock(
               sourceWarehouse?.id!,
               sourceStock,
             );
+            console.log("line 160")
             await productStockService.updateStock(
               destinationWarehouse?.id!,
               destinationStock,

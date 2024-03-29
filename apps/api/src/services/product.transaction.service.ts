@@ -6,8 +6,17 @@ export default class ProductTransactionService {
     async getById(id: number): Promise<Products | null> {
         return await prisma.products.findUnique({
             where: {
-                id: id
+                id: id,
+                archived: false
+            },
+            include: {
+                productImages:  {
+                    where: {
+                      archived: false,
+                    },
+                  },
             }
+            
         });
     }
 

@@ -10,7 +10,7 @@ export async function getUserAddresses(req: Request, res: Response) {
         const addresses = await prisma.userCities.findMany({
             where: {
                 userId: user.id,
-                archived: false
+                archieved: false
             },
             orderBy: [
                 { isPrimaryAddress: 'desc' },
@@ -29,7 +29,7 @@ export async function getUserAddresses(req: Request, res: Response) {
 
 export async function addAddress(req: Request, res: Response) {
     const user = req.user as Users;
-    const { isPrimaryAddress, cityId, address, latitude, longitude, label, archived } = req.body;
+    const { isPrimaryAddress, cityId, address, latitude, longitude, label, archieved } = req.body;
     try {
         if (isPrimaryAddress) {
             const newAddress = await prisma.$transaction([
@@ -49,7 +49,7 @@ export async function addAddress(req: Request, res: Response) {
                         latitude,
                         longitude,
                         label,
-                        archived,
+                        archieved,
                         isPrimaryAddress
                     }
                 })
@@ -64,7 +64,7 @@ export async function addAddress(req: Request, res: Response) {
                     latitude,
                     longitude,
                     label,
-                    archived,
+                    archieved,
                 },
             });
             resSuccess(res, 'Address added successfully', newAddress, 1);
@@ -79,15 +79,15 @@ export async function archieveAddress(req: Request, res: Response) {
     const user = req.user as Users;
     const { id } = req.params;
     try {
-        const archivedAddress = await prisma.userCities.update({
+        const archievedAddress = await prisma.userCities.update({
             where: {
                 id: parseInt(id)
             },
             data: {
-                archived: true
+                archieved: true
             }
         });
-        resSuccess(res, 'Address archived successfully', archivedAddress, 1);
+        resSuccess(res, 'Address archieved successfully', archievedAddress, 1);
     } catch (error) {
         console.error('Error archieving user address', error);
         resInternalServerError(res, 'Error archieving user address', null);
@@ -125,7 +125,7 @@ export async function setAsPrimaryAddress(req: Request, res: Response) {
 
 export async function updateAddress(req: Request, res: Response) {
     const user = req.user as Users;
-    const { isPrimaryAddress, cityId, address, latitude, longitude, label, archived } = req.body;
+    const { isPrimaryAddress, cityId, address, latitude, longitude, label, archieved } = req.body;
     const { id } = req.params;
     try {
         if (isPrimaryAddress) {
@@ -143,7 +143,7 @@ export async function updateAddress(req: Request, res: Response) {
                         latitude,
                         longitude,
                         label,
-                        archived,
+                        archieved,
                         isPrimaryAddress,
                         cityId: parseInt(cityId)
                     }
@@ -158,7 +158,7 @@ export async function updateAddress(req: Request, res: Response) {
                     latitude,
                     longitude,
                     label,
-                    archived,
+                    archieved,
                     cityId: parseInt(cityId)
                 }
             });

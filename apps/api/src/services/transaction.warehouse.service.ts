@@ -7,7 +7,11 @@ export default class TransactionWarehouseService {
     }
 
     async getAll(){
-        return await this.prisma.warehouses.findMany();
+        return await this.prisma.warehouses.findMany({
+            where: {
+                archived: false
+            }
+        });
     }
 
     async getById(id:number){

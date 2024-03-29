@@ -8,6 +8,9 @@ import Timeline from "@/components/transaction/timeline";
 import TransactionProductDetail from "@/components/transaction/detail.product";
 import idr from "@/lib/idrCurrency";
 import { useUpdateCart } from "@/lib/cart.provider.update";
+import { TransactionProductWithStockModel } from "@/model/TransactionProductWithStockModel";
+import { TransactionsProductsModel } from "@/model/TransactionsProductsModel";
+import TransactionProductApi from "@/api/transaction.product.api";
 
 export default function TransactionDetail({ params }: { params: { orderId: string } }) {
     const updateCart = useUpdateCart();
@@ -15,10 +18,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     const [update, setUpdate] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
     const [status, setStatus] = useState<number>(0);
+    const [transactionProductsWithStock, setTransactionProductsWithStock] = useState<TransactionProductWithStockModel[]>([]);
     const [isTimelineOpen, setIsTimelineOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-    const [isPaymentProofOpen, setIsPaymentProofOpen] = useState<boolean>(false);
+    const [isStockEnough, setIsStockEnough] = useState<boolean>(true);
     const transactionApi = new TransactionApi();
+    const transactionProductApi = new TransactionProductApi();
     const auth = useAuth();
     const isAuthenticated = auth?.user?.isAuthenticated;
     const role = auth?.user?.data?.role;
@@ -44,6 +49,37 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         return () => clearTimeout(timeoutId);
     }, [update, params.orderId]);
 
+
+    useEffect(() => {
+        if (transaction && transaction.products) {
+            const transactionsProductList:TransactionsProductsModel[] = transaction.products;
+            if (transactionsProductList && transactionsProductList.length > 0) {
+                transactionProductApi.getAllTransactionProductsWithStock(transactionsProductList, transaction.warehouseId)
+                    .then((res) => {
+                        if (res.status === 200) {
+                            setTransactionProductsWithStock(res.data);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+        }
+    }, [transaction]);
+
+    useEffect(() => {
+        if (transactionProductsWithStock) {
+            let flag = true;
+            transactionProductsWithStock.forEach((item) => {
+                if (item.stock < item.quantity) {
+                    flag=false;
+                }
+            });
+            setIsStockEnough(flag);
+        }
+    }, [transactionProductsWithStock, update, isStockEnough]);
+
+
     if (loading) {
         return (
             <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
@@ -60,11 +96,15 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         )
     }
 
+    async function handleUpdate(){
+        setUpdate(!update);
+    }
+
     async function handleCancelOrder() {
         if (transaction) {
             const res = await transactionApi.cancelOrder(transaction.transactionUid);
             if (res.status == 200) {
-                setUpdate(!update);
+                handleUpdate();
             }
         }
     }
@@ -73,7 +113,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         if(transaction) {
             const res = await transactionApi.verifyPayment(transaction.transactionUid);
             if (res.status == 200) {
-                setUpdate(!update);
+                handleUpdate();
             }
         }
     }
@@ -82,7 +122,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         if(transaction) {
             const res = await transactionApi.denyPayment(transaction.transactionUid);
             if (res.status == 200) {
-                setUpdate(!update);
+                handleUpdate();
             }
         }
     }
@@ -91,7 +131,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         if(transaction) {
             const res = await transactionApi.processOrder(transaction.transactionUid)
             if (res.status == 200) {
-                setUpdate(!update);
+                handleUpdate();
             }
         }
     }
@@ -100,7 +140,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         if(transaction) {
             const res = await transactionApi.shipOrder(transaction.transactionUid)
             if (res.status == 200) {
-                setUpdate(!update);
+                handleUpdate();
             }
         }
     }
@@ -113,7 +153,6 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                 </div>
             )
         }
-
 
         return (
             <div className="px-[24px] h-fit mx-16 mt-5 overflow-auto">
@@ -148,12 +187,15 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                             </div>
                         </div>
                         <div className="mt-5">
-                            <TransactionProductDetail transaction={transaction} />
+                            <TransactionProductDetail handleUpdate={handleUpdate} transaction={transaction} transactionProductWithStock={transactionProductsWithStock} />
                         </div>
                         <div className="mt-5">
                             <div className="border border-[var(--lightPurple)] p-2 rounded-xl">
                                 <h2 className="text-xl font-semibold">Shipping Address</h2>
                                 <hr className="my-2" />
+                                <p className="font-semibold">from</p>
+                                <p>{transaction.warehouse?.name ?? "placeholder_warehouse_name"}</p>
+                                <p className="font-semibold">to</p>
                                 <p>{transaction.shippingAddress?.address}</p>
                             </div>
                         </div>
@@ -202,8 +244,8 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                     <div className="flex flex-col gap-2 rounded-xl px-5 md:max-w-72 2xl:min-w-72 md:my-0 my-5">
 
                         {(transaction.orderStatus == "VERIFIED") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleProcessOrder}>Process Order</button>)}
-                        {(transaction.orderStatus == "PROCESSING") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleShippingOrder}>Ship Order</button>)}
-                        {(transaction.orderStatus != "SHIPPING" && transaction.orderStatus != "CONFIRMED" && transaction.orderStatus != "FAILED_PAYMENT") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleCancelOrder}>Cancel Order</button>)}
+                        {(transaction.orderStatus == "PROCESSING") && (<button className={isStockEnough ?"bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] text-white rounded-xl p-2":"bg-gray-400 rounded-xl p-2"} onClick={handleShippingOrder} disabled={!isStockEnough} >Ship Order</button>)}
+                        {(transaction.orderStatus != "CANCELLED" && transaction.orderStatus != "SHIPPING" && transaction.orderStatus != "CONFIRMED" && transaction.orderStatus != "FAILED_PAYMENT") && (<button className="bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handleCancelOrder}>Cancel Order</button>)}
 
                     </div>
                 </div>

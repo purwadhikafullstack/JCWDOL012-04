@@ -4,6 +4,7 @@ import UserCitiesTransactionService from "@/services/transaction.userCities.serv
 import MutationOrderService from "@/services/transaction.mutation.service";
 import TransactionWarehouseService from "@/services/transaction.warehouse.service";
 import ProductTransactionService from "@/services/product.transaction.service";
+import TransactionMutationService from "@/services/transaction.mutation.service";
 import { TransactionsCreateModel } from "@/model/transaction.create.model";
 import { transactionProductCreateModel } from "@/model/transaction.product.create.model";
 import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
@@ -11,8 +12,10 @@ import distance from "@/lib/distance";
 import { Transactions, TransactionsProducts, mutationType, Users, UserCities, paymentType, ShoppingCart, Warehouses, orderStatus } from "@prisma/client";
 import { Request, Response } from "express";
 import { midtransRequest } from "@/model/transaction.midtrans.create.model";
+import { ProductStockController } from "./products/product.stock.controller";
 import fs from 'fs';
 import path from 'path';
+import productCheck from "@/lib/product.check";
 
 type transactionData = {
     userId: number,
@@ -29,6 +32,8 @@ export default class TransactionController {
     UserCitiesTransactionService: UserCitiesTransactionService;
     TransactionWarehouseService: TransactionWarehouseService;
     ProductTransactionService: ProductTransactionService;
+    ProductStockController: ProductStockController;
+    TransactionMutationService: TransactionMutationService;
     constructor() {
         this.TransactionService = new TransactionService();
         this.TransactionProductService = new TransactionProductService();
@@ -36,6 +41,22 @@ export default class TransactionController {
         this.UserCitiesTransactionService = new UserCitiesTransactionService();
         this.TransactionWarehouseService = new TransactionWarehouseService();
         this.ProductTransactionService = new ProductTransactionService();
+        this.ProductStockController = new ProductStockController();
+        this.TransactionMutationService = new TransactionMutationService();
+    }
+
+    async requestStock(req: Request, res: Response): Promise<void> {
+        const warehouseId = req.body.warehouseId;
+        const productId = req.body.productId;
+        const transactionId = req.body.transactionId;
+        const rawQuantity = req.body.rawQuantity;
+        await this.ProductStockController.automatedMutation(warehouseId, productId, transactionId, rawQuantity)
+            .then((result) => {
+                res.status(200).json(result);
+            }).catch((error) => {
+                res.status(500).json({ message: "Internal server error" });
+            });
+
     }
 
     async getAll(req: Request, res: Response): Promise<void> {
@@ -53,9 +74,9 @@ export default class TransactionController {
         if (user.role == "WAREHOUSE_ADMIN" && user.wareHouseAdmin_warehouseId != null) {
             transactions = await this.TransactionService.getAllTransactionAdminWarehouse(user.wareHouseAdmin_warehouseId);
         }
-        if(transactions.length === 0){
-            res.status(404).json({ message: "Transaction not found" });return;
-        }else{
+        if (transactions.length === 0) {
+            res.status(404).json({ message: "Transaction not found" }); return;
+        } else {
             res.status(200).json(transactions);
         }
     }
@@ -86,7 +107,7 @@ export default class TransactionController {
     async getTransactionByUidAdmin(req: Request, res: Response): Promise<void> {
         const user = req.user as Users;
         const transactionUid = req.params.transactionUid;
-        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        const transaction = await this.TransactionService.getByTransactionUidAdmin(transactionUid);
         if (transaction != null && (user.role === "SUPER_ADMIN" || (user.role === "WAREHOUSE_ADMIN" && user.wareHouseAdmin_warehouseId === transaction.warehouseId))) {
             res.status(200).json(transaction);
         } else {
@@ -255,7 +276,6 @@ export default class TransactionController {
     async handlePaymentGatewayNotif(req: Request, res: Response) {
         const status = req.body.transaction_status;
         const transactionUid = req.body.order_id;
-        console.log(JSON.stringify(req.body));
         const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
         if (transaction != null) {
             let updatedTransaction: Transactions | null = null;
@@ -388,16 +408,36 @@ export default class TransactionController {
 
     //not done
     async shipOrder(req: Request, res: Response): Promise<void> {
-        // const transactionUid = req.body.transactionUid;
-        // const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
-        // if (transaction != null) {
-        //     const updatedTransaction = await this.TransactionService.shipOrder(transactionUid);
-        //     if (updatedTransaction != null) {
-        //         res.status(200).json(updatedTransaction);
-        //     }
-        // } else {
-        //     res.status(404).json({ message: "Transaction not found" });
-        // }
+        const transactionUid = req.body.transactionUid;
+        const transaction = await this.TransactionService.getByTransactionUid(transactionUid);
+        if (transaction != null) {
+            const transactionProducts = await this.TransactionProductService.getByTransactionId(transaction.id);
+            const mutationDataList: MutationCreateModel[] = [];
+            if (transactionProducts != null) {
+                for (const transactionProduct of transactionProducts) {
+                    const mutationData: MutationCreateModel = {
+                        transactionId: transaction.id,
+                        productId: transactionProduct.productId,
+                        warehouseId: transaction.warehouseId,
+                        isAdd: false,
+                        quantity: transactionProduct.quantity,
+                        mutationType: "TRANSACTION"
+                    }
+                    mutationDataList.push(mutationData);
+                }
+                const product = await this.TransactionMutationService.createShipment(mutationDataList);
+                if (product) {
+                    const updatedTransaction = await this.TransactionService.shipTransaction(transactionUid);
+                    if (updatedTransaction != null) {
+                        res.status(200).json(updatedTransaction);
+                    }
+                }
+            } else {
+                res.status(404).json({ message: "Transaction not found" });
+            }
+        }else{
+            res.status(500).json({message: "Internal server error"});
+        }
     }
 
 }

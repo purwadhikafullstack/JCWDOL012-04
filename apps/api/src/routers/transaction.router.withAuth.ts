@@ -1,12 +1,15 @@
 import { Request, Response, Router } from "express";
 import TransactionController from '../controllers/transaction.controller.withAuth';
+import TransactionWarehouseController from "@/controllers/transaction.warehouse.controller";
+import TransactionProductController from "@/controllers/transaction.product.controller";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
 import { uploadPaymentProof } from "@/lib/payment.proof.multer";
-import cors from 'cors';
 
 const transactionRouter = Router();
 
 const transactionController = new TransactionController();
+const transactionWarehouseController = new TransactionWarehouseController();
+const transactionProductController = new TransactionProductController();
 
 transactionRouter.get('/address', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.getUsersByUserId(req, res);
@@ -26,6 +29,10 @@ transactionRouter.get('/', requireJwtAuth, (req: Request, res: Response): void =
 
 transactionRouter.get('/admin', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.getAllForAdmin(req, res);
+});
+
+transactionRouter.get('/admin/warehouses', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionWarehouseController.getAll(req, res);
 });
 
 transactionRouter.get('/orderstatus', requireJwtAuth, (req: Request, res: Response): void => {
@@ -74,6 +81,14 @@ transactionRouter.post('/admin/orders/process', requireJwtAuth, (req: Request, r
 
 transactionRouter.post('/admin/orders/ship', requireJwtAuth, (req: Request, res: Response): void => {
     transactionController.shipOrder(req, res);
+});
+
+transactionRouter.post('/productsWithStock', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionProductController.getAllProductsWithStock(req, res);
+});
+
+transactionRouter.post('/admin/requestStock', requireJwtAuth, (req: Request, res: Response): void => {
+    transactionController.requestStock(req, res);
 });
 
 export default transactionRouter;

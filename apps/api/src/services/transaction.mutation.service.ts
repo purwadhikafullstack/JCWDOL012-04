@@ -2,7 +2,7 @@ import { prisma } from "./prisma.service";
 import { Mutations, mutationType } from "@prisma/client";
 import { MutationCreateModel } from "@/model/transaction.mutation.create.model";
 
-export default class MutationOrderService {
+export default class TransactionMutationService {
     async create(mutationOrder: Mutations): Promise<Mutations> {
         return await prisma.mutations.create({
             data: mutationOrder

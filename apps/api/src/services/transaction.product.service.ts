@@ -1,10 +1,48 @@
 import { prisma } from "./prisma.service";
-import { ProductCategories, TransactionsProducts } from "@prisma/client";
+import { ProductCategories, TransactionsProducts, Products } from "@prisma/client";
 
 export default class TransactionProductService {
-    async create(transactionProduct:any ): Promise<TransactionsProducts> {
+    async create(transactionProduct: any): Promise<TransactionsProducts> {
         return await prisma.transactionsProducts.create({
             data: transactionProduct
+        });
+    }
+
+    async getGlobalStockbyProductId(productId: number): Promise<any> {
+        return await prisma.productsWarehouses.aggregate({
+            _sum: {
+                stock: true
+            },
+            where: {
+                productId: productId,
+                archived:false
+            },
+        });
+    }
+
+    async getProductWarehouseByProductId(ProductId: number, warehouseId:number): Promise<any> {
+        return await prisma.productsWarehouses.findFirst({
+            where: {
+                productId: ProductId,
+                warehouseId: warehouseId,
+                archived: false
+            }
+        });
+    }
+
+    async getProductById(productId: number): Promise<Products | null> {
+        return await prisma.products.findUnique({
+            where: {
+                id: productId,
+                archived: false
+            },
+            include: {
+                productImages: {
+                    where: {
+                      archived: false,
+                    },
+                  }
+            }
         });
     }
 

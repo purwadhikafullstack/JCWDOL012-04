@@ -23,7 +23,15 @@ export default class TransactionService {
             include: {
                 products: {
                     include: {
-                        product: true
+                        product: {
+                            include: {
+                                productImages: {
+                                    where: {
+                                        archived: false,
+                                    },
+                                },
+                            }
+                        }
                     }
                 },
                 mutations: true
@@ -42,7 +50,15 @@ export default class TransactionService {
             include: {
                 products: {
                     include: {
-                        product: true
+                        product: {
+                            include: {
+                                productImages: {
+                                    where: {
+                                        archived: false,
+                                    },
+                                },
+                            }
+                        }
                     }
                 },
                 mutations: true
@@ -67,14 +83,22 @@ export default class TransactionService {
                 shippingAddress: true,
                 products: {
                     include: {
-                        product: true
+                        product: {
+                            include: {
+                                productImages: {
+                                    where: {
+                                        archived: false,
+                                    },
+                                },
+                            }
+                        }
                     }
                 }
             }
         });
     }
 
-    async getLatestTransactionUid(userId:number): Promise<string> {
+    async getLatestTransactionUid(userId: number): Promise<string> {
         return await prisma.transactions.findFirst({
             where: {
                 userId: userId
@@ -93,6 +117,11 @@ export default class TransactionService {
                         product: {
                             include: {
                                 productCategory: true,
+                                productImages: {
+                                    where: {
+                                        archived: false,
+                                    },
+                                },
                             }
                         }
                     }
@@ -146,8 +175,21 @@ export default class TransactionService {
                 archived: false
             },
             include: {
-                products: true,
-                mutations: true,
+                shippingAddress: true,
+                products: {
+                    include: {
+                        product: {
+                            include: {
+                                productImages: {
+                                    where: {
+                                      archived: false,
+                                    },
+                                  },
+                            }
+                        }
+                    }
+                },
+                warehouse: true
             }
         });
     }
@@ -359,6 +401,18 @@ export default class TransactionService {
             data: {
                 orderStatus: 'PROCESSING',
                 processDate: new Date()
+            }
+        });
+    }
+
+    async shipTransaction(transactionUid: string): Promise<Transactions | null> {
+        return await prisma.transactions.update({
+            where: {
+                transactionUid: transactionUid
+            },
+            data: {
+                orderStatus: 'SHIPPING',
+                shippingDate: new Date()
             }
         });
     }
