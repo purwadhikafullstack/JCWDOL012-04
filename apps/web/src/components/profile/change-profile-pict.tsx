@@ -40,7 +40,12 @@ export default function ChangeProfilePictDialog() {
         }
     })
 
-    useEffect(() => { if (dialogOpen) formik.resetForm() }, [dialogOpen])
+    useEffect(() => {
+        if (dialogOpen) {
+            formik.resetForm()
+            auth.clearError()
+        }
+    }, [dialogOpen])
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >

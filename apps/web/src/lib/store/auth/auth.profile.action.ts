@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
-import { UserAuthErrorType, UserAuthType } from "./auth.provider"
+import { AuthContextType } from "./auth.provider"
 import axios, { AxiosResponse } from "axios"
 import { clientSideRedirect, logOutAction } from "./auth.action"
 
@@ -13,9 +13,9 @@ const profile = axios.create({
 
 export async function changeNameAction(
     values: { firstName: string, lastName: string, password: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.patch('change-name', values)
         .then((response: AxiosResponse) => {
@@ -39,9 +39,9 @@ export async function changeNameAction(
 
 export async function changePasswordAction(
     values: { currentPassword: string, newPassword: string, retypeNewPassword: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.patch('change-password', values)
         .then((response: AxiosResponse) => {
@@ -65,9 +65,9 @@ export async function changePasswordAction(
 
 export async function changeEmailAction(
     values: { newEmail: string, password: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.post('request-change-email', values)
         .then((response: AxiosResponse) => {
@@ -92,9 +92,9 @@ export async function changeEmailAction(
 export async function updateEmailAction(
     values: { password: string },
     token: string,
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.patch(`/change/email${token ? `?token=${token}` : ''}`, values)
         .then((response: AxiosResponse) => {
@@ -117,9 +117,9 @@ export async function updateEmailAction(
 
 export async function verifyChangeEmailToken(
     token: string,
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.get(`/change/email/verify-token?token=${token}`)
         .then((response: AxiosResponse) => {
@@ -142,9 +142,9 @@ export async function verifyChangeEmailToken(
 
 export async function updateProfilePictureAction(
     values: { file: File },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     const formData = new FormData()
     formData.append('file', values.file)

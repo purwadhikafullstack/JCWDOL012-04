@@ -42,7 +42,8 @@ export function ChangeNameDialog() {
         }),
         onSubmit: async (values) => {
             await auth?.changeName(values)
-            formik.setSubmitting(false)
+            await console.log(values)
+            // formik.setSubmitting(false)
         }
     })
 

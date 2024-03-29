@@ -53,9 +53,6 @@ export default function TabAccount() {
                             </AvatarFallback>
                             <ChangeProfilePictDialog />
                         </Avatar>
-                        {auth?.error.status
-                            ? <div> {auth.error.message}</div>
-                            : null}
                     </CardHeader>
                     <CardContent className="space-y-2 my-4">
                         <div className="space-y-1">

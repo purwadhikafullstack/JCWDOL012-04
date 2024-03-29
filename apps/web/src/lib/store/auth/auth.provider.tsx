@@ -1,7 +1,7 @@
 "use client";
 
 import { UsersModel } from "@/model/UsersModel";
-import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, createContext, useContext, useEffect, useMemo, useState } from "react";
 import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction, initChangeRequestAction, verifyResetPasswordRequest, resetNewPassword } from "./auth.action";
 import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
@@ -10,9 +10,16 @@ import UnauthorizedPage from "@/components/auth/unauthorized";
 
 export type AuthContextType = {
     isLoading: boolean;
-    user: UserAuthType;
-    error: UserAuthErrorType
-    setUser: Dispatch<SetStateAction<UserAuthType>>;
+    user: {
+        isAuthenticated: boolean;
+        data: UsersModel | null;
+    };
+    error: {
+        status: number | null | undefined;
+        message: string | null | undefined;
+        code?: number | null | undefined;
+    }
+    setUser: Dispatch<SetStateAction<AuthContextType['user']>>;
     verifyActivationToken: (token: string) => void;
     setPassword: (values: { password: string }, token?: string, redirectTo?: string) => void;
     logIn: (values: { email: string, password: string }) => void;
@@ -29,43 +36,68 @@ export type AuthContextType = {
         setNewPassword: (values: { newPassword: string }, token: string) => void;
     };
     clearError: () => void
-} | null;
+};
 
-export type UserAuthType = {
-    isAuthenticated: boolean;
-    data: UsersModel | null;
+const initialAuthContextValue = {
+    isLoading: true,
+    user: {
+        isAuthenticated: false,
+        data: null
+    },
+    error: {
+        status: null,
+        message: null,
+        code: null
+    },
+    setUser: () => { },
+    verifyActivationToken: (token: string) => { },
+    setPassword: (values: { password: string }, token?: string, redirectTo?: string) => { },
+    logIn: (values: { email: string, password: string }) => { },
+    logOut: () => { },
+    registerWithEmail: (values: { email: string, firstName: string, lastName: string }) => { },
+    changeName: (values: { firstName: string, lastName: string, password: string }) => { },
+    changePassword: (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => { },
+    changeEmail: (values: { newEmail: string, password: string }) => { },
+    updateEmail: (values: { password: string }, token: string) => { },
+    updateProfilePicture: (values: { file: File }) => { },
+    resetPassword: {
+        initChangeRequest: (values: { email: string }) => { },
+        verifyRequest: (token: string) => { },
+        setNewPassword: (values: { newPassword: string }, token: string) => { }
+    },
+    clearError: () => { }
 }
 
-export type UserAuthErrorType = {
-    status: number | null | undefined;
-    message: string | null | undefined;
-    code?: number | null | undefined;
-}
-
-const initialUserAuth = {
-    isAuthenticated: false,
-    data: null
-}
-
-const AuthContext = createContext<AuthContextType>(null);
+const AuthContext = createContext<AuthContextType>(initialAuthContextValue);
 const cookieName: string = process.env.NEXT_PUBLIC_COOKIE_NAME || "";
 if (!cookieName) throw new Error('COOKIE_NAME is not defined')
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const hasCookie = getCookie(cookieName);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [user, setUser] = useState<UserAuthType>(initialUserAuth);
-    const [error, setError] = useState<UserAuthErrorType>({ status: undefined, message: undefined });
+    // const [cookie, setCookie] = useState('');
+    const hasCookie = Boolean(getCookie(cookieName))
+    console.log(hasCookie)
+    const cookie = useMemo(() => { return getCookie(cookieName) }, [hasCookie])
+    const [isLoading, setIsLoading] = useState<AuthContextType['isLoading']>(true);
+    const [user, setUser] = useState<AuthContextType['user']>(initialAuthContextValue.user);
+    const [error, setError] = useState<AuthContextType['error']>(initialAuthContextValue.error);
     const path = usePathname();
     const tokenQuery = useSearchParams().get('token')
     const router = useRouter();
+    console.log("Cookie: ", cookie)
+
+    // useEffect(() => {
+    //     const cookies = getCookie(cookieName)
+    //     if (cookies) {
+    //         setCookie(cookies)
+    //     }
+    // }, [])
 
     useEffect(() => {
-        if (!hasCookie) {
+        if (!cookie) {
             setIsLoading(true);
             setUser(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }));
             setIsLoading(false);
-        } else if (hasCookie) {
+        } else if (cookie) {
             setIsLoading(true);
             verifyToken(setUser, setError, setIsLoading, undefined, path);
         }
@@ -119,17 +151,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const changeName = async (values: { firstName: string, lastName: string, password: string }) => {
-        setIsLoading(true);
         await changeNameAction(values, setUser, setError, setIsLoading);
     }
 
     const changePassword = async (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => {
-        setIsLoading(true);
         await changePasswordAction(values, setUser, setError, setIsLoading);
     }
 
     const changeEmail = async (values: { newEmail: string, password: string }) => {
-        setIsLoading(true);
         await changeEmailAction(values, setUser, setError, setIsLoading);
     }
 
@@ -144,7 +173,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const updateProfilePicture = async (values: { file: File }) => {
-        setIsLoading(true);
         await updateProfilePictureAction(values, setUser, setError, setIsLoading);
     }
 
