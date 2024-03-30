@@ -95,7 +95,7 @@ export default function TransactionHistory() {
     const currentItems = filteredTransactions.slice(indexOfFirstItem, indexOfLastItem);
 
     return (
-        <div className="px-[24px] h-fit mx-16 overflow-auto">
+        <div className="h-fit overflow-auto pb-[120px]">
             <div className="flex flex-col gap-4 px-6 rounded-xl bg-white py-6">
                 <h1 className="text-base font-bold">Transaction History</h1>
                 <div>

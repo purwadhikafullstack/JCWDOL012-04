@@ -25,11 +25,11 @@ export default function TransactionProductDetail({ handleUpdate, transaction, tr
                 rawQuantity: transactionProduct.quantity
             }
             transactionProductApi.requestStock(data)
-            .then(() => {
-                handleUpdate();
-            }).catch((err) => {
-                console.log(err)
-            });
+                .then(() => {
+                    handleUpdate();
+                }).catch((err) => {
+                    console.log(err)
+                });
         }
     }
 
@@ -41,7 +41,7 @@ export default function TransactionProductDetail({ handleUpdate, transaction, tr
                 {products.map((item) => {
                     return (
                         <div key={item.id}>
-                            <div className="flex gap-2 py-5 m-2 justify-between">
+                            <div className="2xl:flex gap-2 py-5 m-2 justify-between">
                                 <div className="flex">
                                     <ImagePlaceholder primaryImagePath={getPrimaryImagePath(item.product)} alt={`${item.id}`} />
                                     <a href={`/products/${item.productId}`} className="px-6 py-4 hover:underline">{item.product?.name}</a>

@@ -97,11 +97,10 @@ export default function WarehouseDetail({
     );
 
   return (
-    <div className="flex flex-col w-full min-h-[700px] py-10 px-5 xl:px-20 2xl:px-32 max-w-[1440px] mx-auto">
+    <div className="flex flex-col w-full min-h-[700px] pt-10 pb-[120px] px-5 xl:px-20 2xl:px-32 max-w-[1440px] mx-auto">
       <div
-        className={`${
-          role === 'SUPER_ADMIN' ? 'mb-[10px]' : 'mb-[30px]'
-        } flex flex-col lg:flex-row justify-between space-y-2 lg:space-y-0 lg:items-center`}
+        className={`${role === 'SUPER_ADMIN' ? 'mb-[10px]' : 'mb-[30px]'
+          } flex flex-col lg:flex-row justify-between space-y-2 lg:space-y-0 lg:items-center`}
       >
         <div className="text-2xl font-semibold">{warehouseName[0]?.name}</div>
         <Link href={`/admin/mutation/${warehouseId}`}>
@@ -111,9 +110,8 @@ export default function WarehouseDetail({
         </Link>
       </div>
       <div
-        className={`${
-          role === 'SUPER_ADMIN' ? '' : 'hidden'
-        } flex mb-5 justify-start lg:justify-end`}
+        className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'
+          } flex mb-5 justify-start lg:justify-end`}
       >
         <div className="relative">
           <div
@@ -136,9 +134,8 @@ export default function WarehouseDetail({
             </div>
           </div>
           <div
-            className={`${
-              isOpenWare ? '' : 'hidden'
-            } z-10 left-[-10px] top-10 rounded-md bg-white absolute border shadow-md max-h-[300px] w-[210px] overflow-y-auto`}
+            className={`${isOpenWare ? '' : 'hidden'
+              } z-10 left-[-10px] top-10 rounded-md bg-white absolute border shadow-md max-h-[300px] w-[210px] overflow-y-auto`}
           >
             {warehouses.map((warehouse, index) => {
               return (
@@ -150,11 +147,10 @@ export default function WarehouseDetail({
                   }}
                 >
                   <div
-                    className={`${
-                      warehouse.id === Number(warehouseId)
-                        ? 'px-3 py-2 bg-[var(--primaryColor)] truncate text-white'
-                        : 'px-3 py-2 hover:bg-slate-200 cursor-pointer truncate duration-150'
-                    }`}
+                    className={`${warehouse.id === Number(warehouseId)
+                      ? 'px-3 py-2 bg-[var(--primaryColor)] truncate text-white'
+                      : 'px-3 py-2 hover:bg-slate-200 cursor-pointer truncate duration-150'
+                      }`}
                   >
                     {warehouse.name}
                   </div>
@@ -189,11 +185,9 @@ export default function WarehouseDetail({
                 </div>
                 <div className="flex items-center md:space-x-2">
                   <div
-                    className={`${
-                      edit && selectedId === product.id ? '' : 'hidden'
-                    } ${
-                      stock < 1 ? 'pointer-events-none opacity-60' : ''
-                    } bg-[var(--primaryColor)] px-[11px] py-[3px] text-white rounded-full hover:opacity-70 cursor-pointer`}
+                    className={`${edit && selectedId === product.id ? '' : 'hidden'
+                      } ${stock < 1 ? 'pointer-events-none opacity-60' : ''
+                      } bg-[var(--primaryColor)] px-[11px] py-[3px] text-white rounded-full hover:opacity-70 cursor-pointer`}
                     onClick={() => {
                       setStock(stock - 1);
                     }}
@@ -201,16 +195,14 @@ export default function WarehouseDetail({
                     -
                   </div>
                   <div
-                    className={`${
-                      edit && selectedId === product.id ? 'text-center' : ''
-                    } w-10`}
+                    className={`${edit && selectedId === product.id ? 'text-center' : ''
+                      } w-10`}
                   >
                     {selectedId === product.id ? stock : productStock?.stock}
                   </div>
                   <div
-                    className={`${
-                      edit && selectedId === product.id ? '' : 'hidden'
-                    } bg-[var(--primaryColor)] px-[10px] py-[3px] text-white rounded-full cursor-pointer hover:opacity-70`}
+                    className={`${edit && selectedId === product.id ? '' : 'hidden'
+                      } bg-[var(--primaryColor)] px-[10px] py-[3px] text-white rounded-full cursor-pointer hover:opacity-70`}
                     onClick={() => {
                       setStock(stock + 1);
                     }}
@@ -242,13 +234,12 @@ export default function WarehouseDetail({
                   </div>
                 </div>
                 <div
-                  className={`${
-                    edit &&
+                  className={`${edit &&
                     selectedId === product.id &&
                     productStock?.stock !== stock
-                      ? ''
-                      : 'hidden'
-                  } ml-2 md:ml-5 bg-[var(--primaryColor)] text-white px-4 py-1 rounded-md hover:opacity-70 cursor-pointer`}
+                    ? ''
+                    : 'hidden'
+                    } ml-2 md:ml-5 bg-[var(--primaryColor)] text-white px-4 py-1 rounded-md hover:opacity-70 cursor-pointer`}
                   onClick={handleUpdate}
                 >
                   Update

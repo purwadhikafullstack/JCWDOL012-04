@@ -9,9 +9,8 @@ export const Pagination = (props: any) => {
     >
       <Link
         href={`?page=${Number(props.page) - 1}&pageSize=15`}
-        className={`${
-          Number(props.page) < 2 ? 'opacity-50 pointer-events-none' : ''
-        }`}
+        className={`${Number(props.page) < 2 ? 'opacity-50 pointer-events-none' : ''
+          }`}
       >
         <div className="px-[8px] cursor-pointer hover:opacity-70">
           <div className="relative w-[15px] h-[15px]">
@@ -24,9 +23,8 @@ export const Pagination = (props: any) => {
       </div>
       <Link
         href={`?page=${Number(props.page) + 1}&pageSize=15`}
-        className={`${
-          props.hasNextPage ? '' : 'opacity-50 pointer-events-none'
-        }`}
+        className={`${props.hasNextPage ? '' : 'opacity-50 pointer-events-none'
+          }`}
       >
         <div className="px-[8px] cursor-pointer hover:opacity-70">
           <div className="relative w-[15px] h-[15px]">
