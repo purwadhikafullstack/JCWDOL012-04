@@ -406,15 +406,17 @@ export default function ProductDetails({
                       fill
                       className="object-cover rounded"
                     />
-                    <button
-                      type="button"
-                      className={`${
-                        role === 'SUPER_ADMIN' ? '' : 'hidden'
-                      } absolute top-[-5px] right-[-8px] px-[8px] bg-red-500 text-white rounded-full`}
-                      onClick={() => deleteProductImage(index)}
-                    >
-                      x
-                    </button>
+                    {formik.values.productImages.length > 1 && (
+                      <button
+                        type="button"
+                        className={`${
+                          role === 'SUPER_ADMIN' ? '' : 'hidden'
+                        } absolute top-[-5px] right-[-8px] px-[8px] bg-red-500 text-white rounded-full`}
+                        onClick={() => deleteProductImage(index)}
+                      >
+                        x
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

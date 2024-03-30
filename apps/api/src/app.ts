@@ -8,7 +8,7 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import {prisma} from './services/prisma.service';
+import { prisma } from './services/prisma.service';
 import { join } from 'path';
 import { ProductRouter } from './routers/product.router';
 import passport from 'passport';
@@ -41,8 +41,8 @@ export default class App {
     this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(express.static('public'))
-    this.app.use('/public', express.static('public'))
+    this.app.use(express.static('public'));
+    this.app.use('/public', express.static('public'));
     this.app.use(cookieparser());
     startUpdateOrderStatusJob();
     startUpdateTransactionOrderStatusJob();
@@ -86,7 +86,6 @@ export default class App {
     this.app.use('/api/cart', cartRouter);
     this.app.use('/api/transaction', transactionRouter);
 
-
     this.app.use('/api', productRouter.getRouter());
     this.app.use('/auth', googleAuthRouter);
     this.app.use('/auth', localAuthRouter);
@@ -95,7 +94,7 @@ export default class App {
     this.app.use('/data', dataRouter);
     this.app.use('/shipping', shippingRouter);
     this.app.use('/warehouses', warehouseRouter);
-    this.app.use('/api/sales', reportRouter.getRouter());
+    this.app.use('/api/report', reportRouter.getRouter());
   }
 
   public start(): void {

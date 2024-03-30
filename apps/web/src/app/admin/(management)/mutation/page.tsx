@@ -101,24 +101,23 @@ export default function WarehouseDetail({
       <div
         className={`${
           role === 'SUPER_ADMIN' ? 'mb-[10px]' : 'mb-[30px]'
-        } flex flex-col md:flex-row justify-between space-y-2 md:space-y-0 md:items-center`}
+        } flex flex-col lg:flex-row justify-between space-y-2 lg:space-y-0 lg:items-center`}
       >
         <div className="text-2xl font-semibold">{warehouseName[0]?.name}</div>
-        <Link
-          href={`/admin/mutation/${warehouseId}`}
-          className="bg-[var(--primaryColor)] px-4 py-2 text-white rounded-md hover:opacity-70 duration-200"
-        >
-          Mutation Request <span className="font-semibold">-&gt;</span>
+        <Link href={`/admin/mutation/${warehouseId}`}>
+          <div className="bg-[var(--primaryColor)] px-4 py-2 text-white rounded-md hover:opacity-70 duration-200 w-48">
+            Mutation Request <span className="font-semibold">-&gt;</span>
+          </div>
         </Link>
       </div>
       <div
         className={`${
           role === 'SUPER_ADMIN' ? '' : 'hidden'
-        } flex mb-5 justify-end`}
+        } flex mb-5 justify-start lg:justify-end`}
       >
         <div className="relative">
           <div
-            className="flex items-center space-x-2 border rounded-md px-3 py-1 cursor-pointer hover:bg-gray-200  border-slate-400"
+            className="flex items-center space-x-2 border rounded-md px-[17px] py-1 cursor-pointer hover:bg-gray-200  border-slate-400"
             onClick={() => {
               setIsOpenWare(!isOpenWare);
             }}
