@@ -113,7 +113,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const changeName = async (values: { firstName: string, lastName: string, password: string }) => {
-        await changeNameAction(values, setUser, setError, setIsLoading);
+        return await changeNameAction(values, setUser, setError, setIsLoading);
     }
 
     const changePassword = async (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => {

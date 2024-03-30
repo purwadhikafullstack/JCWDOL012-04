@@ -31,7 +31,7 @@ export async function changeName(req: Request, res: Response) {
           lastName,
         },
       });
-      resSuccess(res, 'Name updated successfully', updatedUser, 1);
+      resSuccess(res, 'Name updated successfully', { user: updatedUser }, 1);
     } catch (error) {
       console.error('Error', error);
       resInternalServerError(res, 'Error updating name', null);
