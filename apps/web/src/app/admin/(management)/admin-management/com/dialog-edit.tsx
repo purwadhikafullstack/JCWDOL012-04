@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useFormik } from 'formik';
 import { editAdminValidationSchema, fetchAdminData, submitEditAdmin } from "./validation-action"
 import { useState, useEffect } from "react"
+import LineWithText from "@/components/ui/line"
 
 export type AddAdminError = {
     status: number | undefined | null
@@ -144,8 +145,12 @@ export default function EditAdminDialog({ id }: { id: string | number }) {
                                     ? (<div className="col-start-2 col-span-3 text-red-500 text-xs">{formik.errors.email}</div>)
                                     : null}
                             </div>
+                            <div className="flex items-center gap-4">
+                                <p className="min-w-fit block text-sm font-medium text-gray-500">Change Password</p>
+                                <hr className="w-full h-px my-8 bg-purple-300 border-1" />
+                            </div>
                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">New Password</Label>
                                 <Input
                                     id="password"
                                     name="password"
@@ -161,7 +166,7 @@ export default function EditAdminDialog({ id }: { id: string | number }) {
                                     : null}
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                <Label htmlFor="confirmPassword">Confirm New Password</Label>
                                 <Input
                                     id="confirmPassword"
                                     name="confirmPassword"
