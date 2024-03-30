@@ -5,9 +5,12 @@ import { setPasswordValidationSchema } from "./validation";
 import { PiArrowRightBold, PiSealWarningLight } from "react-icons/pi";
 import { Button } from "../ui/button-c";
 import { useAuth } from "@/lib/store/auth/auth.provider";
+import Spinner from "../ui/spinner";
 
 export default function VerifySetPassword({ token }: { token: string }) {
     const auth = useAuth()
+    const error = auth.error
+    console.log(error)
 
     const formik = useFormik({
         initialValues: {
@@ -15,10 +18,13 @@ export default function VerifySetPassword({ token }: { token: string }) {
             confirmPassword: '',
         },
         validationSchema: setPasswordValidationSchema,
-        onSubmit: (values) => {
-            auth?.setPassword(values, token, '/auth/login?origin=verify-email')
+        onSubmit: async (values) => {
+            await auth?.setPassword(values, token, '/auth/login?origin=verify-email')
+            formik.setSubmitting(false)
         },
     })
+
+    if (auth.isLoading) return <Spinner />
 
     return (
         <>
@@ -86,10 +92,13 @@ export default function VerifySetPassword({ token }: { token: string }) {
                                     ) : null}
                                 </div>
                                 <div>
-                                    <Button className="my-6 w-full px-3" disabled={auth?.isLoading!} type='submit'>
+                                    <Button className="my-6 w-full px-3" disabled={auth?.isLoading || formik.isSubmitting} type='submit'>
                                         Complete Registration <PiArrowRightBold className="ml-auto h-5 w-5 text-gray-50" />
                                     </Button>
                                 </div>
+                                {error?.status
+                                    ? <p className="text-xs text-red-600">{error?.message}</p>
+                                    : null}
                             </div>
                         </div>
                     </form>

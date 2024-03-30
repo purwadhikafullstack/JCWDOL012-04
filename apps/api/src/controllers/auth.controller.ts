@@ -60,6 +60,8 @@ export async function registerNewUser(req: Request, res: Response, next: NextFun
 }
 
 export async function setPassword(req: Request, res: Response, next: NextFunction) {
+    // return resInternalServerError(res, "Testing error", null)
+
     try {
         const salt = await genSalt(10)
         const hashedPassword = await hash(req.body.newPassword ? req.body.newPassword : req.body.password, salt)
@@ -70,7 +72,8 @@ export async function setPassword(req: Request, res: Response, next: NextFunctio
             },
             data: {
                 isVerified: true,
-                password: hashedPassword
+                password: hashedPassword,
+                isRequestingChangePassword: false
             }
         })
         resSuccess(res, 'Password set successfully', user, 1)

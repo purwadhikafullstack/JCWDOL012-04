@@ -35,6 +35,7 @@ export default function VerifyChangeEmailPage() {
                 .required('Retype your new password')
         }),
         onSubmit: async (values) => {
+            auth.clearError()
             await auth?.resetPassword.setNewPassword({ newPassword: values.newPassword }, tokenQuery)
             formik.setSubmitting(false)
         }

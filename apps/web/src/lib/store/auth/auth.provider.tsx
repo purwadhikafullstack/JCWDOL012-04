@@ -73,11 +73,11 @@ const cookieName: string = process.env.NEXT_PUBLIC_COOKIE_NAME || "";
 if (!cookieName) throw new Error('COOKIE_NAME is not defined')
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const hasCookie = Boolean(getCookie(cookieName))
-    const cookie = useMemo(() => { return getCookie(cookieName) }, [hasCookie])
     const [isLoading, setIsLoading] = useState<AuthContextType['isLoading']>(true);
     const [user, setUser] = useState<AuthContextType['user']>(initialAuthContextValue.user);
     const [error, setError] = useState<AuthContextType['error']>(initialAuthContextValue.error);
+    const hasCookie = Boolean(getCookie(cookieName))
+    const cookie = useMemo(() => { return getCookie(cookieName) }, [hasCookie])
     const path = usePathname();
     const tokenQuery = useSearchParams().get('token')
     const router = useRouter();
@@ -131,7 +131,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const setPassword = (values: { password: string }, token?: string, redirectTo?: string) => {
-        setIsLoading(true);
+        setIsLoading(true)
         setPasswordAction(values, setUser, setError, setIsLoading, token, redirectTo);
     }
 

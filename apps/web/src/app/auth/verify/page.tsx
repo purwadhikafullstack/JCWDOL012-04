@@ -31,7 +31,7 @@ export default function Verify() {
         </main>
     )
 
-    if (auth?.error.status) return (
+    if (auth?.error.status?.toString() === '401') return (
         <div className="flex flex-col w-full h-screen items-center justify-center gap-3 p-6">
             <h1 className="text-2xl text-center">Expired or Invalid Verification Link</h1>
             <p className="text-center ">The link you accessed is invalid or expired. Please register again.</p>

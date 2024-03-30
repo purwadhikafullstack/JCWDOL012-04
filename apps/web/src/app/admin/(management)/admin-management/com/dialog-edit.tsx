@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label"
 import { useFormik } from 'formik';
 import { editAdminValidationSchema, fetchAdminData, submitEditAdmin } from "./validation-action"
 import { useState, useEffect } from "react"
-import LineWithText from "@/components/ui/line"
 
 export type AddAdminError = {
     status: number | undefined | null
