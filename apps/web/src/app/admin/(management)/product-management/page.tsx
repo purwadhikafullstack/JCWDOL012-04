@@ -28,6 +28,7 @@ export default function Products({
   const search = (searchParams.search || '') as string;
   const category = (searchParams.category || '') as string;
   const sort = (searchParams.sort || '') as string;
+  const hasNextPage = totalProducts - Number(page) * Number(pageSize) > 0;
 
   const isAuthenticated = auth?.user?.isAuthenticated;
   const role = auth?.user?.data?.role;
@@ -72,7 +73,7 @@ export default function Products({
   console.log(totalProducts);
 
   return (
-    <div className="w-full flex flex-col bg-gray-200 pt-[20px]">
+    <div className="w-full flex flex-col bg-gray-200 pt-[20px] pb-40">
       <div className="flex flex-col space-y-5 ml-[20px] md:space-y-0 md:flex-row md:items-end md:mx-auto md:justify-between md:w-[500px] lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products</div>
         <Link
@@ -98,7 +99,7 @@ export default function Products({
       ) : (
         <div
           id="product-list-container"
-          className="flex flex-wrap justify-center mx-auto px-[10px] mb-[100px] mt-[10px]  2xl:px-[100px] max-w-[1440px]"
+          className="flex flex-wrap justify-center mx-auto px-[10px] mb-[40px] mt-[10px]  2xl:px-[100px] max-w-[1440px]"
         >
           {products.map((product, index) => {
             return (
@@ -120,7 +121,11 @@ export default function Products({
                         className="relative w-[90px] h-[90px]"
                       >
                         <Image
-                          src={'/images/products/product1image1.jpeg'}
+                          src={
+                            product.productImages?.[0]?.path.startsWith('http')
+                              ? product.productImages?.[0]?.path!
+                              : '/images/products/product1image1.jpeg'
+                          }
                           className="object-cover object-center"
                           fill
                           alt="productImage"
@@ -182,6 +187,42 @@ export default function Products({
           })}
         </div>
       )}
+      <div className="flex justify-center md:hidden">
+        <div
+          id="pagination"
+          className="flex items-center border border-slate-300 rounded"
+        >
+          <Link
+            href={`?page=${
+              Number(page) - 1
+            }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
+            className={`${
+              Number(page) < 2 ? 'opacity-50 pointer-events-none' : ''
+            }`}
+          >
+            <div className="px-[8px] cursor-pointer hover:opacity-70">
+              <div className="relative w-[15px] h-[15px]">
+                <Image src={'/images/icon/left-arrow.png'} fill alt="left" />
+              </div>
+            </div>
+          </Link>
+          <div className="bg-slate-200 border-r border-l w-[30px] text-center pointer-events-none">
+            {page}
+          </div>
+          <Link
+            href={`?page=${
+              Number(page) + 1
+            }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
+            className={`${hasNextPage ? '' : 'opacity-50 pointer-events-none'}`}
+          >
+            <div className="px-[8px] cursor-pointer hover:opacity-70">
+              <div className="relative w-[15px] h-[15px]">
+                <Image src={'/images/icon/right-arrow.png'} fill alt="left" />
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
       <ConfirmModal
         item="product"
         handleArchive={handleArchive}

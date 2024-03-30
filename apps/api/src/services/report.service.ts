@@ -5,7 +5,6 @@ export default class ReportService {
   constructor() {
     this.prisma = prisma;
   }
-
   async getMonthlySales(
     warehouse: string,
     productCategory: string,
@@ -21,7 +20,7 @@ export default class ReportService {
       where: {
         transaction: {
           archived: false,
-          orderStatus: 'CONFIRMED',
+          orderStatus: 'SHIPPING' || 'CONFIRMED',
           warehouse: {
             name: {
               contains: warehouse,
@@ -62,7 +61,7 @@ export default class ReportService {
       where: {
         transaction: {
           archived: false,
-          orderStatus: 'CONFIRMED',
+          orderStatus: 'SHIPPING' || 'CONFIRMED',
           warehouse: {
             name: {
               contains: warehouse,
@@ -89,20 +88,20 @@ export default class ReportService {
   async getMonthlyAddHistory(
     startMonth: number,
     endMonth: number,
+    warehouse: string,
     productId: number,
   ) {
-    console.log(
-      new Date(new Date().setMonth(new Date().getMonth() - startMonth)),
-    );
-    console.log(
-      new Date(new Date().setMonth(new Date().getMonth() - endMonth)),
-    );
     return await this.prisma.mutations.aggregate({
       _sum: {
         quantity: true,
       },
       where: {
         isAdd: true,
+        warehouse: {
+          name: {
+            contains: warehouse,
+          },
+        },
         OR: [
           {
             isAccepted: true,
@@ -124,6 +123,7 @@ export default class ReportService {
   async getMonthlySubtractHistory(
     startMonth: number,
     endMonth: number,
+    warehouse: string,
     productId: number,
   ) {
     return await this.prisma.mutations.aggregate({
@@ -131,9 +131,27 @@ export default class ReportService {
         quantity: true,
       },
       where: {
-        isAdd: false,
         productId: productId,
-        OR: [{ isAccepted: true }, { isAccepted: null }],
+        OR: [
+          {
+            isAccepted: true,
+            isAdd: true,
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+          },
+          {
+            isAccepted: null,
+            isAdd: false,
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+          },
+        ],
         createdAt: {
           gte: new Date(
             new Date().setMonth(new Date().getMonth() - startMonth),
@@ -141,6 +159,168 @@ export default class ReportService {
           lte: new Date(new Date().setMonth(new Date().getMonth() - endMonth)),
         },
       },
+    });
+  }
+
+  async getMonthlyHistory(
+    startMonth: number,
+    endMonth: number,
+    product: string,
+    warehouse: string,
+    take: number,
+    skip: number,
+  ) {
+    return this.prisma.mutations.findMany({
+      where: {
+        product: {
+          name: {
+            contains: product,
+          },
+        },
+        OR: [
+          {
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
+            },
+          },
+          {
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
+            },
+          },
+        ],
+        createdAt: {
+          gte: new Date(
+            new Date().setMonth(new Date().getMonth() - startMonth),
+          ),
+          lte: new Date(new Date().setMonth(new Date().getMonth() - endMonth)),
+        },
+      },
+      include: {
+        product: {
+          select: {
+            name: true,
+          },
+        },
+        destinationWarehouse: {
+          select: {
+            name: true,
+          },
+        },
+        warehouse: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      take,
+      skip,
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+  async getTotalMutations(
+    product: string,
+    warehouse: string,
+    startMonth: number,
+    endMonth: number,
+  ) {
+    return this.prisma.mutations.count({
+      where: {
+        product: {
+          name: {
+            contains: product,
+          },
+        },
+        OR: [
+          {
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            warehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
+            },
+          },
+          {
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: 'REQUEST',
+            isAccepted: true,
+          },
+          {
+            destinationWarehouse: {
+              name: {
+                contains: warehouse,
+              },
+            },
+            mutationType: {
+              not: 'REQUEST',
+            },
+          },
+        ],
+        createdAt: {
+          gte: new Date(
+            new Date().setMonth(new Date().getMonth() - startMonth),
+          ),
+          lte: new Date(new Date().setMonth(new Date().getMonth() - endMonth)),
+        },
+      },
+    });
+  }
+  async getProducts(take: number, skip: number) {
+    return this.prisma.products.findMany({
+      where: {
+        archived: false,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+      take,
+      skip,
     });
   }
 }

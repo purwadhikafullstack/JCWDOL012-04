@@ -2,6 +2,8 @@
 import { useAuth } from '@/lib/store/auth/auth.provider';
 import { Loading } from '@/components/Loading';
 import SalesReport from '@/components/admin/report/SalesReport';
+import { StockSummaries } from '@/components/admin/report/StockSummaries';
+import { ProductHistory } from '@/components/admin/report/ProductHistory';
 
 export default function DashboardHome({
   searchParams,
@@ -24,8 +26,20 @@ export default function DashboardHome({
   return (
     <main className="pb-[120px]">
       <div className="flex flex-col justify-center">
-        <h1 className="text-2xl p-2 ml-10 font-medium">Welcome {username}</h1>
+        <h1 className="text-2xl p-2 text-center font-semibold">
+          Welcome <span className="text-[var(--primaryColor)]">{username}</span>
+        </h1>
         <SalesReport
+          searchParams={searchParams}
+          role={role}
+          adminWarehouseId={adminWarehouseId}
+        />
+        <StockSummaries
+          searchParams={searchParams}
+          role={role}
+          adminWarehouseId={adminWarehouseId}
+        />
+        <ProductHistory
           searchParams={searchParams}
           role={role}
           adminWarehouseId={adminWarehouseId}
