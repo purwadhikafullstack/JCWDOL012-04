@@ -99,7 +99,7 @@ export async function getWarehouseAdminData(req: Request, res: Response) {
     }
 }
 
-export async function archieveWarehouseAdmin(req: Request, res: Response) {
+export async function archiveWarehouseAdmin(req: Request, res: Response) {
     try {
         const { id } = req.params;
         if (!id) return resUnprocessable(res, 'Missing mandatory fields: id', null)
@@ -108,7 +108,8 @@ export async function archieveWarehouseAdmin(req: Request, res: Response) {
                 id: parseInt(id)
             },
             data: {
-                archived: true
+                archived: true,
+                wareHouseAdmin_warehouseId: null
             }
         })
         resSuccess(res, 'Warehouse Admin archieved successfully', admin, 1)

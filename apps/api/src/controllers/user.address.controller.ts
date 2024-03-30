@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient, Users } from '@prisma/client';
 import { resInternalServerError, resSuccess, resUnprocessable } from '@/services/responses';
-import { generateHashedPassword } from '@/services/auth/auth';
 const prisma = new PrismaClient();
 
 export async function getUserAddresses(req: Request, res: Response) {
