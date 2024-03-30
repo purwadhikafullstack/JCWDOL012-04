@@ -157,7 +157,7 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
         }
 
         return (
-            <div className="px-[24px] h-fit mx-16 mt-5 overflow-auto">
+            <div className="h-fit pb-[120px] mt-5 mx-2 sm:mx-0 overflow-auto">
                 <div>
                     <div className="flex">
                         <h1 className="text-2xl font-semibold pr-2">Transaction Detail</h1>

@@ -14,11 +14,16 @@ export const guestLinks: NavLinks = [
 export const customerLinks: NavLinks = [
     {
         id: 1,
+        label: "Orders",
+        href: "/orders"
+    },
+    {
+        id: 2,
         label: "Profile",
         href: "/profile",
     },
     {
-        id: 2,
+        id: 3,
         label: "Logout",
         href: "/auth/logout",
     }
