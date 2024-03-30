@@ -131,7 +131,6 @@ export async function updateProfilePicture(
   req: Request,
   res: Response,
 ) {
-  return resInternalServerError(res, "Errorrrrr", null)
   const user = req.user as Users;
   const file = req.file;
   if (!file) return resUnprocessable(res, 'File is not acceptable', null);

@@ -111,7 +111,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             <UnauthorizedPage />
             return router.push('/admin')
         }
-    }, [path, user])
+    }, [path])
 
     const logOut = () => {
         setIsLoading(true);

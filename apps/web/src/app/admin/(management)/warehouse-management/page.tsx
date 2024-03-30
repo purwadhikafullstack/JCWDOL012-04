@@ -3,6 +3,9 @@ import { DataTable } from "./com/data-table"
 import axios from "axios"
 import { cookies } from 'next/headers'
 import AddNewWarehouseDialog from "./com/dialog-add-new-warehouse"
+import UnauthorizedPage from "@/components/auth/unauthorized"
+import { UsersModel } from "@/model/UsersModel"
+import { verifyUserServerSide } from "../action"
 
 async function getWarehouses(): Promise<any> {
     const cookie = cookies().get('palugada-auth-token')?.value
@@ -19,11 +22,18 @@ async function getWarehouses(): Promise<any> {
     return await warehouse.get('')
         .then((response) => response.data.data as TWarehouse[])
         .catch((error) => {
-            console.error('Error getting Administrator data', error);
+            console.error('Error getting Administrator data', error.response?.data);
+            return [] as AdminModel[]
         });
 }
 
 export default async function DemoPage() {
+    const user: UsersModel | undefined | null = await verifyUserServerSide()
+
+    if (!user || user?.role?.toUpperCase() !== "SUPER_ADMIN") return (
+        < UnauthorizedPage message="401 | You are not authorized to view this page" ctaLabel="Go To Dashboard Home" redirectTo="/admin" />
+    )
+
     const data: TWarehouse[] = await getWarehouses()
 
     return (

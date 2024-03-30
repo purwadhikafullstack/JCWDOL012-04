@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/store/auth/auth.provider";
 
 export default function LoginPage() {
     const auth = useAuth();
-    const prevPath = sessionStorage.getItem('prevPath')
+    const prevPath = typeof window !== 'undefined' && sessionStorage.getItem('prevPath')
 
     function delayedRedirect() {
         setTimeout(() => {

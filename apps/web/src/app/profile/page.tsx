@@ -25,7 +25,7 @@ export default function ProfilePage() {
     )
 
     if (!auth.isLoading) return (
-        <Tabs defaultValue={defaultTab} className="max-w-screen-sm mx-auto mt-6 px-4 md:px-0" >
+        <Tabs defaultValue={defaultTab} className="max-w-screen-sm mx-auto my-6 px-4 md:px-0" >
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="account">Account</TabsTrigger>
                 <TabsTrigger value="address">Address</TabsTrigger>

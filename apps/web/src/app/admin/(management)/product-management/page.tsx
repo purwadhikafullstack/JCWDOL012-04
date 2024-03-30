@@ -147,9 +147,8 @@ export default function Products({
                       </div>
                     </div>
                     <div
-                      className={`${
-                        role === 'SUPER_ADMIN' ? '' : 'hidden'
-                      } border border-red-600 p-[5px] rounded-md hover:scale-110 duration-200`}
+                      className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'
+                        } border border-red-600 p-[5px] rounded-md hover:scale-110 duration-200`}
                       onClick={(e) => {
                         e.preventDefault();
                         setIsModalOpen(true);
@@ -193,12 +192,10 @@ export default function Products({
           className="flex items-center border border-slate-300 rounded"
         >
           <Link
-            href={`?page=${
-              Number(page) - 1
-            }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
-            className={`${
-              Number(page) < 2 ? 'opacity-50 pointer-events-none' : ''
-            }`}
+            href={`?page=${Number(page) - 1
+              }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
+            className={`${Number(page) < 2 ? 'opacity-50 pointer-events-none' : ''
+              }`}
           >
             <div className="px-[8px] cursor-pointer hover:opacity-70">
               <div className="relative w-[15px] h-[15px]">
@@ -210,9 +207,8 @@ export default function Products({
             {page}
           </div>
           <Link
-            href={`?page=${
-              Number(page) + 1
-            }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
+            href={`?page=${Number(page) + 1
+              }&pageSize=${pageSize}&search=${search}&category=${category}&sort=${sort}`}
             className={`${hasNextPage ? '' : 'opacity-50 pointer-events-none'}`}
           >
             <div className="px-[8px] cursor-pointer hover:opacity-70">
