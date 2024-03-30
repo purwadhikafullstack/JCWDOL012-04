@@ -14,7 +14,7 @@ export type AddressContext = {
     error: {
         status: number | null | undefined;
         message: string | null | undefined;
-    };
+    } | null;
     data: {
         provinces: ProvincesModel[],
         cities: CitiesModel[]
@@ -27,6 +27,7 @@ export type AddressContext = {
     updateAddress: (id: number | string, values: UserCitiesModel) => void;
     setAsPrimary: (id: number | string) => void;
     deleteAddress: (id: number | string) => void;
+    clearError: () => void
 }
 
 const initialAddressContext = {
@@ -35,7 +36,7 @@ const initialAddressContext = {
     userAddress: [],
     error: {
         status: undefined,
-        message: undefined
+        message: undefined,
     },
     data: {
         provinces: [],
@@ -48,7 +49,8 @@ const initialAddressContext = {
     addAddress: (values: UserCitiesModel) => { },
     updateAddress: (id: number | string, values: UserCitiesModel) => { },
     setAsPrimary: (id: number | string) => { },
-    deleteAddress: (id: number | string) => { }
+    deleteAddress: (id: number | string) => { },
+    clearError: () => { }
 }
 
 const AddressContext = createContext<AddressContext>(initialAddressContext);
@@ -89,11 +91,13 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     const addAddress = async (values: UserCitiesModel) => {
         setIsLoading(true);
         addAddressAction(values, setAddress, setError);
+        setIsLoading(false)
     }
 
     const updateAddress: AddressContext['updateAddress'] = async (id, values) => {
         setIsLoading(true);
         updateAddressAction(id, values, setAddress, setError);
+        setIsLoading(false)
     }
 
     const deleteAddress = async (id: number | string) => {
@@ -105,6 +109,7 @@ export default function AddressProvider({ children }: { children: React.ReactNod
     const setAsPrimary = async (id: number | string) => {
         setIsLoading(true);
         setAsPrimaryAddressAction(id, setAddress, setError);
+        setIsLoading(false)
     }
 
     const updateChosenAddress: AddressContext['updateChosenAddress'] = (address) => {
@@ -123,8 +128,30 @@ export default function AddressProvider({ children }: { children: React.ReactNod
         setIsLoading(false);
     }
 
+    const clearError = () => {
+        setError({ status: null, message: null })
+    }
+
     return (
-        <AddressContext.Provider value={{ isAvailable, isLoading, userAddress, error, data: { provinces, cities }, choosenAddress, updateChosenAddress, addAddress, updateAddress, setAsPrimary, deleteAddress, getProvinces, getCities }}>
+        <AddressContext.Provider value={{
+            isAvailable,
+            isLoading,
+            userAddress,
+            error: {
+                status: error?.status,
+                message: error?.message,
+            },
+            data: { provinces, cities },
+            choosenAddress,
+            updateChosenAddress,
+            addAddress,
+            updateAddress,
+            setAsPrimary,
+            deleteAddress,
+            getProvinces,
+            getCities,
+            clearError
+        }}>
             {children}
         </AddressContext.Provider>
     )

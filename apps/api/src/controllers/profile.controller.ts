@@ -45,7 +45,7 @@ export async function validatePassword(
   next: NextFunction,
 ) {
   const { currentPassword, newPassword } = req.body;
-  const user = req.user as Users & { info?: string }; // Update the type of user to include the 'info' property
+  const user = req.user as Users & { info?: string };
   let passwordMatch: boolean;
 
   if (!user.password)
@@ -77,22 +77,14 @@ export async function validatePassword(
   next();
 }
 
-export async function sendChangeEmail(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  const token = generateJWT(
-    req.user as Users,
-    { newEmail: req.body.newEmail },
-    '1h',
-  );
+export async function sendChangeEmail(req: Request, res: Response, next: NextFunction) {
+  const token = generateJWT(req.user as Users, { newEmail: req.body.newEmail }, "1h");
   try {
-    await sendChangeEmailInstructions(req.body.newEmail, token);
-    resSuccess(res, 'Change email instructions sent', null, 1);
+    await sendChangeEmailInstructions(req.body.newEmail, token)
+    resSuccess(res, 'Change email instructions sent', null, 1)
   } catch (error) {
-    console.error('Change Email Request Error', error);
-    return resInternalServerError(res, 'Error changing email', null);
+    console.error('Change Email Request Error', error)
+    return resInternalServerError(res, 'Error changing email', null)
   }
 }
 
@@ -138,9 +130,8 @@ export async function changeEmail(
 export async function updateProfilePicture(
   req: Request,
   res: Response,
-  next: NextFunction,
 ) {
-  console.log('here');
+  return resInternalServerError(res, "Errorrrrr", null)
   const user = req.user as Users;
   const file = req.file;
   if (!file) return resUnprocessable(res, 'File is not acceptable', null);

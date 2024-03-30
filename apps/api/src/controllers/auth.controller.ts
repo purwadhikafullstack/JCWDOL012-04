@@ -75,7 +75,7 @@ export async function setPassword(req: Request, res: Response, next: NextFunctio
         })
         resSuccess(res, 'Password set successfully', user, 1)
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return resInternalServerError(res, 'Error setting password', null)
     }
 }
@@ -106,7 +106,7 @@ export async function resetPassword(req: Request, res: Response, next: NextFunct
 
         resSuccess(res, 'Reset password instructions sent to the email', null, 1)
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return resInternalServerError(res, 'Error resetting password', null)
     }
 }
@@ -117,6 +117,6 @@ export async function verifyChangePasswordRequest(req: Request, res: Response, n
     if (!user?.isRequestingChangePassword) return resUnprocessable(res, 'Invalid Token: Token has been used to reset the password.', null)
     if (user.isRequestingChangePassword) return resSuccess(res, 'Request is valid', { id: user.id }, 1)
 
-    console.log("Error: Undhandled error at verifyChangePasswordRequest")
+    console.error("Error: Undhandled error at verifyChangePasswordRequest")
     return resInternalServerError(res, 'Unknown error.', null)
 }

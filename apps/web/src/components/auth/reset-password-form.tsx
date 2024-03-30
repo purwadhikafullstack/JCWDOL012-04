@@ -12,7 +12,6 @@ import Link from "next/link"
 export default function ResetPasswordForm() {
     const auth = useAuth()
     const error = auth?.error
-    console.log(error)
 
     const formik = useFormik({
         initialValues: {

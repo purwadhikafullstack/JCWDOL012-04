@@ -90,7 +90,14 @@ function AutoComplete({ onPlaceSelect }: Props) {
 
     return (
         <div className="autocomplete-container mt-2">
-            <input ref={inputRef} className='rounded-md' />
+            <input
+                ref={inputRef}
+                className='rounded-md'
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        return e.preventDefault()
+                    }
+                }} />
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
-import { UserAuthErrorType, UserAuthType } from "./auth.provider"
+import { AuthContextType } from "./auth.provider"
 import axios, { AxiosResponse } from "axios"
 import { clientSideRedirect, logOutAction } from "./auth.action"
 
@@ -13,14 +13,14 @@ const profile = axios.create({
 
 export async function changeNameAction(
     values: { firstName: string, lastName: string, password: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.patch('change-name', values)
         .then((response: AxiosResponse) => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState ? () => setLoadingState(false) : null
+            setLoadingState(false)
             clientSideRedirect('/profile')
         })
         .catch((error) => {
@@ -31,17 +31,17 @@ export async function changeNameAction(
             } else if (error.response.status === 422 || error.response.status === 500) {
                 setError({ status: error.response.status, message: error.response.data.msg })
             } else {
-                setLoadingState ? setLoadingState(false) : null
+                setLoadingState(false)
                 throw new Error('An unhandled error occured')
-            } setLoadingState ? setLoadingState(false) : null
+            } setLoadingState(false)
         })
 }
 
 export async function changePasswordAction(
     values: { currentPassword: string, newPassword: string, retypeNewPassword: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.patch('change-password', values)
         .then((response: AxiosResponse) => {
@@ -65,13 +65,13 @@ export async function changePasswordAction(
 
 export async function changeEmailAction(
     values: { newEmail: string, password: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.post('request-change-email', values)
         .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
+            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response?.data?.data?.user }))
             setLoadingState ? () => setLoadingState(false) : null
             clientSideRedirect('/profile')
         })
@@ -92,9 +92,9 @@ export async function changeEmailAction(
 export async function updateEmailAction(
     values: { password: string },
     token: string,
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.patch(`/change/email${token ? `?token=${token}` : ''}`, values)
         .then((response: AxiosResponse) => {
@@ -104,10 +104,10 @@ export async function updateEmailAction(
         .catch((error) => {
             if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
+                setError({ status: error.response.status, message: error.response?.data })
                 clientSideRedirect('/auth/login?origin=401')
             } else if (error?.response?.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
+                setError({ status: error.response.status, message: error.response.data?.msg })
             } else {
                 setLoadingState ? setLoadingState(false) : null
                 throw new Error('An unhandled error occured')
@@ -117,9 +117,9 @@ export async function updateEmailAction(
 
 export async function verifyChangeEmailToken(
     token: string,
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await profile.get(`/change/email/verify-token?token=${token}`)
         .then((response: AxiosResponse) => {
@@ -142,9 +142,9 @@ export async function verifyChangeEmailToken(
 
 export async function updateProfilePictureAction(
     values: { file: File },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     const formData = new FormData()
     formData.append('file', values.file)

@@ -20,21 +20,21 @@ export default function ProfilePage() {
     if (auth?.isLoading && defaultTab === 'account') return <AccountTabSkelLoading />
     if (auth?.isLoading && defaultTab === 'address') return <AddressTabSkelLoading />
 
-    if (auth?.user.data?.role !== "CUSTOMER" && !auth?.isLoading) return (
+    if (auth?.user.data?.role !== "CUSTOMER" && !auth?.isLoading && !auth?.user.isAuthenticated) return (
         <h1 className="text-center mt-6">401: You are not authorized to access this page</h1>
     )
 
-    return (
-        <AddressProvider>
-            <Tabs defaultValue={defaultTab} className="max-w-screen-sm mx-auto mt-6 px-4 md:px-0" >
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="account">Account</TabsTrigger>
-                    <TabsTrigger value="address">Address</TabsTrigger>
-                </TabsList>
-                <TabAccount />
+    if (!auth.isLoading) return (
+        <Tabs defaultValue={defaultTab} className="max-w-screen-sm mx-auto mt-6 px-4 md:px-0" >
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="account">Account</TabsTrigger>
+                <TabsTrigger value="address">Address</TabsTrigger>
+            </TabsList>
+            <TabAccount />
+            <AddressProvider>
                 <TabAddress />
-            </Tabs>
-        </AddressProvider>
+            </AddressProvider >
+        </Tabs>
     )
 }
 
