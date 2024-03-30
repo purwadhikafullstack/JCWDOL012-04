@@ -97,7 +97,7 @@ export default function WarehouseDetail({
     );
 
   return (
-    <div className="flex flex-col w-full min-h-[700px] py-10 px-5 xl:px-20 2xl:px-32 max-w-[1440px] mx-auto">
+    <div className="flex flex-col w-full min-h-[700px] pt-10 pb-[120px] px-5 xl:px-20 2xl:px-32 max-w-[1440px] mx-auto">
       <div
         className={`${
           role === 'SUPER_ADMIN' ? 'mb-[10px]' : 'mb-[30px]'

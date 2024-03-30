@@ -45,6 +45,7 @@ export default function ProductList({
     fetchProducts();
   }, [page, pageSize, search, category, sort]);
 
+  console.log(data);
   if (isLoading) {
     return (
       <>
