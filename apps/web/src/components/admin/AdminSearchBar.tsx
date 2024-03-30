@@ -42,7 +42,7 @@ export const AdminSearchBar = ({
   return (
     <div
       id="search-bar"
-      className="bg-white flex items-center justify-between px-[10px] md:px-[20px] sticky top-[0px] md:top-[-33px] shadow-md z-10 w-full lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
+      className="bg-white border border-slate-200 flex items-center justify-between px-[10px] md:px-[20px] sticky top-[0px] md:top-[60px] shadow-md z-10 w-full lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
     >
       <div id="search-left" className="flex items-center flex-1">
         <input
@@ -81,7 +81,15 @@ export const AdminSearchBar = ({
         >
           <div>Category</div>
           <div className="relative w-[10px] h-[10px]">
-            <Image src={'/images/icon/arrow-down.png'} fill alt="arrow-down" />
+            <Image
+              src={
+                isOpenCat
+                  ? '/images/icon/arrow-up.png'
+                  : '/images/icon/arrow-down.png'
+              }
+              fill
+              alt="arrow-down"
+            />
           </div>
         </div>
         <div
@@ -130,7 +138,15 @@ export const AdminSearchBar = ({
         >
           <div>Sort</div>
           <div className="relative w-[10px] h-[10px]">
-            <Image src={'/images/icon/arrow-down.png'} fill alt="arrow-down" />
+            <Image
+              src={
+                isOpenPri
+                  ? '/images/icon/arrow-up.png'
+                  : '/images/icon/arrow-down.png'
+              }
+              fill
+              alt="arrow-down"
+            />
           </div>
         </div>
         <div
