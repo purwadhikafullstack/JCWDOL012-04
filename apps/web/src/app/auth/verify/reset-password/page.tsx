@@ -17,6 +17,7 @@ export default function VerifyChangeEmailPage() {
     const auth = useAuth()
     const tokenQuery = useSearchParams().get('token')
     if (!tokenQuery) notFound()
+    console.log(auth.user)
 
     useEffect(() => { auth?.resetPassword.verifyRequest(tokenQuery) }, [])
 

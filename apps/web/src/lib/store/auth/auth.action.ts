@@ -141,6 +141,7 @@ export async function verifyResetPasswordRequest(
         })
         .catch((error) => {
             handleError(error, setError)
+            setLoadingState(false)
         })
 
 }

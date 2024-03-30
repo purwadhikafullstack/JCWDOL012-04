@@ -87,7 +87,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             setIsLoading(true);
             setUser(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }));
             setIsLoading(false);
-        } else if (cookie) {
+        } else if (cookie && !path.includes('/verify')) {
             setIsLoading(true);
             verifyToken(setUser, setError, setIsLoading, undefined, path);
         }
