@@ -11,11 +11,14 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { notFound, useSearchParams } from "next/navigation";
 import UnauthorizedPage from "@/components/auth/unauthorized";
+import { useEffect } from "react";
 
 export default function VerifyChangeEmailPage() {
     const auth = useAuth()
     const tokenQuery = useSearchParams().get('token')
     if (!tokenQuery) notFound()
+
+    useEffect(() => { auth.validateChangeEmailRequest(tokenQuery) }, [])
 
     const formik = useFormik({
         initialValues: {

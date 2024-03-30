@@ -5,8 +5,9 @@ import { Dispatch, SetStateAction, createContext, useContext, useEffect, useMemo
 import { logInAction, verifyToken, logOutAction, setPasswordAction, registerWithEmailAction, initChangeRequestAction, verifyResetPasswordRequest, resetNewPassword } from "./auth.action";
 import { changeNameAction, changePasswordAction, changeEmailAction, updateEmailAction, verifyChangeEmailToken, updateProfilePictureAction } from "./auth.profile.action";
 import { getCookie } from "@/utils/helper";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import UnauthorizedPage from "@/components/auth/unauthorized";
+import { initialAuthContextValue } from "./validation";
 
 export type AuthContextType = {
     isLoading: boolean;
@@ -28,6 +29,7 @@ export type AuthContextType = {
     changeName: (values: { firstName: string, lastName: string, password: string }) => void;
     changePassword: (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => void;
     changeEmail: (values: { newEmail: string, password: string }) => void;
+    validateChangeEmailRequest: (token: string) => void;
     updateEmail: (values: { password: string }, token: string) => void;
     updateProfilePicture: (values: { file: File }) => void;
     resetPassword: {
@@ -37,36 +39,6 @@ export type AuthContextType = {
     };
     clearError: () => void
 };
-
-const initialAuthContextValue = {
-    isLoading: true,
-    user: {
-        isAuthenticated: false,
-        data: null
-    },
-    error: {
-        status: null,
-        message: null,
-        code: null
-    },
-    setUser: () => { },
-    verifyActivationToken: (token: string) => { },
-    setPassword: (values: { password: string }, token?: string, redirectTo?: string) => { },
-    logIn: (values: { email: string, password: string }) => { },
-    logOut: () => { },
-    registerWithEmail: (values: { email: string, firstName: string, lastName: string }) => { },
-    changeName: (values: { firstName: string, lastName: string, password: string }) => { },
-    changePassword: (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => { },
-    changeEmail: (values: { newEmail: string, password: string }) => { },
-    updateEmail: (values: { password: string }, token: string) => { },
-    updateProfilePicture: (values: { file: File }) => { },
-    resetPassword: {
-        initChangeRequest: (values: { email: string }) => { },
-        verifyRequest: (token: string) => { },
-        setNewPassword: (values: { newPassword: string }, token: string) => { }
-    },
-    clearError: () => { }
-}
 
 const AuthContext = createContext<AuthContextType>(initialAuthContextValue);
 const cookieName: string = process.env.NEXT_PUBLIC_COOKIE_NAME || "";
@@ -79,7 +51,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const hasCookie = Boolean(getCookie(cookieName))
     const cookie = useMemo(() => { return getCookie(cookieName) }, [hasCookie])
     const path = usePathname();
-    const tokenQuery = useSearchParams().get('token')
     const router = useRouter();
 
     useEffect(() => {
@@ -94,11 +65,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }, [cookie]);
 
     useEffect(() => {
-        if (tokenQuery && path.includes('/auth/verify/change-email')) {
-            validateChangeEmailToken(tokenQuery);
-        }
         if (path.includes('/profile') && !isLoading && !user.isAuthenticated) {
             return router.push('/auth/login?origin=401')
+        }
+        if (path.includes('/profile') && !isLoading && user?.data?.role !== "CUSTOMER") {
+            <UnauthorizedPage />
+            return router.push('/')
         }
         if (path.includes('/auth/reset-password') && !isLoading && user.isAuthenticated) {
             return router.push('/')
@@ -111,7 +83,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             <UnauthorizedPage />
             return router.push('/admin')
         }
-    }, [path])
+    }, [path, user])
 
     const logOut = () => {
         setIsLoading(true);
@@ -186,26 +158,25 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     return (
-        <AuthContext.Provider value={
-            {
-                isLoading,
-                user,
-                error,
-                setUser,
-                logIn,
-                logOut,
-                verifyActivationToken,
-                setPassword,
-                registerWithEmail,
-                changeName,
-                changePassword,
-                changeEmail,
-                updateEmail,
-                updateProfilePicture,
-                resetPassword,
-                clearError
-            }
-        }>
+        <AuthContext.Provider value={{
+            isLoading,
+            user,
+            error,
+            setUser,
+            logIn,
+            logOut,
+            verifyActivationToken,
+            setPassword,
+            registerWithEmail,
+            changeName,
+            changePassword,
+            changeEmail,
+            validateChangeEmailRequest: validateChangeEmailToken,
+            updateEmail,
+            updateProfilePicture,
+            resetPassword,
+            clearError
+        }}>
             {children}
         </AuthContext.Provider>
     )
