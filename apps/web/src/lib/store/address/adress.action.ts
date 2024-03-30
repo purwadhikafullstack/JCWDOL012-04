@@ -113,12 +113,14 @@ export async function updateAddressAction(
 }
 
 function handleError(
-    error: AxiosError<{ message?: string }>,
+    error: AxiosError<{ message?: string, msg?: string }>,
     setError: Dispatch<SetStateAction<AddressContext['error']>>
 ) {
-    if (error.response?.status === 401) {
-        setError({ status: error.response?.status, message: error.response?.data?.message })
-    } else if (error.response?.status === 422 || error.response?.status === 500) {
-        setError({ status: error.response?.status, message: error.response?.data?.message })
+    const errorStatus = error.response?.status
+    const errorMessage = error.response?.data.message || error.response?.data.msg
+    if (errorStatus === 401) {
+        setError({ status: errorStatus, message: errorMessage })
+    } else if (errorStatus === 422 || errorStatus === 500) {
+        setError({ status: errorStatus, message: errorMessage })
     } else { throw new Error('An unhandled error occured') }
 }

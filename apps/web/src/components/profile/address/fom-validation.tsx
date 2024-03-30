@@ -26,7 +26,7 @@ export const AddressInitialValues = {
 }
 
 export function validateChangesOnEdit(
-    address: UserCitiesModel & { provinceId: string | null | undefined } | null,
+    address: UserCitiesModel & { provinceId?: string | null | undefined } | null,
     formikValues: UserCitiesModel & { provinceId: string | null | undefined } | null
 ) {
     const noChangesOnEdit =

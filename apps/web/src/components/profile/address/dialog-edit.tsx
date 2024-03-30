@@ -14,7 +14,7 @@ import Maps, { LatLng } from '@/components/profile/address/maps'
 import { AddressValidationSchema, validateChangesOnEdit } from "./fom-validation"
 import { UserCitiesModel } from "@/model/UserCitiesModel"
 
-export function EditAddress({ initialAddress }: { initialAddress: UserCitiesModel & { provinceId: string | null } | null }) {
+export function EditAddress({ initialAddress }: { initialAddress: UserCitiesModel & { provinceId?: string | null } | null }) {
     const auth = useAuth()
     const address = useAddress()
     const [dialogOpen, setDialogOpen] = useState(false)
@@ -36,7 +36,12 @@ export function EditAddress({ initialAddress }: { initialAddress: UserCitiesMode
         if (cities.length <= 0) address.getCities()
     }, [])
 
-    useEffect(() => { !dialogOpen && formik.resetForm() }, [dialogOpen])
+    useEffect(() => {
+        if (!dialogOpen) {
+            formik.resetForm()
+            address?.clearError()
+        }
+    }, [dialogOpen])
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -172,9 +177,9 @@ export function EditAddress({ initialAddress }: { initialAddress: UserCitiesMode
                                 </div>
                             </div>
                             <div>
-                                {auth?.error?.status
+                                {address?.error?.status
                                     ? (<div className="text-red-500 text-xs">
-                                        {auth.error?.message ? auth.error?.message : 'An Error occured. Something went wrong'}
+                                        {address.error?.message ? address.error?.message : 'An Error occured. Something went wrong'}
                                     </div>)
                                     : null}
                             </div>

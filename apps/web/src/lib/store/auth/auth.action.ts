@@ -1,7 +1,7 @@
 "use client"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { Dispatch, SetStateAction } from "react"
-import { UserAuthErrorType, UserAuthType } from "./auth.provider"
+import { AuthContextType } from "./auth.provider"
 
 const BASE_AUTH_URL = process.env.NEXT_PUBLIC_BASE_AUTH_URL
 if (!BASE_AUTH_URL) throw new Error('BASE_AUTH_URL is not defined')
@@ -13,29 +13,29 @@ const auth = axios.create({
 
 export function logInAction(
     values: { email: string, password: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     auth.post('login', values)
         .then((response) => {
             const prevPath = sessionStorage.getItem('prevPath')
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState ? () => setLoadingState(false) : null
+            setLoadingState(false)
             clientSideRedirect(prevPath ? prevPath : '/')
         })
         .catch((error) => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
             setError({ status: error.response.status, message: error.response.data.message })
-            setLoadingState ? setLoadingState(false) : null
+            setLoadingState(false)
         })
 }
 
 export function registerWithEmailAction(
     values: { email: string, firstName: string, lastName: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     auth.post('register', values)
         .then((response: AxiosResponse) => {
@@ -60,9 +60,9 @@ export function googleLogin() {
 }
 
 export async function verifyToken(
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>,
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>,
     token?: string,
     path?: string,
 ) {
@@ -87,9 +87,9 @@ export async function verifyToken(
 
 export async function setPasswordAction(
     value: { password: string },
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState?: Dispatch<SetStateAction<boolean>>,
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>,
     token?: string,
     redirectTo?: string
 ) {
@@ -109,8 +109,8 @@ export async function setPasswordAction(
 
 export async function initChangeRequestAction(
     value: { email: string },
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>,
 ) {
     await auth.post('reset-password', value)
         .then(() => {
@@ -130,9 +130,9 @@ export async function initChangeRequestAction(
 
 export async function verifyResetPasswordRequest(
     token: string,
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>,
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await auth.get(`reset-password/verify-request?token=${token}`)
         .then((response: AxiosResponse) => {
@@ -148,9 +148,9 @@ export async function verifyResetPasswordRequest(
 export async function resetNewPassword(
     value: { newPassword: string },
     token: string,
-    setUserState: Dispatch<SetStateAction<UserAuthType>>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>,
-    setLoadingState: Dispatch<SetStateAction<boolean>>,
+    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
+    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
     await auth.patch(`reset-password/set-new-password?token=${token}`, value)
         .then(() => {
@@ -163,14 +163,13 @@ export async function resetNewPassword(
         })
 }
 
-
 export function clientSideRedirect(route: string) {
     return window.location.href = route
 }
 
 function handleError(
     error: AxiosError<{ message?: string, msg?: string }>,
-    setError: Dispatch<SetStateAction<UserAuthErrorType>>
+    setError: Dispatch<SetStateAction<AuthContextType['error']>>
 ) {
     const errorStatus = error.response?.status
     const errorMessage = error.response?.data.message ? error.response?.data.message : error.response?.data.msg

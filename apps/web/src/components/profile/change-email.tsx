@@ -16,9 +16,11 @@ import { useAuth } from "@/lib/store/auth/auth.provider"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Spinner from "../ui/spinner"
+import { useEffect, useState } from "react"
 
 export default function ChangeEmailDialog() {
     const auth = useAuth()
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -39,8 +41,13 @@ export default function ChangeEmailDialog() {
         }
     })
 
+    useEffect(() => {
+        formik.resetForm()
+        auth.clearError()
+    }, [dialogOpen])
+
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen} >
             <DialogTrigger asChild>
                 <Button variant="outline" disabled={auth?.isLoading} className="text-xs sm:text-sm">Change Email</Button>
             </DialogTrigger>

@@ -14,13 +14,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/store/auth/auth.provider"
 import { useFormik } from 'formik';
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import * as Yup from 'yup';
 import Spinner from "../ui/spinner"
 
 export function ChangeNameDialog() {
     const auth = useAuth()
     const user = auth?.user?.data
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -46,15 +47,24 @@ export function ChangeNameDialog() {
     })
 
     useEffect(() => {
-        formik.setValues({
-            firstName: user?.firstName!,
-            lastName: user?.lastName!,
-            password: ''
-        })
-    }, [auth?.user])
+        if (dialogOpen) {
+            formik.setValues({
+                firstName: user?.firstName!,
+                lastName: user?.lastName!,
+                password: ''
+            })
+
+        }
+        if (!dialogOpen) {
+            formik.resetForm()
+            auth?.clearError()
+        }
+    }, [dialogOpen])
+
+    const noChanges = user?.firstName === formik.values.firstName && user?.lastName === formik.values.lastName
 
     return (
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" disabled={auth?.isLoading} className="text-xs sm:text-sm">Change Name</Button>
             </DialogTrigger>
@@ -132,11 +142,15 @@ export function ChangeNameDialog() {
                                     : null}
                             </div>
                             <DialogFooter>
-                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading}>Save changes</Button>
+                                <Button
+                                    type="submit"
+                                    disabled={formik.isSubmitting || auth?.isLoading || noChanges}
+                                >
+                                    Save Changes
+                                </Button>
                             </DialogFooter>
                         </div>
-                    </form>)
-                }
+                    </form>)}
             </DialogContent>
         </Dialog>
     )
