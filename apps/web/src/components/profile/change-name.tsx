@@ -155,7 +155,7 @@ export function ChangeNameDialog() {
                     : null}
                 {!isRequesting && response?.id
                     ? <div className="flex flex-col gap-4">
-                        <span>{"Your name hase been changed successfully."}</span>
+                        <span>{"Your name has been changed successfully."}</span>
                         <DialogFooter>
                             <Button onClick={() => {
                                 setDialogOpen(false)

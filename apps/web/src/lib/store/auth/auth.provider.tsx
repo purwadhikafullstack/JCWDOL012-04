@@ -117,7 +117,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const changePassword = async (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => {
-        await changePasswordAction(values, setUser, setError, setIsLoading);
+        return await changePasswordAction(values);
     }
 
     const changeEmail = async (values: { newEmail: string, password: string }) => {

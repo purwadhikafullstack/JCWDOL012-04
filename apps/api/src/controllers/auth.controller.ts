@@ -60,7 +60,6 @@ export async function registerNewUser(req: Request, res: Response, next: NextFun
 }
 
 export async function setPassword(req: Request, res: Response, next: NextFunction) {
-    // return resInternalServerError(res, "Testing error", null)
 
     try {
         const salt = await genSalt(10)
