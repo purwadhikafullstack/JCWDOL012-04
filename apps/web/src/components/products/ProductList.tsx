@@ -78,7 +78,7 @@ export default function ProductList({
             <Link key={index} href={`/products/${product.id}`}>
               <div
                 id="product"
-                className="flex flex-col w-[150px] xl:w-[170px] xl:h-[230px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] bg-white hover:bg-slate-200 duration-200"
+                className="flex flex-col w-[150px] xl:w-[170px] h-[230px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] bg-white hover:bg-slate-200 duration-200"
               >
                 <div id="product-image" className="relative w-full h-[145px]">
                   <Image
