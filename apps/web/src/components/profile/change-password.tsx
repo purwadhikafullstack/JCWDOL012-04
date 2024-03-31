@@ -25,7 +25,6 @@ export function ChangePasswordDialog() {
     const [response, setResponse] = useState<any>(null)
     const [isRequesting, setIsRequesting] = useState<boolean>(false)
     const auth = useAuth()
-    console.log(response)
 
     const formik = useFormik({
         initialValues: {

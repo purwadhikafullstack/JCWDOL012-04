@@ -31,10 +31,7 @@ export async function changePasswordAction(
     values: { currentPassword: string, newPassword: string, retypeNewPassword: string },
 ) {
     return await profile.patch('change-password', values)
-        .then((response: AxiosResponse) => {
-            console.log(response)
-            return response.data.data
-        })
+        .then((response: AxiosResponse) => response.data.data)
         .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleErrorCB(error))
 }
 

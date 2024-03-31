@@ -10,7 +10,6 @@ import Spinner from "../ui/spinner";
 export default function VerifySetPassword({ token }: { token: string }) {
     const auth = useAuth()
     const error = auth.error
-    console.log(error)
 
     const formik = useFormik({
         initialValues: {
