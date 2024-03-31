@@ -70,11 +70,9 @@ export default function Products({
       </div>
     );
 
-  console.log(totalProducts);
-
   return (
-    <div className="w-full flex flex-col bg-gray-200 pt-[20px] pb-40">
-      <div className="flex flex-col space-y-5 ml-[20px] md:space-y-0 md:flex-row md:items-end md:mx-auto md:justify-between md:w-[500px] lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px]">
+    <div className="w-full flex flex-col pt-[20px] pb-40">
+      <div className="flex flex-col space-y-5 ml-[20px] md:space-y-0 md:flex-row md:items-end md:mx-auto md:justify-between md:w-[480px] lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px]">
         <div className="text-3xl font-semibold">All Products</div>
         <Link
           href={'/admin/product-management/product-form'}
@@ -99,7 +97,7 @@ export default function Products({
       ) : (
         <div
           id="product-list-container"
-          className="flex flex-wrap justify-center mx-auto px-[10px] mb-[40px] mt-[10px]  2xl:px-[100px] max-w-[1440px]"
+          className="flex flex-wrap justify-center mx-auto px-[10px] mb-[40px] mt-[10px] 2xl:px-[100px] max-w-[1440px]"
         >
           {products.map((product, index) => {
             return (
@@ -109,7 +107,7 @@ export default function Products({
               >
                 <div
                   id="product-container"
-                  className="flex flex-col w-[290px] lg:w-[320px] 2xl:w-[360px] h-[210px] bg-white m-[10px] p-[15px] rounded-md shadow-md hover:bg-slate-100"
+                  className="flex flex-col w-[290px] xl:w-[320px] 2xl:w-[360px] h-[210px] bg-white m-[10px] p-[15px] rounded-md shadow-md hover:bg-slate-100 border border-slate-200"
                 >
                   <div
                     id="product-top"
@@ -124,7 +122,7 @@ export default function Products({
                           src={
                             product.productImages?.[0]?.path.startsWith('http')
                               ? product.productImages?.[0]?.path!
-                              : '/images/products/product1image1.jpeg'
+                              : '/images/products/product-placeholder.png'
                           }
                           className="object-cover object-center"
                           fill

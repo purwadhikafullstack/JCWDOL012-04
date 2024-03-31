@@ -61,13 +61,9 @@ export class ProductController {
     try {
       const id = parseInt(req.params.id);
       const product = await productService.getProduct(id);
-      const singleProduct = product;
-      const totalStock = singleProduct?.productsWarehouses.reduce(
-        (total, warehouse) => total + warehouse.stock,
-        0,
-      );
+      const totalStock = await productService.getTotalStock(product?.id!);
       const productWithTotalStock = {
-        ...singleProduct,
+        ...product,
         totalStock,
       };
       return res.status(200).json(productWithTotalStock);
