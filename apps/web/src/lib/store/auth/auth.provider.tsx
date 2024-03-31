@@ -113,7 +113,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const changeName = async (values: { firstName: string, lastName: string, password: string }) => {
-        return await changeNameAction(values, setUser, setError, setIsLoading);
+        return await changeNameAction(values);
     }
 
     const changePassword = async (values: { currentPassword: string, newPassword: string, retypeNewPassword: string }) => {
@@ -121,7 +121,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 
     const changeEmail = async (values: { newEmail: string, password: string }) => {
-        await changeEmailAction(values, setUser, setError, setIsLoading);
+        return await changeEmailAction(values);
     }
 
     const validateChangeEmailToken = async (token: string) => {

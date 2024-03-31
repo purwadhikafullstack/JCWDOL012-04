@@ -81,7 +81,7 @@ export async function sendChangeEmail(req: Request, res: Response, next: NextFun
   const token = generateJWT(req.user as Users, { newEmail: req.body.newEmail }, "1h");
   try {
     await sendChangeEmailInstructions(req.body.newEmail, token)
-    resSuccess(res, 'Change email instructions sent', null, 1)
+    resSuccess(res, 'Change email instructions sent', { user: req.user }, 1)
   } catch (error) {
     console.error('Change Email Request Error', error)
     return resInternalServerError(res, 'Error changing email', null)
