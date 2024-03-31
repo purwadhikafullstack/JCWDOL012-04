@@ -20,7 +20,7 @@ dataRouter.get('/:provinceId/cities',
 )
 
 dataRouter.get('/closest-wh',
-    // requireJwtAuth,
+    requireJwtAuth,
     getClosestWarehouse
 )
 

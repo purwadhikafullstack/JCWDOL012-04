@@ -74,7 +74,6 @@ export default class App {
   private routes(): void {
     const productRouter = new ProductRouter();
     const reportRouter = new ReportRouter();
-    // const sampleRouter = new SampleRouter();
     require('./services/auth/googleStrategy');
     require('./services/auth/localStrategy');
     require('./services/auth/jwtStrategy');
