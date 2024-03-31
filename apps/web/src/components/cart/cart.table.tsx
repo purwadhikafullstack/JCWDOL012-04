@@ -46,9 +46,14 @@ export default function CartTable() {
             if (!isNaN(quantity) && quantity > 0) {
                 await cartApi.updateCartItem(id, quantity).then((response) => {
                     setLoading(true);
-                    if (response.status === 200) {
-                        setLoading(false);
-                        updateCart();
+                    if (response.status) {
+                        if (response.status === 200) {
+                            setLoading(false);
+                            updateCart();
+                        }
+                    } else {
+                        setStatus(response.status);
+                        console.log(response);
                     }
                 }
                 ).catch((error) => {
@@ -63,11 +68,16 @@ export default function CartTable() {
     async function updateCart() {
         await cartApi.getCart().then((response) => {
             setLoading(true);
-            setStatus(response.status);
-            if (response.status === 200) {
-                setCart(response.data);
-                updateCartContext();
-                setLoading(false);
+            if (response.status) {
+                setStatus(response.status);
+                if (response.status === 200) {
+                    setCart(response.data);
+                    updateCartContext();
+                    setLoading(false);
+                }
+            } else {
+                setStatus(response.status);
+                console.log(response);
             }
         }).catch((error) => {
             setStatus(error.status);
@@ -96,7 +106,7 @@ export default function CartTable() {
         )
     }
 
-    
+
     if (!loading && cart.length === 0) {
         return (
             <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
@@ -104,7 +114,7 @@ export default function CartTable() {
             </div>
         )
     }
-    
+
     if (status && status !== 200) {
         return <Errors statusCode={status} message={error} />
     }
@@ -135,7 +145,7 @@ export default function CartTable() {
                                         async (event) => {
                                             event.preventDefault();
                                             if (window.confirm('Are you sure you want to delete this item?')) {
-                                                await cartApi.deleteCartItem(item.id).then((response) => { if (response.status === 200) { toast.success("Item Deleted") } }); setCart(cart.filter(itemTemp => itemTemp.id !== item.id)); updateCartContext();
+                                                await cartApi.deleteCartItem(item.id).then((response) => { if (response.status && response.status === 200) { toast.success("Item Deleted") } }); setCart(cart.filter(itemTemp => itemTemp.id !== item.id)); updateCartContext();
                                             }
                                         }}
                                     >

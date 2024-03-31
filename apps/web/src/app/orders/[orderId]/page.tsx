@@ -63,8 +63,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleCancelOrder() {
         if (transaction) {
             const res = await transactionApi.cancelOrder(transaction.transactionUid);
-            if (res.status == 200) {
-                setUpdate(!update);
+            if (res.status) {
+                if (res.status == 200) {
+                    setUpdate(!update);
+                }
+            } else {
+                console.log(res);
             }
         }
     }
@@ -72,8 +76,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleConfirmOrder() {
         if (transaction) {
             const res = await transactionApi.confirmOrder(transaction.transactionUid);
-            if (res.status == 200) {
-                setUpdate(!update);
+            if (res.status) {
+                if (res.status == 200) {
+                    setUpdate(!update);
+                }
+            } else {
+                console.log(res);
             }
         }
     }
@@ -83,13 +91,21 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     }
 
     async function handleUploadPaymentProof(file: File) {
+        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            alert("Please check the image file, it only accepts jpg, jpeg and png format.");
+            return;
+        }
         if (transaction) {
             const res = await transactionApi.postPaymentProof(transaction.transactionUid, file);
-            if (res.status == 200) {
-                setUpdate(!update);
-                handlePaymentProofButton();
+            if (res.status) {
+                if (res.status == 200) {
+                    setUpdate(!update);
+                    handlePaymentProofButton();
+                } else {
+                    alert("Failed to upload payment proof");
+                }
             } else {
-                alert("Failed to upload payment proof");
+                alert("Please check the image file, it only accepts jpg, jpeg and png format.");
             }
         }
     }
@@ -178,33 +194,33 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
                                     <div className="flex gap-2">
                                         <img src={baseUrl + "" + transaction.paymentProof} alt="payment proof" className="w-1/2 max-w-[500px] max-h-[500px]" />
                                         <div className="border-l border-l-[var(--lightPurple)]">
-                                        {(transaction.orderStatus=="PENDING_PROOF" || transaction.orderStatus=="PENDING_VERIFICATION") && <button className="text-sm lg:text-md max-h-10 ml-2 mb-5 bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handlePaymentProofButton}>Edit Payment Proof</button>}
-                                        {isPaymentProofOpen && (
-                                            <div className="border border-[var(--lightPurple)] rounded-xl p-2 ml-2">
-                                                <form
-                                                    onSubmit={(event) => {
-                                                        event.preventDefault();
-                                                        const fileInput = event.currentTarget.elements.namedItem("file") as HTMLInputElement;
-                                                        const file = fileInput.files?.[0];
-                                                        if (file) {
-                                                            if (file.size > 1024 * 1024) { // file size limit 1MB
-                                                                alert("File size exceeds 1MB. Please select a smaller file.");
-                                                            } else {
-                                                                handleUploadPaymentProof(file);
+                                            {(transaction.orderStatus == "PENDING_PROOF" || transaction.orderStatus == "PENDING_VERIFICATION") && <button className="text-sm lg:text-md max-h-10 ml-2 mb-5 bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] rounded-xl text-white p-2" onClick={handlePaymentProofButton}>Edit Payment Proof</button>}
+                                            {isPaymentProofOpen && (
+                                                <div className="border border-[var(--lightPurple)] rounded-xl p-2 ml-2">
+                                                    <form
+                                                        onSubmit={(event) => {
+                                                            event.preventDefault();
+                                                            const fileInput = event.currentTarget.elements.namedItem("file") as HTMLInputElement;
+                                                            const file = fileInput.files?.[0];
+                                                            if (file) {
+                                                                if (file.size > 1024 * 1024) { // file size limit 1MB
+                                                                    alert("File size exceeds 1MB. Please select a smaller file.");
+                                                                } else {
+                                                                    handleUploadPaymentProof(file);
+                                                                }
                                                             }
-                                                        }
-                                                    }}
-                                                >
-                                                    <input
-                                                        name="file"
-                                                        type="file"
-                                                        accept="image/jpeg, image/png"
-                                                        className=""
-                                                    />
-                                                    <button className="bg-[var(--primaryColor)] rounded-xl p-2 mt-2 mx-auto block text-white hover:bg-[var(--lightPurple)]" type="submit">Upload</button>
-                                                </form>
-                                            </div>
-                                        )}
+                                                        }}
+                                                    >
+                                                        <input
+                                                            name="file"
+                                                            type="file"
+                                                            accept="image/jpeg, image/png"
+                                                            className=""
+                                                        />
+                                                        <button className="bg-[var(--primaryColor)] rounded-xl p-2 mt-2 mx-auto block text-white hover:bg-[var(--lightPurple)]" type="submit">Upload</button>
+                                                    </form>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

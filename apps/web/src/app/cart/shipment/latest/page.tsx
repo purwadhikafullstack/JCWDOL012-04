@@ -1,7 +1,7 @@
 'use client'
 import TransactionApi from "@/api/transaction.user.api.withAuth";
 import { useRouter } from "next/navigation";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/store/auth/auth.provider";
 
 export default function LatestTransaction() {
@@ -15,9 +15,13 @@ export default function LatestTransaction() {
 
     useEffect(() => {
         transactionApi.getLatestTransactionUid().then((response) => {
-            if (response.status === 200) {
-                setTransactionUid(response.data.replace(/"/g, ''));
-                router.push(`../../../orders/${transactionUid}`)
+            if (response.status) {
+                if (response.status === 200) {
+                    setTransactionUid(response.data.replace(/"/g, ''));
+                    router.push(`../../../orders/${transactionUid}`)
+                }
+            } else {
+                console.log('error');
             }
         }).catch((error) => {
             console.log(error);
@@ -25,7 +29,7 @@ export default function LatestTransaction() {
         setLoading(false);
     }, [isAuthenticated, role]);
 
-    if(loading){
+    if (loading) {
         return (
             <div className="w-full h-screen flex justify-center items-center text-xl font-semibold">
                 <h1>Loading...</h1>

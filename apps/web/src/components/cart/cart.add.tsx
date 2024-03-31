@@ -29,11 +29,15 @@ export default function CartAdd({ productId }: { productId: number }) {
       .preAddToCart(productId)
       .then((response) => {
         setLoading(true);
-        setStatus(response.status);
-        if (response.status === 200) {
-          setProduct(response.product);
-          setStock(response.stock);
-          setLoading(false);
+        if (response.status) {
+          setStatus(response.status);
+          if (response.status === 200) {
+            setProduct(response.product);
+            setStock(response.stock);
+            setLoading(false);
+          }
+        } else {
+          console.log(response);
         }
       })
       .catch((error) => {
@@ -64,11 +68,15 @@ export default function CartAdd({ productId }: { productId: number }) {
         .addToCart(productId, quantity)
         .then((response) => {
           setLoading(true);
-          setStatus(response.status);
-          if (response.status === 200) {
-            toast.success('Added to cart');
-            setLoading(false);
-            updateCartContext();
+          if (response.status) {
+            setStatus(response.status);
+            if (response.status === 200) {
+              toast.success('Added to cart');
+              setLoading(false);
+              updateCartContext();
+            }
+          } else {
+            console.log(response);
           }
         })
         .catch((error) => {
@@ -136,11 +144,10 @@ export default function CartAdd({ productId }: { productId: number }) {
         </div>
         <div className="flex justify-end mt-5">
           <button
-            className={`bg-[var(--primaryColor)] hover:bg-[var(--primaryColor-dark)] text-white px-5 py-2 rounded-lg ${
-              isExceedQuantity || stock === 0
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
+            className={`bg-[var(--primaryColor)] hover:bg-[var(--primaryColor-dark)] text-white px-5 py-2 rounded-lg ${isExceedQuantity || stock === 0
+              ? 'opacity-50 cursor-not-allowed'
+              : ''
+              }`}
             disabled={isExceedQuantity || stock === 0}
             onClick={handleAddToCart}
           >
