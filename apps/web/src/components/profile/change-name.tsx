@@ -25,7 +25,6 @@ export function ChangeNameDialog() {
     const [isRequesting, setIsRequesting] = useState<boolean>(false)
     const auth = useAuth()
     const user = auth?.user?.data
-    console.log(response)
 
     const formik = useFormik({
         initialValues: {

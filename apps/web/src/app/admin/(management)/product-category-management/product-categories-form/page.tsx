@@ -30,7 +30,6 @@ export default function ProductCategoriesForm() {
           values,
           'application/json',
         );
-        console.log(response);
 
         if (response.status === 201) {
           setIsModalOpen(true);
@@ -66,7 +65,7 @@ export default function ProductCategoriesForm() {
     <div className="w-full h-screen flex justify-center items-center bg-gradient-to-r from-violet-500 to-fuchsia-500 ">
       <form
         onSubmit={formik.handleSubmit}
-        className="max-w-md mx-auto mt-8 p-10 bg-white rounded border shadow-md"
+        className="max-w-md mx-auto mb-28 md:mb-0 p-10 bg-white rounded border shadow-md"
       >
         <div className="mb-6 text-center font-semibold text-2xl text-[var(--primaryColor)] py-2 rounded-md">
           Product Category Form

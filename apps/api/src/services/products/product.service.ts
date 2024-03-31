@@ -52,6 +52,9 @@ export default class ProductService {
       },
       where: {
         productId: id,
+        warehouse: {
+          archived: false,
+        },
       },
     });
     return totalStock._sum.stock || 0;

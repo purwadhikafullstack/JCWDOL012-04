@@ -70,8 +70,10 @@ export default function ProductCategories({
 
   return (
     <div className="w-full flex flex-col pt-[20px]">
-      <div className="flex flex-col space-y-5 ml-[20px] lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[740px] xl:w-[1000px] 2xl:w-[1120px]">
-        <div className="text-3xl font-semibold">All Products Categories</div>
+      <div className="flex flex-col space-y-5 ml-[55px] md:ml-0 lg:space-y-0 lg:flex-row lg:items-end lg:mx-auto lg:justify-between lg:w-[670px] xl:w-[1000px] 2xl:w-[1120px]">
+        <div className="text-2xl md:text-3xl font-semibold">
+          All Products Categories
+        </div>
         <Link
           href={'/admin/product-category-management/product-categories-form'}
           className={`${role === 'SUPER_ADMIN' ? '' : 'hidden'}`}
@@ -90,22 +92,22 @@ export default function ProductCategories({
       {isLoading ? (
         <Loading />
       ) : (
-        <div className="flex flex-col mb-[200px] space-y-4 items-center mt-[20px]">
+        <div className="flex flex-col mb-[200px] space-y-4 items-center mx-auto mt-[20px]">
           {productCategories.map((procat, index) => {
             return (
               <Link
-                href={`/admin/products?category=${procat.name}`}
+                href={`/admin/product-management?category=${procat.name}`}
                 key={index}
               >
                 <div
                   id="product-categories-container"
-                  className="bg-gradient-to-r from-white to-purple-300 border h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[500px] lg:w-[750px] xl:w-[1000px] 2xl:w-[1120px] rounded-md px-[30px] hover:scale-105 duration-200"
+                  className="bg-gradient-to-r from-white to-purple-300 border h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[500px] lg:w-[670px] xl:w-[1000px] 2xl:w-[1120px] rounded-md px-[30px] hover:scale-105 duration-200"
                 >
                   <div className="flex items-center">
                     <div className="font-semibold w-[140px] lg:w-[200px] truncate">
                       #{procat.name}
                     </div>
-                    <div className="hidden md:flex text-gray-600 w-[150px] lg:w-[220px] xl:w-[400px] truncate">
+                    <div className="hidden md:block text-gray-600 w-[150px] lg:w-[220px] xl:w-[400px] truncate">
                       {procat.description}
                     </div>
                   </div>

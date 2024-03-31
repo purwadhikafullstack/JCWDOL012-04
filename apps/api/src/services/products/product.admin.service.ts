@@ -58,7 +58,13 @@ export default class AdminProductService {
             archived: false,
           },
         },
-        productsWarehouses: true,
+        productsWarehouses: {
+          where: {
+            warehouse: {
+              archived: false,
+            },
+          },
+        },
         productCategory: true,
       },
     });

@@ -101,6 +101,11 @@ export class ProductRouter {
       requireJwtAuth,
       this.ProductCategoryController.getWarehouseById,
     );
+    this.router.get(
+      '/admin/warehouse-stock',
+      requireJwtAuth,
+      this.ProductStockController.getWarehouseStock,
+    );
     this.router.patch(
       '/admin/products/:id',
       requireJwtAuth,

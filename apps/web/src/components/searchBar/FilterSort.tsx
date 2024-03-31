@@ -72,16 +72,19 @@ export const FilterSort: React.FC<FilterSortProps> = (props) => {
             <Link
               href={`?page=1&pagesize=15&search=${props.search}&category=${procat.name}`}
               key={index}
-              className={`${
-                procat.name === props.category
-                  ? 'bg-[var(--primaryColor)] hover:bg-[var(--primaryColor)] text-white cursor-pointer px-[20px] py-[5px]'
-                  : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px] truncate'
-              }`}
               onClick={() => {
                 props.setIsOpenCat(false);
               }}
             >
-              {procat.name}
+              <div
+                className={`${
+                  procat.name === props.category
+                    ? 'bg-[var(--primaryColor)] hover:bg-[var(--primaryColor)] text-white cursor-pointer px-[20px] py-[5px]'
+                    : 'hover:bg-slate-200 cursor-pointer px-[20px] py-[5px] truncate'
+                }`}
+              >
+                {procat.name}
+              </div>
             </Link>
           );
         })}

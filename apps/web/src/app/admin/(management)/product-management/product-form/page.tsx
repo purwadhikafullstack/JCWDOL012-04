@@ -68,7 +68,6 @@ export default function CreateProductForm() {
         values.productImages.forEach((image) => {
           formData.append('productImages', image);
         });
-        console.log(values);
         const response = await createData(
           `admin/products`,
           formData,

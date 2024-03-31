@@ -60,7 +60,6 @@ export const MutationFormModal: React.FC<MutationModalProps> = (props) => {
           values,
           'application/json',
         );
-        console.log(response);
         if (response.status === 201) {
           props.fetchData();
           setIsOpenModal(true);

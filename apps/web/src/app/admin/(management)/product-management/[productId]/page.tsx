@@ -11,6 +11,7 @@ import { Loading } from '@/components/Loading';
 import * as Yup from 'yup';
 import Image from 'next/image';
 import { SuccessModal } from '@/components/admin/SuccessModal';
+import { ProductWarehousesModel } from '@/model/ProductWarehousesModel';
 
 export default function ProductDetails({
   params,
@@ -19,6 +20,9 @@ export default function ProductDetails({
 }) {
   const [product, setProduct] = useState<ProductsModel | null>(null);
   const [warehouses, setWarehouses] = useState<WarehousesModel[]>([]);
+  const [warehouse, setWarehouse] = useState<WarehousesModel>();
+  const [productWarehouse, setProductWarehouse] =
+    useState<ProductWarehousesModel>();
   const [productCategories, setProductCategories] = useState<
     ProductCategoriesModel[]
   >([]);
@@ -65,8 +69,30 @@ export default function ProductDetails({
         console.log(error);
       }
     }
-    fetchWarehouses();
-  }, []);
+    async function fetchWarehouse() {
+      try {
+        const response = await fetchData(
+          `admin/product-warehouses/${warehouseAdminId}`,
+        );
+        setWarehouse(response);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    async function fetchStock() {
+      try {
+        const response = await fetchData(
+          `admin/warehouse-stock?productId=${product?.id}&warehouseId=${warehouseAdminId}`,
+        );
+        setProductWarehouse(response);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    role === 'SUPER_ADMIN'
+      ? fetchWarehouses()
+      : (fetchWarehouses(), fetchStock(), fetchWarehouse());
+  }, [role, warehouseAdminId, product?.id]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -208,7 +234,6 @@ export default function ProductDetails({
   ) {
     return <Loading />;
   }
-
   return (
     <div className="w-full p-10 md:p-0 min-h-[1300px] lg:min-h-[800px] max-w-[1440px] mx-auto">
       <form
@@ -250,15 +275,15 @@ export default function ProductDetails({
               >
                 Description
               </label>
-              <input
-                type="text"
+              <textarea
+                rows={5}
                 id="description"
                 name="description"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.description}
                 className="w-full border px-3 py-2 rounded"
-              />
+              ></textarea>
               {formik.touched.description && formik.errors.description ? (
                 <div className="text-red-500 text-sm">
                   {formik.errors.description}
@@ -350,13 +375,8 @@ export default function ProductDetails({
                   <div className="relative w-6 h-6">
                     <Image src={'/images/icon/home.png'} fill alt="house" />
                   </div>
-                  <div className="">
-                    {warehouses[warehouseAdminId! - 1].name} :
-                  </div>
-                  <div className="font-semibold">
-                    {product.productsWarehouses?.[warehouseAdminId! - 1]
-                      ?.stock ?? 0}
-                  </div>
+                  <div className="">{warehouse?.name} :</div>
+                  <div className="font-semibold">{productWarehouse?.stock}</div>
                 </div>
               ) : (
                 <div className="flex flex-wrap mt-2">

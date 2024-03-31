@@ -35,6 +35,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
             </div>
             <div className="flex items-center space-x-5">
               <button
+                className="bg-[var(--primaryColor)] text-white px-5 py-[5px] border border-[var(--primaryColor)] rounded-md hover:bg-white hover:text-[var(--primaryColor)] duration-200"
+                onClick={() => {
+                  props.setIsModalOpen(false);
+                }}
+              >
+                No
+              </button>
+              <button
                 className="bg-red-600 text-white px-5 py-[5px] border border-red-600 rounded-md hover:bg-white hover:text-red-600 duration-200"
                 onClick={() => {
                   props.handleArchive();
@@ -42,14 +50,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
                 }}
               >
                 Yes
-              </button>
-              <button
-                className="bg-[var(--primaryColor)] text-white px-5 py-[5px] border border-[var(--primaryColor)] rounded-md hover:bg-white hover:text-[var(--primaryColor)] duration-200"
-                onClick={() => {
-                  props.setIsModalOpen(false);
-                }}
-              >
-                No
               </button>
             </div>
           </motion.div>
