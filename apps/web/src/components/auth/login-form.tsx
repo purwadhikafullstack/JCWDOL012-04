@@ -155,5 +155,11 @@ function LoginBanner({ origin }: { origin: string | null }) {
         </Alert>
     )
 
+    if (origin === 'reset-password-success') return (
+        <Alert className=" border-purple-800">
+            <PiSealCheck className="h-5 w-5 mr-2 " />
+            <AlertDescription>Your password has been successfully updated. Please login with your new password to continue.</AlertDescription>
+        </Alert>
+    )
     return null
 }

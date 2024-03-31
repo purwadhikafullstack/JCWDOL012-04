@@ -10,11 +10,15 @@ import Spinner from "@/components/ui/spinner"
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { notFound, useSearchParams } from "next/navigation";
+import UnauthorizedPage from "@/components/auth/unauthorized";
+import { useEffect } from "react";
 
 export default function VerifyChangeEmailPage() {
     const auth = useAuth()
     const tokenQuery = useSearchParams().get('token')
     if (!tokenQuery) notFound()
+
+    useEffect(() => { auth.validateChangeEmailRequest(tokenQuery) }, [])
 
     const formik = useFormik({
         initialValues: {
@@ -30,6 +34,13 @@ export default function VerifyChangeEmailPage() {
             formik.setSubmitting(false)
         }
     })
+
+    if (auth.error.status?.toString() === '401') return (
+        <>
+            <UnauthorizedPage message="Invalid or expired link. Please request your changes again." ctaLabel="Go To Home" redirectTo="/" />
+        </>
+    )
+
     return (
         <>
             <div className="min-h-[80vh] w-full px-3">

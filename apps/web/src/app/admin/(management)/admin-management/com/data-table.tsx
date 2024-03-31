@@ -18,8 +18,6 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
-import { redirect } from "next/navigation"
-
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -36,8 +34,6 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
-    if (!columns || !data) throw new Error('401 | Unauthorized')
 
     if (data && columns) return (
         <div>

@@ -4,7 +4,7 @@ import { ShoppingCartModel } from "@/model/ShoppingCartModel";
 import Errors from "@/app/errors";
 import { debounce } from "lodash";
 import { useUpdateCart } from "@/lib/cart.provider.update";
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 import CartApi from "@/api/cart.api.withAuth";
 import idr from "@/lib/idrCurrency";
@@ -40,10 +40,16 @@ export default function CartTable() {
             if (!isNaN(quantity) && quantity > 0) {
                 await cartApi.updateCartItem(id, quantity).then((response) => {
                     setLoading(true);
-                    if (response.status === 200) {
-                        setLoading(false);
-                        updateCart();
+                    if (response.status) {
+                        if (response.status === 200) {
+                            setLoading(false);
+                            updateCart();
+                        }
+                    } else {
+                        setStatus(response.status);
+                        console.log(response);
                     }
+
                 }
                 ).catch((error) => {
                     setStatus(error.status);
@@ -58,10 +64,14 @@ export default function CartTable() {
         await cartApi.getCart().then((response) => {
             setLoading(true);
             setStatus(response.status);
-            if (response.status === 200) {
-                setCart(response.data);
-                updateCartContext();
-                setLoading(false);
+            if (response.status) {
+                if (response.status === 200) {
+                    setCart(response.data);
+                    updateCartContext();
+                    setLoading(false);
+                }
+            } else {
+                console.log(response);
             }
         }).catch((error) => {
             setStatus(error.status);
@@ -140,7 +150,7 @@ export default function CartTable() {
                                         async (event) => {
                                             event.preventDefault();
                                             if (window.confirm('Are you sure you want to delete this item?')) {
-                                                await cartApi.deleteCartItem(item.id).then((response)=>{if(response.status===200){toast.success("Item Deleted")}}); setCart(cart.filter(itemTemp => itemTemp.id !== item.id)); updateCartContext(); 
+                                                await cartApi.deleteCartItem(item.id).then((response) => { if (response.status && response.status === 200) { toast.success("Item Deleted") } }); setCart(cart.filter(itemTemp => itemTemp.id !== item.id)); updateCartContext();
                                             }
                                         }}
                                     >Remove</button>

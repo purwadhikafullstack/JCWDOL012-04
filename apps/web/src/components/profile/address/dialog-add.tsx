@@ -88,7 +88,6 @@ export function AddAddress() {
                                     defaultValue={formik.values.provinceId}
                                     onValueChange={async (e) => {
                                         formik.setFieldValue('provinceId', e.toString())
-                                        // await address.getCities(e.toString())
                                         formik.setFieldValue('cityId', '')
                                     }}
                                 >
