@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { AuthContextType } from "./auth.provider"
-import axios, { AxiosResponse } from "axios"
+import axios, { AxiosError, AxiosResponse } from "axios"
 import { clientSideRedirect, logOutAction } from "./auth.action"
 
 const BASE_PROFILE_URL = process.env.NEXT_PUBLIC_BASE_PROFILE_URL
@@ -13,80 +13,26 @@ const profile = axios.create({
 
 export async function changeNameAction(
     values: { firstName: string, lastName: string, password: string },
-    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
-    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
-    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
-    await profile.patch('change-name', values)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            setLoadingState(false)
-            clientSideRedirect('/profile')
-        })
-        .catch((error) => {
-            if (error.response.status === 401) {
-                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
-                clientSideRedirect('/auth/login')
-            } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
-            } else {
-                setLoadingState(false)
-                throw new Error('An unhandled error occured')
-            } setLoadingState(false)
-        })
+    return await profile.patch('change-name', values)
+        .then((response: AxiosResponse) => response.data.data.user)
+        .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleErrorCB(error))
+}
+
+export async function changeEmailAction(
+    values: { newEmail: string, password: string }
+) {
+    return await profile.post('request-change-email', values)
+        .then((response: AxiosResponse) => response?.data?.data?.user)
+        .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleErrorCB(error))
 }
 
 export async function changePasswordAction(
     values: { currentPassword: string, newPassword: string, retypeNewPassword: string },
-    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
-    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
-    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
 ) {
-    await profile.patch('change-password', values)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response.data.data.user }))
-            clientSideRedirect('/profile')
-            setLoadingState ? () => setLoadingState(false) : null
-        })
-        .catch((error) => {
-            if (error.response.status === 401) {
-                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error?.response?.status, message: error.response?.data })
-                clientSideRedirect('/auth/login')
-            } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response?.status, message: error.response.data?.msg })
-            } else {
-                setLoadingState ? setLoadingState(false) : null
-                throw new Error('An unhandled error occured')
-            } setLoadingState ? setLoadingState(false) : null
-        })
-}
-
-export async function changeEmailAction(
-    values: { newEmail: string, password: string },
-    setUserState: Dispatch<SetStateAction<AuthContextType['user']>>,
-    setError: Dispatch<SetStateAction<AuthContextType['error']>>,
-    setLoadingState: Dispatch<SetStateAction<AuthContextType['isLoading']>>
-) {
-    await profile.post('request-change-email', values)
-        .then((response: AxiosResponse) => {
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: true, data: response?.data?.data?.user }))
-            setLoadingState ? () => setLoadingState(false) : null
-            clientSideRedirect('/profile')
-        })
-        .catch((error) => {
-            if (error.response.status === 401) {
-                setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-                setError({ status: error.response.status, message: error.response.data })
-                clientSideRedirect('/auth/login')
-            } else if (error.response.status === 422 || error.response.status === 500) {
-                setError({ status: error.response.status, message: error.response.data.msg })
-            } else {
-                setLoadingState ? setLoadingState(false) : null
-                throw new Error('An unhandled error occured')
-            } setLoadingState ? setLoadingState(false) : null
-        })
+    return await profile.patch('change-password', values)
+        .then((response: AxiosResponse) => response.data.data)
+        .catch((error: AxiosError<{ message?: string, msg?: string }>) => handleErrorCB(error))
 }
 
 export async function updateEmailAction(
@@ -130,7 +76,6 @@ export async function verifyChangeEmailToken(
             if (error?.response?.status === 401) {
                 setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
                 setError({ status: error.response.status, message: error.response.data })
-                clientSideRedirect('/auth/login?origin=401')
             } else if (error?.response?.status === 422 || error.response.status === 500) {
                 setError({ status: error.response.status, message: error.response.data.msg })
             } else {
@@ -162,4 +107,14 @@ export async function updateProfilePictureAction(
                 throw new Error('An unhandled error occured')
             } setLoadingState(false)
         })
+}
+
+function handleErrorCB(error: AxiosError<{ message?: string, msg?: string }>) {
+    const errorStatus = error.response?.status
+    const errorMessage = error.response?.data?.msg ? error.response?.data?.msg : error.response?.data?.message
+    if (errorStatus) {
+        return { error: { status: errorStatus, message: errorMessage } }
+    } else {
+        return { error: { status: null, message: "Unknown error occured" } }
+    }
 }

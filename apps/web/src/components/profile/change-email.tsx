@@ -17,10 +17,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Spinner from "../ui/spinner"
 import { useEffect, useState } from "react"
+import { clientSideRedirect } from "@/lib/store/auth/auth.action"
 
 export default function ChangeEmailDialog() {
-    const auth = useAuth()
+    const [isRequesting, setIsRequesting] = useState<boolean>(false)
     const [dialogOpen, setDialogOpen] = useState(false)
+    const [response, setResponse] = useState<any>(null)
+    const auth = useAuth()
 
     const formik = useFormik({
         initialValues: {
@@ -36,14 +39,19 @@ export default function ChangeEmailDialog() {
                 .required('Type your new email address')
         }),
         onSubmit: async (values) => {
-            await auth?.changeEmail(values)
+            setIsRequesting(true)
+            const response = await auth?.changeEmail(values)
+            setResponse(response)
             formik.setSubmitting(false)
+            setIsRequesting(false)
         }
     })
 
     useEffect(() => {
-        formik.resetForm()
-        auth.clearError()
+        if (dialogOpen) {
+            formik.resetForm()
+            setResponse(null)
+        }
     }, [dialogOpen])
 
     return (
@@ -54,13 +62,13 @@ export default function ChangeEmailDialog() {
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Change Email</DialogTitle>
-                    <DialogDescription>
+                    {!response?.id && <DialogDescription>
                         {"We will send an instruction to your new email to complete your changes. Type your password and new email, and then click submit when you're done."}
-                    </DialogDescription>
+                    </DialogDescription>}
                 </DialogHeader>
-                {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}
-                {!auth?.isLoading &&
-                    (<form onSubmit={formik.handleSubmit}>
+                {isRequesting && <div className="mx-auto"><Spinner /></div>}
+                {!isRequesting && !response?.id
+                    ? (<form onSubmit={formik.handleSubmit}>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="password" >
                                 Password
@@ -95,21 +103,34 @@ export default function ChangeEmailDialog() {
                                     ? (<div className="col-span-4 text-red-500 text-xs">{formik.errors.newEmail}</div>)
                                     : null}
                             </div>
-                            <div>
-                                {auth?.error?.status
-                                    ? (<div className="text-red-500 text-xs">
-                                        {auth.error?.message
-                                            ? auth.error?.message
-                                            : 'An Error occured. Something went wrong'}
-                                    </div>)
-                                    : null}
-                            </div>
+
+                            {response?.error
+                                ? (<div className="text-red-500 text-xs">
+                                    {response?.error?.message}
+                                </div>)
+                                : null
+                            }
 
                             <DialogFooter className="mt-4">
-                                <Button type="submit" disabled={formik.isSubmitting || auth?.isLoading}>Submit</Button>
+                                <Button type="submit" disabled={formik.isSubmitting || isRequesting}>Submit</Button>
                             </DialogFooter>
                         </div>
-                    </form>)}
+                    </form>)
+                    : null
+                }
+                {!isRequesting && response?.id
+                    ? <div className="flex flex-col gap-4">
+                        <span>{"We have sent an email to your new email address. Please check and follow the instructions to complete your change email request."}</span>
+                        <DialogFooter>
+                            <Button onClick={() => {
+                                setDialogOpen(false)
+                                clientSideRedirect('/profile')
+                            }}>
+                                Close
+                            </Button>
+                        </DialogFooter>
+                    </div>
+                    : null}
             </DialogContent>
         </Dialog>
     )

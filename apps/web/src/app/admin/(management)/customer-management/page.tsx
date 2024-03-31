@@ -1,7 +1,10 @@
+import UnauthorizedPage from "@/components/auth/unauthorized"
 import { columns } from "./com/columns"
 import { DataTable } from "./com/data-table"
 import axios from "axios"
 import { cookies } from 'next/headers'
+import { UsersModel } from "@/model/UsersModel"
+import { verifyUserServerSide } from "../action"
 
 async function getCustomers(): Promise<any> {
     const cookie = cookies().get('palugada-auth-token')?.value
@@ -17,11 +20,17 @@ async function getCustomers(): Promise<any> {
     return await user.get('/customers')
         .then((response) => response.data.data as AdminModel[])
         .catch((error) => {
-            console.error('Error getting Administrator data', error);
+            console.error('Error getting Administrator data', error.response?.data);
+            return [] as AdminModel[]
         });
 }
 
 export default async function DemoPage() {
+    const user: UsersModel | undefined | null = await verifyUserServerSide()
+
+    if (!user || user?.role?.toUpperCase() !== "SUPER_ADMIN") return (
+        < UnauthorizedPage message="401 | You are not authorized to view this page" ctaLabel="Go To Dashboard Home" redirectTo="/admin" />
+    )
     const data: AdminModel[] = await getCustomers()
 
     return (

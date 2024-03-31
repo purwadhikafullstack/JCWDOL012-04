@@ -31,7 +31,7 @@ export async function changeName(req: Request, res: Response) {
           lastName,
         },
       });
-      resSuccess(res, 'Name updated successfully', updatedUser, 1);
+      resSuccess(res, 'Name updated successfully', { user: updatedUser }, 1);
     } catch (error) {
       console.error('Error', error);
       resInternalServerError(res, 'Error updating name', null);
@@ -81,7 +81,7 @@ export async function sendChangeEmail(req: Request, res: Response, next: NextFun
   const token = generateJWT(req.user as Users, { newEmail: req.body.newEmail }, "1h");
   try {
     await sendChangeEmailInstructions(req.body.newEmail, token)
-    resSuccess(res, 'Change email instructions sent', null, 1)
+    resSuccess(res, 'Change email instructions sent', { user: req.user }, 1)
   } catch (error) {
     console.error('Change Email Request Error', error)
     return resInternalServerError(res, 'Error changing email', null)
@@ -131,7 +131,6 @@ export async function updateProfilePicture(
   req: Request,
   res: Response,
 ) {
-  return resInternalServerError(res, "Errorrrrr", null)
   const user = req.user as Users;
   const file = req.file;
   if (!file) return resUnprocessable(res, 'File is not acceptable', null);

@@ -144,10 +144,11 @@ export default function CartAdd({ productId }: { productId: number }) {
         </div>
         <div className="flex justify-end mt-5">
           <button
-            className={`bg-[var(--primaryColor)] hover:bg-[var(--primaryColor-dark)] text-white px-5 py-2 rounded-lg ${isExceedQuantity || stock === 0
-              ? 'opacity-50 cursor-not-allowed'
-              : ''
-              }`}
+            className={`bg-[var(--primaryColor)] hover:bg-[var(--primaryColor-dark)] text-white px-5 py-2 rounded-lg ${
+              isExceedQuantity || stock === 0
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
+            }`}
             disabled={isExceedQuantity || stock === 0}
             onClick={handleAddToCart}
           >

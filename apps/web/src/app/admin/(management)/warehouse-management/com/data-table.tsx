@@ -19,7 +19,6 @@ import {
 
 import { Button } from "@/components/ui/button"
 
-
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
@@ -35,8 +34,6 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     })
-
-    if (!columns || !data) throw new Error('401 | Unauthorized')
 
     return (
         <div>

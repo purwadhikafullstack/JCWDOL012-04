@@ -19,7 +19,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // useRecordPreviousPath()
   return (
     <html lang="en">
       <body className={inter.className}>
