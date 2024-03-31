@@ -44,8 +44,6 @@ export default function ProductList({
     }
     fetchProducts();
   }, [page, pageSize, search, category, sort]);
-
-  console.log(data);
   if (isLoading) {
     return (
       <>
@@ -73,22 +71,22 @@ export default function ProductList({
       </div>
       <div
         id="products-container"
-        className="flex flex-wrap min-h-[700px] justify-center mx-auto px-[10px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"
+        className="flex flex-wrap justify-center mx-auto px-[10px] lg:px-[30px] xl:px-[100px] max-w-[1440px]"
       >
         {data.map((product, index) => {
           return (
             <Link key={index} href={`/products/${product.id}`}>
               <div
                 id="product"
-                className="flex flex-col w-[150px] xl:w-[180px] h-[205px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] bg-white hover:bg-slate-200 duration-200"
+                className="flex flex-col w-[150px] xl:w-[170px] xl:h-[230px] rounded-md shadow-md border m-[10px] xl:my-[20px] xl:mx-[15px] bg-white hover:bg-slate-200 duration-200"
               >
-                <div id="product-image" className="relative w-full h-[120px]">
+                <div id="product-image" className="relative w-full h-[145px]">
                   <Image
                     className="object-cover object-center"
                     src={
                       product.productImages?.[0]?.path.startsWith('http')
                         ? product.productImages?.[0]?.path!
-                        : '/images/products/product1image1.jpeg'
+                        : '/images/products/product-placeholder.png'
                     }
                     fill
                     alt="productimage"

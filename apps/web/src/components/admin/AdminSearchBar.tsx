@@ -42,7 +42,7 @@ export const AdminSearchBar = ({
   return (
     <div
       id="search-bar"
-      className="bg-white border border-slate-200 flex items-center justify-between px-[10px] md:px-[20px] sticky top-[0px] md:top-[60px] shadow-md z-10 w-full lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
+      className="bg-white border border-slate-200 flex items-center justify-between px-[10px] md:px-[20px] sticky top-[0px] md:top-[-33px] shadow-md z-10 w-full lg:w-[660px] xl:w-[1000px] 2xl:w-[1120px] mx-auto h-[60px] mt-[30px] lg:rounded-md"
     >
       <div id="search-left" className="flex items-center flex-1">
         <input
@@ -77,7 +77,7 @@ export const AdminSearchBar = ({
             setIsOpenCat(!isOpenCat);
             setIsOpenPri(false);
           }}
-          className="border hidden md:flex items-center space-x-1 border-slate-300 md:ml-[20px] px-[15px] py-[3px] rounded cursor-pointer hover:bg-slate-200 duration-200"
+          className="border hidden lg:flex items-center space-x-1 border-slate-300 md:ml-[20px] px-[15px] py-[3px] rounded cursor-pointer hover:bg-slate-200 duration-200"
         >
           <div>Category</div>
           <div className="relative w-[10px] h-[10px]">
@@ -96,7 +96,7 @@ export const AdminSearchBar = ({
           id="product-categories-container"
           className={`${
             isOpenCat ? '' : 'hidden'
-          }  absolute flex flex-col bg-white top-[55px] w-[172px] shadow-md border right-0 md:right-[200px] lg:right-[205px] xl:right-[435px] 2xl:right-[555px] rounded-md max-h-[300px] overflow-y-auto overflow-x-hidden`}
+          }  absolute flex flex-col bg-white top-[55px] w-[172px] shadow-md border right-0 md:right-[90px] lg:right-[205px] xl:right-[435px] 2xl:right-[555px] rounded-md max-h-[300px] overflow-y-auto overflow-x-hidden`}
         >
           {productCategories.map((procat, index) => {
             return (
@@ -121,7 +121,7 @@ export const AdminSearchBar = ({
           })}
         </div>
         <div
-          className="relative w-[20px] h-[20px] md:hidden ml-[20px] mx-[10px]"
+          className="relative w-[20px] h-[20px] lg:hidden ml-[20px] mx-[10px]"
           onClick={() => {
             setIsOpenCat(!isOpenCat);
             setIsOpenPri(false);
@@ -130,7 +130,7 @@ export const AdminSearchBar = ({
           <Image src={'/images/icon/filter.png'} fill alt="filter" />
         </div>
         <div
-          className="hidden md:flex border items-center space-x-1 border-slate-300 md:mr-[20px] md:ml-[20px] px-[15px] py-[3px] rounded cursor-pointer hover:bg-slate-200 duration-200"
+          className="hidden lg:flex border items-center space-x-1 border-slate-300 md:mr-[20px] md:ml-[20px] px-[15px] py-[3px] rounded cursor-pointer hover:bg-slate-200 duration-200"
           onClick={() => {
             setIsOpenPri(!isOpenPri);
             setIsOpenCat(false);
@@ -150,7 +150,7 @@ export const AdminSearchBar = ({
           </div>
         </div>
         <div
-          className={`absolute bg-white flex flex-col rounded-md border shadow-md top-[55px] right-0 md:right-[106px] xl:right-[340px] 2xl:right-[455px] ${
+          className={`absolute bg-white flex flex-col rounded-md border shadow-md top-[55px] right-0 md:right-[75px] lg:right-[108px] xl:right-[340px] 2xl:right-[455px] ${
             isOpenPri ? '' : 'hidden'
           }`}
         >
@@ -188,7 +188,7 @@ export const AdminSearchBar = ({
           </Link>
         </div>
         <div
-          className="relative w-[20px] h-[20px] md:hidden mx-[10px]"
+          className="relative w-[20px] h-[20px] lg:hidden mx-[10px]"
           onClick={() => {
             setIsOpenPri(!isOpenPri);
             setIsOpenCat(false);

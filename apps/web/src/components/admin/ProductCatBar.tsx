@@ -15,11 +15,11 @@ export const ProductCatBar = ({
   return (
     <div
       id="product-categories-bar"
-      className="sticky top-0 md:top-[-32px] z-10 bg-gradient-to-r from-violet-500 to-fuchsia-500 font-semibold text-white mt-[30px] mx-auto h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[500px] lg:w-[750px] xl:w-[1000px] 2xl:w-[1120px] rounded-md px-[30px]"
+      className="sticky top-0 md:top-[-32px] z-10 bg-gradient-to-r from-violet-500 to-fuchsia-500 font-semibold text-white mt-[30px] mx-auto h-[60px] flex items-center justify-between space-x-10 shadow-md w-[320px] md:w-[500px] lg:w-[670px] xl:w-[1000px] 2xl:w-[1120px] rounded-md px-[30px]"
     >
       <div className="flex items-center">
         <div className="w-[50px] md:w-[140px] lg:w-[200px]">Category</div>
-        <div className="hidden md:flex lg:w-[220px] xl:w-[400px] truncate">
+        <div className="hidden md:flex lg:w-[200px] xl:w-[400px] truncate">
           Description
         </div>
       </div>

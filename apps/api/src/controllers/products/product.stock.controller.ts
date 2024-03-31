@@ -215,4 +215,16 @@ export class ProductStockController {
       console.log(error);
     }
   }
+  async getWarehouseStock(req: Request, res: Response) {
+    try {
+      const { productId, warehouseId } = req.query;
+      const productWarehouse = await productStockService.findProductWarehouse(
+        Number(productId),
+        Number(warehouseId),
+      );
+      return res.status(200).json(productWarehouse);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

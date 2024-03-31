@@ -80,7 +80,6 @@ export default function WarehouseDetail({
         },
         'application/json',
       );
-      console.log(updatedStock);
       setIsModalOpen(true);
       fetchProducts();
       setEdit(false);
@@ -178,7 +177,11 @@ export default function WarehouseDetail({
               <div className="flex items-center">
                 <div className="relative w-[40px] h-[40px] mr-[30px] hidden md:flex">
                   <Image
-                    src={'/images/products/product1image1.jpeg'}
+                    src={
+                      product.productImages?.[0]?.path.startsWith('http')
+                        ? product.productImages?.[0]?.path!
+                        : '/images/products/product-placeholder.png'
+                    }
                     fill
                     className="object-cover object-center"
                     alt="product image"

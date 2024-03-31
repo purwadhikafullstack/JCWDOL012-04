@@ -7,7 +7,7 @@ import {
   PiArchive,
   PiCirclesFour,
   PiTruck,
-  PiNotepad
+  PiNotepad,
 } from 'react-icons/pi';
 
 export type MenuLinks = {
@@ -18,7 +18,7 @@ export type MenuLinks = {
 
 export const superAdminLinks = [
   { name: 'Home', href: '/admin', icon: PiHouse },
-  { name: "Orders", href: "/admin/orders", icon: PiNotepad },
+  { name: 'Orders', href: '/admin/orders', icon: PiNotepad },
   { name: 'Customer', href: '/admin/customer-management', icon: PiUser },
   {
     name: 'Warehouse Admin',
@@ -41,11 +41,11 @@ export const superAdminLinks = [
 
 export const warehouseAdminLinks = [
   { name: 'Home', href: '/admin', icon: PiHouse },
-  { name: "Orders", href: "/admin/orders", icon: PiNotepad },
-  { name: 'Products', href: '/admin/products', icon: PiArchive },
+  { name: 'Orders', href: '/admin/orders', icon: PiNotepad },
+  { name: 'Products', href: '/admin/product-management', icon: PiArchive },
   {
     name: 'Product Categories',
-    href: '/admin/product-categories',
+    href: '/admin/product-category-management',
     icon: PiCirclesFour,
   },
   {

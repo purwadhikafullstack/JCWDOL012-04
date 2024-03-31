@@ -88,7 +88,7 @@ export default function ProductCategoriesUpdateForm({
           }
         }}
       >
-        <Form className="max-w-md mx-auto mt-8 p-10 bg-white rounded border shadow-md">
+        <Form className="max-w-md mx-auto mb-28 md:mb-0 p-10 bg-white rounded border shadow-md">
           <div className="mb-6 text-center font-semibold text-2xl text-[var(--primaryColor)] py-2 rounded-md">
             Product Category Form
           </div>
