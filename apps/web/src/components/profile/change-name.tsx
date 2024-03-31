@@ -17,11 +17,14 @@ import { useFormik } from 'formik';
 import { useEffect, useState } from "react"
 import * as Yup from 'yup';
 import Spinner from "../ui/spinner"
+import { clientSideRedirect } from "@/lib/store/auth/auth.action"
 
 export function ChangeNameDialog() {
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [response, setResponse] = useState<any>(null)
+    const [isRequesting, setIsRequesting] = useState<boolean>(false)
     const auth = useAuth()
     const user = auth?.user?.data
-    const [dialogOpen, setDialogOpen] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -41,8 +44,11 @@ export function ChangeNameDialog() {
                 .required('Password is required')
         }),
         onSubmit: async (values) => {
-            await auth?.changeName(values)
+            setIsRequesting(true)
+            const response = await auth?.changeName(values)
+            setResponse(response)
             formik.setSubmitting(false)
+            setIsRequesting(false)
         }
     })
 
@@ -57,7 +63,7 @@ export function ChangeNameDialog() {
         }
         if (!dialogOpen) {
             formik.resetForm()
-            auth?.clearError()
+            setResponse(null)
         }
     }, [dialogOpen])
 
@@ -71,13 +77,10 @@ export function ChangeNameDialog() {
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Change Name</DialogTitle>
-                    <DialogDescription>
-                        {"Make changes to your name here. Click save when you're done."}
-                    </DialogDescription>
                 </DialogHeader>
-                {auth?.isLoading && <div className="mx-auto"><Spinner /></div>}
-                {!auth?.isLoading &&
-                    (<form onSubmit={formik.handleSubmit}>
+                {isRequesting && <div className="mx-auto"><Spinner /></div>}
+                {!isRequesting && !response?.id
+                    ? (<form onSubmit={formik.handleSubmit}>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="firstName" >
@@ -132,25 +135,37 @@ export function ChangeNameDialog() {
                                     </div>)
                                     : null}
                             </div>
-                            <div>
-                                {auth?.error?.status
-                                    ? (<div className="text-red-500 text-xs">
-                                        {auth.error?.message
-                                            ? auth.error?.message
-                                            : 'An Error occured. Something went wrong'}
-                                    </div>)
-                                    : null}
-                            </div>
+
+                            {response?.error
+                                ? (<div className="text-red-500 text-xs">
+                                    {response?.error?.message}
+                                </div>)
+                                : null}
+
                             <DialogFooter>
                                 <Button
                                     type="submit"
-                                    disabled={formik.isSubmitting || auth?.isLoading || noChanges}
+                                    disabled={formik.isSubmitting || isRequesting || noChanges}
                                 >
                                     Save Changes
                                 </Button>
                             </DialogFooter>
                         </div>
-                    </form>)}
+                    </form>)
+                    : null}
+                {!isRequesting && response?.id
+                    ? <div className="flex flex-col gap-4">
+                        <span>{"Your name has been changed successfully."}</span>
+                        <DialogFooter>
+                            <Button onClick={() => {
+                                setDialogOpen(false)
+                                clientSideRedirect('/profile')
+                            }}>
+                                Close
+                            </Button>
+                        </DialogFooter>
+                    </div>
+                    : null}
             </DialogContent>
         </Dialog>
     )

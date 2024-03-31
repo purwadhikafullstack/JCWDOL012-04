@@ -41,17 +41,39 @@ export async function createWarehouseAdmin(req: Request, res: Response) {
         const { email, password, firstName, lastName, gender } = req.body;
         if (!email || !password || !firstName || !lastName || !gender) return resUnprocessable(res, 'Missing mandatory fields', null)
         const hashedPassword = await generateHashedPassword(password)
-        const admin = await prisma.users.create({
-            data: {
-                email,
-                password: hashedPassword,
-                firstName,
-                lastName,
-                gender,
-                isVerified: true,
-                role: 'WAREHOUSE_ADMIN'
+
+        const isUserExisted = await prisma.users.findUnique({
+            where: {
+                email
             }
         })
+
+        const admin = isUserExisted
+            ? await prisma.users.update({
+                where: {
+                    id: isUserExisted.id
+                },
+                data: {
+                    password: hashedPassword,
+                    firstName,
+                    lastName,
+                    gender,
+                    isVerified: true,
+                    role: "WAREHOUSE_ADMIN",
+                    archived: false
+                }
+            })
+            : await prisma.users.create({
+                data: {
+                    email,
+                    password: hashedPassword,
+                    firstName,
+                    lastName,
+                    gender,
+                    isVerified: true,
+                    role: 'WAREHOUSE_ADMIN'
+                }
+            })
 
         resSuccess(res, 'Warehouse Admin created successfully', admin, 1)
     } catch (error) {
@@ -77,7 +99,7 @@ export async function getWarehouseAdminData(req: Request, res: Response) {
     }
 }
 
-export async function archieveWarehouseAdmin(req: Request, res: Response) {
+export async function archiveWarehouseAdmin(req: Request, res: Response) {
     try {
         const { id } = req.params;
         if (!id) return resUnprocessable(res, 'Missing mandatory fields: id', null)
@@ -86,7 +108,8 @@ export async function archieveWarehouseAdmin(req: Request, res: Response) {
                 id: parseInt(id)
             },
             data: {
-                archived: true
+                archived: true,
+                wareHouseAdmin_warehouseId: null
             }
         })
         resSuccess(res, 'Warehouse Admin archieved successfully', admin, 1)

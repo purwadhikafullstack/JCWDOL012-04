@@ -12,6 +12,8 @@ if (!secretKey) throw new Error('JWT_SECRET is not defined')
 function tokenExtractor(req: Request) {
     if (req.path.includes('/reset-password')) return req.query.token
     if (req.path.includes('/change/email')) return req.query.token
+    if (req.path.includes('/reset-password/verify-request')) return req.query.token
+    if (req.path.includes('/verify-token') && req.query.token) return req.query.token
 
     if (req.headers.cookie) return req.cookies['palugada-auth-token'];
     if (req.query.token) return req.query.token;

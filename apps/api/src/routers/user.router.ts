@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireJwtAuth } from "@/middlewares/auth/requireJwtAuth";
-import { archieveWarehouseAdmin, createWarehouseAdmin, getWarehouseAdminData, getAdmins, updateWarehouseAdmin, getIdleAdmins } from "@/controllers/user.wh.admin.controller";
+import { archiveWarehouseAdmin, createWarehouseAdmin, getWarehouseAdminData, getAdmins, updateWarehouseAdmin, getIdleAdmins } from "@/controllers/user.wh.admin.controller";
 import { getUserAddresses, addAddress, archieveAddress, setAsPrimaryAddress, updateAddress } from "@/controllers/user.address.controller";
 import { getCustomers } from "@/controllers/user.customer.controller";
 import { superAdminGuard } from "@/middlewares/auth/userDataVerification";
@@ -57,7 +57,7 @@ userRouter.get('/admin/wh/:id',
 userRouter.patch('/admin/wh/:id/archieve',
     requireJwtAuth,
     superAdminGuard,
-    archieveWarehouseAdmin
+    archiveWarehouseAdmin
 )
 
 userRouter.patch('/admin/wh/:id/update',

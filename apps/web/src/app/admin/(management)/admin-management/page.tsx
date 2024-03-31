@@ -1,8 +1,11 @@
 import { columns } from "./com/columns"
 import { DataTable } from "./com/data-table"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { cookies } from 'next/headers'
 import DialogAddNewAdmin from "./com/dialog-add-new-admin"
+import UnauthorizedPage from "@/components/auth/unauthorized"
+import { UsersModel } from "@/model/UsersModel"
+import { verifyUserServerSide } from "../action"
 
 
 async function getAdmins(): Promise<AdminModel[]> {
@@ -20,13 +23,18 @@ async function getAdmins(): Promise<AdminModel[]> {
 
     return await user.get('/admin')
         .then((response) => response.data.data as AdminModel[])
-        .catch((error) => {
-            console.error('Error getting Administrator data', error);
+        .catch((error: AxiosError) => {
+            console.error('Error getting Administrator data', error.response?.data);
             return [] as AdminModel[];
         });
 }
 
 export default async function DemoPage() {
+    const user: UsersModel | undefined | null = await verifyUserServerSide()
+
+    if (!user || user?.role?.toUpperCase() !== "SUPER_ADMIN") return (
+        < UnauthorizedPage message="401 | You are not authorized to view this page" ctaLabel="Go To Dashboard Home" redirectTo="/admin" />
+    )
     const data: AdminModel[] = await getAdmins()
 
     return (

@@ -97,13 +97,13 @@ export async function setPasswordAction(
         .then((response: AxiosResponse) => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
             redirectTo ? clientSideRedirect(redirectTo) : null
-            setLoadingState ? setLoadingState(false) : null
         })
         .catch((error) => {
-
-            setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-            setError({ status: error?.response?.status, message: error?.response?.data?.message })
-            setLoadingState ? setLoadingState(false) : null
+            const errStatus = error.response?.status
+            const errMessage = error.response?.data?.message ? error?.response?.data?.message : error?.response?.data?.msg
+            setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: prevUser.data }))
+            setError({ status: errStatus, message: errMessage })
+            setLoadingState(false)
         })
 }
 
@@ -141,6 +141,7 @@ export async function verifyResetPasswordRequest(
         })
         .catch((error) => {
             handleError(error, setError)
+            setLoadingState(false)
         })
 
 }
@@ -155,7 +156,7 @@ export async function resetNewPassword(
     await auth.patch(`reset-password/set-new-password?token=${token}`, value)
         .then(() => {
             setUserState(prevUser => ({ ...prevUser, isAuthenticated: false, data: null }))
-            clientSideRedirect('/auth/login?reset=success')
+            clientSideRedirect('/auth/login?origin=reset-password-success')
         })
         .catch((error) => {
             handleError(error, setError)
