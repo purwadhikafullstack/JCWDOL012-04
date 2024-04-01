@@ -5,11 +5,27 @@ import express, {
   Request,
   Response,
   NextFunction,
-  Router,
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import { prisma } from './services/prisma.service';
+import { join } from 'path';
+import { ProductRouter } from './routers/product.router';
+import passport from 'passport';
+import cookieparser from 'cookie-parser';
+import cartRouter from './routers/cart.router.withAuth';
+import transactionRouter from './routers/transaction.router.withAuth';
+import { googleAuthRouter } from './routers/auth/authGoogle.router';
+import { localAuthRouter } from './routers/auth/localAuth.router';
+import { requireJwtAuth } from './middlewares/auth/requireJwtAuth';
+import { profileRouter } from './routers/profile.router';
+import { userRouter } from './routers/user.router';
+import { dataRouter } from './routers/data.router';
+import { shippingRouter } from './routers/shipping.router';
+import { startUpdateOrderStatusJob } from './lib/updateOrderStatusJob';
+import { startUpdateTransactionOrderStatusJob } from './lib/updateTransactionOrderStatusJob';
+import warehouseRouter from './routers/warehouse.router';
+import { ReportRouter } from './routers/report.router';
 
 export default class App {
   private app: Express;
@@ -22,9 +38,14 @@ export default class App {
   }
 
   private configure(): void {
-    this.app.use(cors());
+    this.app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use(express.static('public'));
+    this.app.use('/public', express.static('public'));
+    this.app.use(cookieparser());
+    startUpdateOrderStatusJob();
+    startUpdateTransactionOrderStatusJob();
   }
 
   private handleError(): void {
@@ -51,18 +72,41 @@ export default class App {
   }
 
   private routes(): void {
-    const sampleRouter = new SampleRouter();
+    const productRouter = new ProductRouter();
+    const reportRouter = new ReportRouter();
+    require('./services/auth/googleStrategy');
+    require('./services/auth/localStrategy');
+    require('./services/auth/jwtStrategy');
+    this.app.use(passport.initialize());
 
-    this.app.get('/', (req: Request, res: Response) => {
+    this.app.get('/', requireJwtAuth, (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
+    this.app.use('/api/cart', cartRouter);
+    this.app.use('/api/transaction', transactionRouter);
 
-    this.app.use('/samples', sampleRouter.getRouter());
+    this.app.use('/api', productRouter.getRouter());
+    this.app.use('/auth', googleAuthRouter);
+    this.app.use('/auth', localAuthRouter);
+    this.app.use('/profile', profileRouter);
+    this.app.use('/user', userRouter);
+    this.app.use('/data', dataRouter);
+    this.app.use('/shipping', shippingRouter);
+    this.app.use('/warehouses', warehouseRouter);
+    this.app.use('/api/report', reportRouter.getRouter());
   }
 
   public start(): void {
     this.app.listen(PORT, () => {
       console.log(`  ➜  [API] Local:   http://localhost:${PORT}/`);
+    });
+  }
+
+  private setupSignalHandlers() {
+    process.on('SIGINT', async () => {
+      await prisma.$disconnect();
+      console.log('Prisma client disconnected');
+      process.exit();
     });
   }
 }

@@ -13,6 +13,6 @@
     }
   },
   // "include": ["src/**/*"],
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["**/*.ts","src/**/*.ts","src/**/**/*.ts"],
+  "exclude": ["node_modules"],
 }

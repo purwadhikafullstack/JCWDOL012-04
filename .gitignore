@@ -37,3 +37,13 @@ yarn-error.log*
 
 # others
 dist
+
+# api ignored
+apps/api/node_modules
+apps/api/.env.development
+apps/api/.env
+
+# web node_modules
+apps/web/node_modules
+apps/web/.env.development
+apps/web/.env

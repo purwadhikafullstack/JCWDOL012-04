@@ -6,16 +6,253 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Sample {
+enum Role {
+  SUPER_ADMIN
+  CUSTOMER
+  WAREHOUSE_ADMIN
+}
+
+model Provinces {
   id        Int      @id @default(autoincrement())
   name      String
-  code      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
 
-  @@map("samples") // if you want to use snake_case format
+  cities Cities[]
+}
+
+model Cities {
+  id         Int       @id @default(autoincrement())
+  type       CityType  @default(KOTA)
+  name       String
+  province   Provinces @relation(fields: [provinceId], references: [id])
+  provinceId Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archived   Boolean   @default(false)
+
+  users      UserCities[]
+  warehouses Warehouses[]
+}
+
+enum CityType {
+  KABUPATEN
+  KOTA
+}
+
+model UserCities {
+  id                 Int     @id @default(autoincrement())
+  userId             Int
+  user               Users   @relation(fields: [userId], references: [id])
+  city               Cities  @relation(fields: [cityId], references: [id])
+  cityId             Int
+  address            String
+  latitude           String
+  longitude          String
+  isPrimaryAddress   Boolean @default(false)
+  closestWarehouseId Int?
+
+  warehouse Warehouses? @relation(fields: [closestWarehouseId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  archieved  Boolean     @default(false)
+  label     String
+  Transactions Transactions[]
+}
+
+model Warehouses {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  cityId    Int
+  city      Cities   @relation(fields: [cityId], references: [id])
+  latitude  String
+  longitude String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
+
+  usercities         UserCities[]
+  warehouseAdmin     Users[]
+  productsWarehouses ProductsWarehouses[]
+  transactions       Transactions[]
+  mutations          Mutations[]
+  destinationWarehouseMutations Mutations[] @relation("DestinationWarehouse")
+}
+
+model Users {
+  id                         Int         @id @default(autoincrement())
+  firstName                  String
+  lastName                   String
+  email                      String      @unique
+  password                   String?
+  gender                     String?
+  phoneNumber                String?
+  isVerified                 Boolean     @default(false)
+  role                       Role        @default(CUSTOMER)
+  wareHouseAdmin_warehouseId Int?
+  wareHouseAdmin             Warehouses? @relation(fields: [wareHouseAdmin_warehouseId], references: [id])
+  profilePicture             String?
+  createdAt                  DateTime    @default(now())
+  updatedAt                  DateTime    @updatedAt
+  archived                   Boolean     @default(false)
+  googleId                   String?     @unique
+  isRequestingChangePassword Boolean     @default(false)
+
+  userCities   UserCities[]
+  transactions Transactions[]
+  shoppingCart ShoppingCart[]
+}
+
+model ShoppingCart {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      Users    @relation(fields: [userId], references: [id])
+  productId Int
+  product   Products @relation(fields: [productId], references: [id])
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
+}
+
+model ProductImages {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Products @relation(fields: [productId], references: [id])
+  path      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
+}
+
+model ProductCategories {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  archived    Boolean    @default(false)
+  products    Products[]
+}
+
+model Products {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  description          String
+  price                Float
+  weight               Int                    @default(1000)
+  productCategoryId    Int
+  productCategory      ProductCategories      @relation(fields: [productCategoryId], references: [id])
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  archived             Boolean                @default(false)
+  productImages        ProductImages[]
+  productsWarehouses   ProductsWarehouses[]
+  TransactionsProducts TransactionsProducts[]
+  mutations            Mutations[]
+  shoppingCart         ShoppingCart[]
+}
+
+model ProductsWarehouses {
+  id          Int        @id @default(autoincrement())
+  productId   Int
+  product     Products   @relation(fields: [productId], references: [id])
+  warehouseId Int
+  warehouse   Warehouses @relation(fields: [warehouseId], references: [id])
+  stock       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  archived    Boolean    @default(false)
+}
+
+enum paymentType {
+  PAYMENT_GATEWAY
+  TRANSFER
+}
+
+enum orderStatus {
+  PENDING_PROOF
+  PENDING_VERIFICATION
+  VERIFIED
+  FAILED_PAYMENT
+  CANCELLED
+  PROCESSING
+  SHIPPING
+  CONFIRMED
+}
+
+model Transactions {
+  id                Int                    @id @default(autoincrement())
+  transactionUid    String                 @unique
+  userId            Int
+  user              Users                  @relation(fields: [userId], references: [id])
+  paymentType       paymentType
+  paymentProof      String?
+  orderStatus       orderStatus            @default(PENDING_PROOF)
+  warehouseId       Int
+  warehouse         Warehouses             @relation(fields: [warehouseId], references: [id])
+  shippingAddressId Int
+  shippingAddress   UserCities             @relation(fields: [shippingAddressId], references: [id])
+  paymentProofDate  DateTime?
+  verifiedDate      DateTime?
+  shippingDate      DateTime?
+  sentDate          DateTime?
+  processDate       DateTime?
+  confirmationDate  DateTime?
+  cancelledDate     DateTime?
+  failedPaymentDate DateTime?
+  shippingCost      Float
+  total             Float
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  archived          Boolean                @default(false)
+  products          TransactionsProducts[]
+  mutations         Mutations[]
+}
+
+model TransactionsProducts {
+  id            Int          @id @default(autoincrement())
+  transactionId Int
+  transaction   Transactions @relation(fields: [transactionId], references: [id])
+  productId     Int
+  product       Products     @relation(fields: [productId], references: [id])
+  quantity      Int
+  price         Float
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  archived      Boolean      @default(false)
+}
+
+enum mutationType {
+  TRANSACTION
+  TRANSACTION_REVERSAL
+  MANUAL_ADMIN
+  AUTOMATED
+  REQUEST
+}
+
+model Mutations {
+  id            Int           @id @default(autoincrement())
+  productId     Int
+  product       Products?     @relation(fields: [productId], references: [id])
+  warehouseId   Int
+  warehouse     Warehouses?   @relation(fields: [warehouseId], references: [id])
+  transactionId Int?
+  transaction   Transactions? @relation(fields: [transactionId], references: [id])
+  destinationWarehouseId Int?
+  destinationWarehouse Warehouses? @relation("DestinationWarehouse",fields: [destinationWarehouseId], references: [id])
+  isAdd         Boolean       @default(true)
+  isAccepted    Boolean?     
+  quantity      Int
+  mutationType  mutationType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  archived  Boolean  @default(false)
 }
