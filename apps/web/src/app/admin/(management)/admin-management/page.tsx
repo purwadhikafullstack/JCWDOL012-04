@@ -29,7 +29,7 @@ async function getAdmins(): Promise<AdminModel[]> {
         });
 }
 
-export default async function DemoPage() {
+export default async function WHAdminManagementPage() {
     const user: UsersModel | undefined | null = await verifyUserServerSide()
 
     if (!user || user?.role?.toUpperCase() !== "SUPER_ADMIN") return (

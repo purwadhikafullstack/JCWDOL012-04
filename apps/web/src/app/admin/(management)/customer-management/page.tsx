@@ -25,7 +25,7 @@ async function getCustomers(): Promise<any> {
         });
 }
 
-export default async function DemoPage() {
+export default async function CustomerOverviewPage() {
     const user: UsersModel | undefined | null = await verifyUserServerSide()
 
     if (!user || user?.role?.toUpperCase() !== "SUPER_ADMIN") return (
