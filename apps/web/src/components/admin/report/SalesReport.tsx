@@ -66,7 +66,14 @@ export default function SalesReport({
     startMonth,
     endMonth,
   ]);
-
+  if (!adminWarehouseId)
+    return (
+      <div className="w-full h-10 flex flex-col justify-center items-center">
+        <div className="text-xl font-medium">
+          You haven&apos;t assigned into a warehouse yet
+        </div>
+      </div>
+    );
   if (sales.length === 0) return <Loading />;
   return (
     <>
