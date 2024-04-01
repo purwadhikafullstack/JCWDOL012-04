@@ -27,7 +27,7 @@ async function getWarehouses(): Promise<any> {
         });
 }
 
-export default async function DemoPage() {
+export default async function WHManagementPage() {
     const user: UsersModel | undefined | null = await verifyUserServerSide()
 
     if (!user || user?.role?.toUpperCase() !== "SUPER_ADMIN") return (
