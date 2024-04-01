@@ -56,8 +56,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
             if (transactionsProductList && transactionsProductList.length > 0) {
                 transactionProductApi.getAllTransactionProductsWithStock(transactionsProductList, transaction.warehouseId)
                     .then((res) => {
-                        if (res.status === 200) {
-                            setTransactionProductsWithStock(res.data);
+                        if (res.status) {
+                            if (res.status === 200) {
+                                setTransactionProductsWithStock(res.data);
+                            }
+                        } else {
+                            setTransactionProductsWithStock([]);
                         }
                     })
                     .catch((err) => {
@@ -105,8 +109,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleCancelOrder() {
         if (transaction) {
             const res = await transactionApi.cancelOrder(transaction.transactionUid);
-            if (res.status == 200) {
-                handleUpdate();
+            if (res.status) {
+                if (res.status == 200) {
+                    handleUpdate();
+                }
+            } else {
+                console.log(res);
             }
         }
     }
@@ -114,8 +122,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleVerifyPayment() {
         if (transaction) {
             const res = await transactionApi.verifyPayment(transaction.transactionUid);
-            if (res.status == 200) {
-                handleUpdate();
+            if (res.status) {
+                if (res.status == 200) {
+                    handleUpdate();
+                }
+            } else {
+                console.log(res);
             }
         }
     }
@@ -123,8 +135,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleDenyPayment() {
         if (transaction) {
             const res = await transactionApi.denyPayment(transaction.transactionUid);
-            if (res.status == 200) {
-                handleUpdate();
+            if (res.status) {
+                if (res.status == 200) {
+                    handleUpdate();
+                }
+            } else {
+                console.log(res);
             }
         }
     }
@@ -132,8 +148,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleProcessOrder() {
         if (transaction) {
             const res = await transactionApi.processOrder(transaction.transactionUid)
-            if (res.status == 200) {
-                handleUpdate();
+            if (res.status) {
+                if (res.status == 200) {
+                    handleUpdate();
+                }
+            } else {
+                console.log(res);
             }
         }
     }
@@ -141,8 +161,12 @@ export default function TransactionDetail({ params }: { params: { orderId: strin
     async function handleShippingOrder() {
         if (transaction) {
             const res = await transactionApi.shipOrder(transaction.transactionUid)
-            if (res.status == 200) {
-                handleUpdate();
+            if (res.status) {
+                if (res.status == 200) {
+                    handleUpdate();
+                }
+            } else {
+                console.log(res);
             }
         }
     }

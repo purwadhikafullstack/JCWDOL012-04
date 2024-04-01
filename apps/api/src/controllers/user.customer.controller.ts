@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { resInternalServerError, resSuccess, resUnprocessable } from '@/services/responses';
-import { generateHashedPassword } from '@/services/auth/auth';
+import { resInternalServerError, resSuccess } from '@/services/responses';
 const prisma = new PrismaClient();
 
 export function getCustomers(req: Request, res: Response) {

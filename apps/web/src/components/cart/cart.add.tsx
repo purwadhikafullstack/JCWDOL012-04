@@ -29,11 +29,15 @@ export default function CartAdd({ productId }: { productId: number }) {
       .preAddToCart(productId)
       .then((response) => {
         setLoading(true);
-        setStatus(response.status);
-        if (response.status === 200) {
-          setProduct(response.product);
-          setStock(response.stock);
-          setLoading(false);
+        if (response.status) {
+          setStatus(response.status);
+          if (response.status === 200) {
+            setProduct(response.product);
+            setStock(response.stock);
+            setLoading(false);
+          }
+        } else {
+          console.log(response);
         }
       })
       .catch((error) => {
@@ -64,11 +68,15 @@ export default function CartAdd({ productId }: { productId: number }) {
         .addToCart(productId, quantity)
         .then((response) => {
           setLoading(true);
-          setStatus(response.status);
-          if (response.status === 200) {
-            toast.success('Added to cart');
-            setLoading(false);
-            updateCartContext();
+          if (response.status) {
+            setStatus(response.status);
+            if (response.status === 200) {
+              toast.success('Added to cart');
+              setLoading(false);
+              updateCartContext();
+            }
+          } else {
+            console.log(response);
           }
         })
         .catch((error) => {
