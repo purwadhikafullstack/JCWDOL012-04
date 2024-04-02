@@ -95,7 +95,8 @@ export class AdminProductController {
     try {
       upload(req, res, async () => {
         const id = parseInt(req.params.id);
-        const { name, description, price, productCategoryId } = req.body;
+        const { name, description, price, weight, productCategoryId } =
+          req.body;
         const currentProduct = await adminProductService.getAdminProduct(id);
         if (name !== currentProduct?.name) {
           const duplicateProduct =
@@ -108,6 +109,7 @@ export class AdminProductController {
           name,
           description,
           parseInt(price),
+          parseInt(weight),
           parseInt(productCategoryId),
           updatedProductImages,
         );

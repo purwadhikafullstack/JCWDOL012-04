@@ -26,8 +26,7 @@ export default class ProductService {
       skip,
       where: {
         name: {
-          contains: search,
-          mode: 'insensitive',
+          contains: search
         },
         productCategory: {
           name: {
@@ -63,8 +62,7 @@ export default class ProductService {
     return this.prisma.products.count({
       where: {
         name: {
-          contains: search,
-          mode: 'insensitive',
+          contains: search
         },
         productCategory: {
           name: {
@@ -115,8 +113,7 @@ export default class ProductService {
       },
       where: {
         name: {
-          contains: search,
-          mode: 'insensitive',
+          contains: search
         },
         archived: false,
       },

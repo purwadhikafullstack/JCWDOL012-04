@@ -81,6 +81,7 @@ export default function WarehouseDetail({
         'application/json',
       );
       setIsModalOpen(true);
+      setSelectedId(0);
       fetchProducts();
       setEdit(false);
     } catch (error) {
@@ -270,7 +271,7 @@ export default function WarehouseDetail({
         })}
       </div>
       <SuccessModal
-        path={`/admin/warehouses/${warehouseId}?page=${page}&pageSize=15`}
+        path={`/admin/mutation?page=${page}&pageSize=15&warehouseId=${warehouseId}`}
         item="Product Stock Updated"
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
