@@ -9,6 +9,7 @@ import { useUpdateCart } from "@/lib/cart.provider.update";
 import { toast, ToastContainer } from 'react-toastify';
 import ImagePlaceholder from "../image.placeholder";
 import Image from "next/image";
+import { getPrimaryImagePath } from "@/lib/product.image.primary.path";
 import { useRouter } from "next/navigation";
 
 import CartApi from "@/api/cart.api.withAuth";
@@ -119,12 +120,6 @@ export default function CartTable() {
         return <Errors statusCode={status} message={error} />
     }
 
-    function getPrimaryImagePath(product?: ProductsModel) {
-        const productImage = product?.productImages ?? [];
-        const primaryImagePath = (productImage.length > 0 ? productImage[0]?.path : '/asdf');
-        return primaryImagePath;
-    }
-
     return (
         <div className="my-10 lg:max-w-[1080px]">
             <ToastContainer />
@@ -160,15 +155,6 @@ export default function CartTable() {
                                         defaultValue={item.quantity}
                                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => { if (parseInt(event.target.value) !== item.quantity) { debounceHandleInputChange(event, item) } }}
                                     />
-                                    {/* <input
-                                            key={item.quantity}
-                                            id="quantityUpdate"
-                                            type="number"
-                                            min="1"
-                                            className="px-2 py-1 border rounded-md max-w-[5rem]"
-                                            defaultValue={item.quantity}
-                                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => { if (parseInt(event.target.value) !== item.quantity) { debounceHandleInputChange(event, item) } }}
-                                        /> */}
                                     <p className="font-bold text-lg flex" key={item.product?.price}>{idr((item.product?.price ?? 0) * item.quantity)}</p>
                                 </div>
                             </div>

@@ -1,4 +1,4 @@
-import {prisma} from './prisma.service';
+import { prisma } from './prisma.service';
 
 
 export default class CartService {
@@ -10,7 +10,16 @@ export default class CartService {
     async get(): Promise<any> {
         return await this.prisma.shoppingCart.findMany({
             include: {
-                product: true
+                product: {
+                    include: {
+                        productImages: {
+                            where: {
+                                archived: false,
+                            },
+                        }
+                    }
+
+                },
             }
         });
     }
@@ -20,7 +29,19 @@ export default class CartService {
             where: {
                 id: id,
                 archived: false
-            }
+            },
+
+            include: {
+                product: {
+                    include: {
+                        productImages: {
+                            where: {
+                                archived: false,
+                            },
+                        }
+                    }
+                }
+            },
         });
     }
 
@@ -29,22 +50,34 @@ export default class CartService {
             where: {
                 id: id,
                 archived: false
-            }
+            },
+
+            include: {
+                product: {
+                    include: {
+                        productImages: {
+                            where: {
+                                archived: false,
+                            },
+                        }
+                    }
+                }
+            },
         });
     }
 
-    async preAdd(productId:number): Promise<any> {
+    async preAdd(productId: number): Promise<any> {
         return await this.prisma.products.findUnique({
             where: {
                 id: productId,
                 archived: false
             },
             include: {
-                productImages:  {
+                productImages: {
                     where: {
-                      archived: false,
+                        archived: false,
                     },
-                  },
+                },
             }
         });
     }
@@ -78,9 +111,17 @@ export default class CartService {
             where: {
                 userId: userId,
                 archived: false
-            }, 
+            },
             include: {
-                product: true
+                product: {
+                    include: {
+                        productImages: {
+                            where: {
+                                archived: false,
+                            },
+                        }
+                    }
+                }
             },
             orderBy: {
                 createdAt: 'desc'
@@ -93,7 +134,18 @@ export default class CartService {
             where: {
                 productId: productId,
                 archived: false
-            }
+            },
+            include: {
+                product: {
+                    include: {
+                        productImages: {
+                            where: {
+                                archived: false,
+                            },
+                        }
+                    }
+                }
+            },
         });
     }
 
@@ -103,7 +155,19 @@ export default class CartService {
                 userId: userId,
                 productId: productId,
                 archived: false
-            }
+            },
+
+            include: {
+                product: {
+                    include: {
+                        productImages: {
+                            where: {
+                                archived: false,
+                            },
+                        }
+                    }
+                }
+            },
         });
     }
 
