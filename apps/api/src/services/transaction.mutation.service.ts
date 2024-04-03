@@ -34,8 +34,6 @@ export default class TransactionMutationService {
             console.error("Create Shipment failed: ", error);
             return false;
         }
-
-
     }
 
     async getByProductId(productId: number): Promise<Mutations[]> {

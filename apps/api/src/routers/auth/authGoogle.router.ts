@@ -22,7 +22,7 @@ googleAuthRouter.get(
     '/google/callback',
     passport.authenticate('google',
         {
-            failureRedirect: '/auth/google/failed',
+            failureRedirect: `${WEB_BASE_URL}/auth?origin=google-auth-failed`,
             session: false
         }),
     function (req: Request, res: Response) {
