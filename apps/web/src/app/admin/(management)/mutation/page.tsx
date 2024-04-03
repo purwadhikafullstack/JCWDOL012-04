@@ -260,10 +260,14 @@ export default function WarehouseDetail({
               </div>
               <div className="items-center flex space-x-16 mr-5">
                 <div className="font-semibold hidden xl:flex">
-                  {new Date(productStock!.createdAt).toLocaleDateString()}
+                  {productStock
+                    ? new Date(productStock.createdAt).toLocaleDateString()
+                    : ''}
                 </div>
                 <div className="font-semibold hidden lg:flex">
-                  {new Date(productStock!.updatedAt).toLocaleDateString()}
+                  {productStock
+                    ? new Date(productStock.updatedAt).toLocaleDateString()
+                    : ''}
                 </div>
               </div>
             </div>
