@@ -98,7 +98,7 @@ export default function LoginForm() {
                 {auth?.error?.status && auth.error?.status !== 401
                     ? (
                         <div className="flex items-center mt-2 text-red-500">
-                            <PiSealWarningLight className="h-5 w-5 mr-2" />
+                            <PiSealWarningLight className="h-5 min-w-5 mr-2" />
                             <span>{auth.error.message}</span>
                         </div>
                     ) : null}
