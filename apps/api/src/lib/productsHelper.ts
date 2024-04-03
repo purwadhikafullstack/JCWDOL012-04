@@ -1,5 +1,6 @@
 import ProductService from '@/services/products/product.service';
-import { Products } from '@prisma/client';
+import { Prisma, PrismaClient, Products } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 import { Response } from 'express';
 
 interface Product extends Products {
@@ -88,4 +89,34 @@ export function getDateFromMonthAndYear(monthYearString: string) {
   // Create a new Date object with the specified month and year
   const date = new Date(Number(fullYear), monthNameToNumber[month] as number);
   return date;
+}
+
+export async function initializeProductStock(
+  tx: Omit<
+    PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+    '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+  >,
+  warehouseId: number,
+) {
+  try {
+    const products = await tx.products.findMany({
+      where: {
+        archived: false,
+      },
+      select: {
+        id: true,
+      },
+    });
+    for (let i = 0; i < products.length; i++) {
+      await tx.productsWarehouses.create({
+        data: {
+          warehouseId: warehouseId,
+          productId: products[i].id,
+          stock: 0,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
