@@ -9,6 +9,7 @@ import idr from '@/lib/idrCurrency';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUpdateCart } from '@/lib/cart.provider.update';
+import { useAuth } from "@/lib/store/auth/auth.provider";
 
 export default function CartAdd({ productId }: { productId: number }) {
   const updateCartContext = useUpdateCart();
@@ -19,6 +20,8 @@ export default function CartAdd({ productId }: { productId: number }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [status, setStatus] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
+  const auth = useAuth();
+  const role = auth?.user?.data?.role;
   // const [imageLoadError, setImageLoadError] = useState(false);
 
   const cartApi = new CartApi();
@@ -93,6 +96,8 @@ export default function CartAdd({ productId }: { productId: number }) {
   let inputLimit = isExceedQuantity
     ? 'border-10 border-red-600'
     : basicInputBorder;
+
+  if(role == 'SUPER_ADMIN' || role == 'WAREHOUSE_ADMIN') return (<></>);
 
   const productImage: ProductImagesModel[] = product?.productImages ?? [];
   const primaryImagePath =
