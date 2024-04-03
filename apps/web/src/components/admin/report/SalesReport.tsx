@@ -66,7 +66,7 @@ export default function SalesReport({
     startMonth,
     endMonth,
   ]);
-  if (!adminWarehouseId)
+  if (!adminWarehouseId && role === 'WAREHOUSE_ADMIN')
     return (
       <div className="w-full h-10 flex flex-col justify-center items-center">
         <div className="text-xl font-medium">

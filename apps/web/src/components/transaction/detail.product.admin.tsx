@@ -58,7 +58,7 @@ export default function TransactionProductDetail({ handleUpdate, transaction, tr
                                 <div className="py-4">
                                     <p className="font-semibold">Warehouse Stock: {item.stock}</p>
                                     <p className="font-semibold">Global Stock: {item.globalStock}</p>
-                                    <button value={item.id} className={`${(item.quantity > item.stock && item.quantity < item.globalStock) ? "bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] text-white" : "bg-gray-400"} rounded-md px-4 py-2 mt-2`} onClick={(e) => { handleRequestMutation((e.target as HTMLButtonElement).value) }} disabled={(item.quantity < item.stock) || (item.quantity > item.globalStock)}>Request Stock</button>
+                                    <button value={item.id} className={`${(item.quantity > item.stock && item.quantity < item.globalStock && transaction.orderStatus=="PROCESSING") ? "bg-[var(--primaryColor)] hover:bg-[var(--lightPurple)] text-white" : "bg-gray-400"} rounded-md px-4 py-2 mt-2`} onClick={(e) => { handleRequestMutation((e.target as HTMLButtonElement).value) }} disabled={(item.quantity < item.stock) || (item.quantity > item.globalStock)}>Request Stock</button>
                                 </div>
                             </div>
                             <hr />

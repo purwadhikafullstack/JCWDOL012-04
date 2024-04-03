@@ -16,6 +16,17 @@ export default class TransactionMutationService {
                     await prisma.mutations.create({
                         data: mutation
                     });
+                    await prisma.productsWarehouses.updateMany({
+                        where: {
+                            productId: mutation.productId,
+                            warehouseId: mutation.warehouseId
+                        },
+                        data: {
+                            stock: {
+                                decrement: mutation.quantity
+                            }
+                        }
+                    });
                 }
             });
             return true;
@@ -23,8 +34,6 @@ export default class TransactionMutationService {
             console.error("Create Shipment failed: ", error);
             return false;
         }
-
-     
     }
 
     async getByProductId(productId: number): Promise<Mutations[]> {
