@@ -106,6 +106,7 @@ export default class AdminProductService {
     name: string,
     description: string,
     price: number,
+    weight: number,
     productCategoryId: number,
     productImages: { path: string }[],
   ) {
@@ -117,6 +118,7 @@ export default class AdminProductService {
         name,
         description,
         price,
+        weight,
         productCategoryId,
         productImages: {
           create: productImages,
