@@ -45,5 +45,4 @@ apps/api/.env
 
 # web node_modules
 apps/web/node_modules
-apps/web/.env.development
 apps/web/.env
